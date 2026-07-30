@@ -21,7 +21,6 @@ subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
         
-        // Print detailed test execution logs for every test case
         testLogging {
             events("passed", "skipped", "failed")
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
@@ -30,18 +29,6 @@ subprojects {
             showStackTraces = true
             showStandardStreams = true
         }
-
-        // Print explicit list of every test method executed
-        afterTest(Closure(this) {
-            val descriptor = this.call() as org.gradle.api.tasks.testing.TestDescriptor
-            val result = this.properties["result"] as org.gradle.api.tasks.testing.TestResult
-            val symbol = when (result.resultType.name) {
-                "SUCCESS" -> "  ✓ PASSED"
-                "FAILURE" -> "  ✕ FAILED"
-                else -> "  - SKIPPED"
-            }
-            logger.lifecycle("$symbol: [${descriptor.className}] > ${descriptor.name}")
-        })
     }
 
     dependencies {
