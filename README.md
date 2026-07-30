@@ -17,6 +17,58 @@ The project adheres strictly to the **DCIT 204/308 Joint DSA Project Brief**:
 
 ---
 
+## 🚀 Setup & Getting Started Guide
+
+### 1. Prerequisites
+Before setting up the project, ensure you have the following installed on your machine:
+- **Java Development Kit (JDK 21 LTS)**: Download OpenJDK 21 or Eclipse Temurin 21.
+  - Verify installation in terminal: `java -version` and `javac -version`
+- **Git**: Installed and configured with your GitHub account.
+
+---
+
+### 2. Cloning the Repository
+Clone the repository and switch to the active integration branch (`dev`):
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd Hospital-Service-DSA
+git checkout dev
+```
+
+---
+
+### 3. Opening the Project in IntelliJ IDEA
+1. Launch **IntelliJ IDEA**.
+2. Click **Open** (or select `File -> Open`).
+3. Navigate to and select the root **`Hospital-Service-DSA`** folder.
+4. **IntelliJ will automatically detect the Gradle multi-module build** (`settings.gradle.kts`), index all 8 subprojects (`datastructures`, `algorithms`, `graph`, `scheduling`, `db`, `benchmark`, `app`, `gui`), and configure source sets automatically.
+5. If prompted for Project SDK, select **Java 21**.
+
+---
+
+### 4. Running Gradle Commands
+The project uses the **Gradle Wrapper** (`./gradlew` on Linux/macOS, `gradlew.bat` on Windows). You do **NOT** need to install Gradle globally on your computer.
+
+- **Build all modules**:
+  ```bash
+  ./gradlew build
+  ```
+- **Run all unit tests**:
+  ```bash
+  ./gradlew test
+  ```
+- **Run the main application**:
+  ```bash
+  ./gradlew :app:run
+  ```
+- **Calculate your student algorithm parameters (Brief Section 2.iii)**:
+  Pass your student index number as an argument:
+  ```bash
+  ./gradlew :app:run --args="10982345"
+  ```
+
+---
+
 ## 👥 Pod Ownership & Task Assignment Matrix (~15 Team Members)
 
 All package directories under `datastructures/`, `algorithms/`, `graph/`, and `scheduling/` contain clean folder scaffolding (`.gitkeep`). Each pod is responsible for building their assigned data structures and algorithms from scratch:
@@ -30,35 +82,6 @@ All package directories under `datastructures/`, `algorithms/`, `graph/`, and `s
 | **Pod 5: Trees & Hashing** | `datastructures` | Binary Search Tree, Red-Black Tree, B-Tree, Custom HashTable |
 | **Pod 6: Graph & Optimisation** | `graph` / `scheduling` | Adjacency Matrix/List, BFS/DFS, Dijkstra Shortest Path, Prim/Kruskal MST, Greedy, DP |
 | **Pod 7: Data & Benchmark** | `db` / `benchmark` | SQLite DB schema/loader, 40+ Unit Tests, Trace Tables, Benchmark Suite |
-
----
-
-## 🛠️ Build & Execution Instructions
-
-### Prerequisites
-- **JDK 21 LTS** installed and configured (`java -version`).
-- **Git** installed.
-
-### 1. Build Entire Project
-```bash
-./gradlew build
-```
-
-### 2. Run All Unit Tests across Modules
-```bash
-./gradlew test
-```
-
-### 3. Run Main Interactive Application
-```bash
-./gradlew :app:run
-```
-
-### 4. Derive Your Student Algorithm Parameters (Brief Section 2.iii)
-Run the application passing your student index number as an argument to compute your student-specific parameters:
-```bash
-./gradlew :app:run --args="10982345"
-```
 
 ---
 
@@ -99,7 +122,7 @@ Hospital-Service-DSA/
 
 ---
 
-## 📜 Development Conventions
+## 📜 Development & Git Conventions
 1. **Branching**: Create feature branches off `dev` (e.g. `feature/pod1-binary-search`, `feature/pod6-dijkstra`).
 2. **Pull Requests**: Target `dev` branch. Ensure `./gradlew test` passes cleanly before submitting.
 3. **No `java.util` Collections**: Core logic must use custom data structures implemented in `datastructures`.
