@@ -6,10 +6,6 @@ plugins {
 allprojects {
     group = "edu.ug.dcit308.hospital"
     version = "1.0.0-SNAPSHOT"
-
-    repositories {
-        mavenCentral()
-    }
 }
 
 subprojects {
