@@ -70,4 +70,27 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             size++;
         }
     }
+
+    public V search(K key) {
+        if (key == null) {
+            return null;
+        }
+        Node<K, V> current = root;
+        while (current != null) {
+            int cmp = key.compareTo(current.key);
+            if (cmp == 0) {
+                return current.value;
+            }
+            if (cmp < 0) {
+                current = current.left;
+            }  else {
+                current = current.right;
+            }
+        }
+        return null;
+    }
+
+    public boolean contains(K key) {
+        return search(key) != null;
+    }
 }
