@@ -1,0 +1,7 @@
+dependencies {
+    implementation(project(":datastructures"))
+    implementation(project(":algorithms"))
+    implementation(project(":graph"))
+    implementation(project(":db"))
+    implementation(rootProject.libs.xchart)
+}
