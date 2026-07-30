@@ -17,14 +17,39 @@ class CircularQueueTest {
     }
 
     @Test
-    void testEnqueueAndDequeue() {
-        assertTrue(queue.enqueue(10));
-        assertTrue(queue.enqueue(20));
-
-        assertEquals(10, queue.peek());
-        assertEquals(10, queue.dequeue());
-        assertEquals(20, queue.dequeue());
+    void testCapacityAndInitialSize() {
+        assertEquals(3, queue.capacity());
+        assertEquals(0, queue.size());
         assertTrue(queue.isEmpty());
+    }
+
+    @Test
+    void testEnqueueAndDequeueUpdatesSize() {
+        assertEquals(0, queue.size());
+        assertTrue(queue.enqueue(10));
+        assertEquals(1, queue.size());
+
+        assertTrue(queue.enqueue(20));
+        assertEquals(2, queue.size());
+
+        assertEquals(10, queue.dequeue());
+        assertEquals(1, queue.size());
+
+        assertEquals(20, queue.dequeue());
+        assertEquals(0, queue.size());
+        assertTrue(queue.isEmpty());
+    }
+
+    @Test
+    void testPeekDoesNotModifySize() {
+        queue.enqueue(99);
+        assertEquals(1, queue.size());
+
+        // Verify peek returns element without altering size
+        assertEquals(99, queue.peek());
+        assertEquals(1, queue.size());
+        assertEquals(99, queue.peek());
+        assertEquals(1, queue.size());
     }
 
     @Test
@@ -32,7 +57,10 @@ class CircularQueueTest {
         assertTrue(queue.enqueue(1));
         assertTrue(queue.enqueue(2));
         assertTrue(queue.enqueue(3));
-        assertFalse(queue.enqueue(4));
+        assertEquals(3, queue.size());
+
+        assertFalse(queue.enqueue(4)); // Should fail when full
+        assertEquals(3, queue.size());
         assertTrue(queue.isFull());
     }
 
