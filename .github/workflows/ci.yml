@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main, dev ]
 
+permissions:
+  contents: read
+  checks: write
+  statuses: write
+
 jobs:
   build:
     name: Build & Run Unit Tests
@@ -26,7 +31,16 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and Run All Unit Tests
-        run: ./gradlew test --info
+        run: ./gradlew test testAudit --continue
+
+      - name: Publish Test Results Report
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          check_name: 'Detailed Unit Test Execution Report'
+          fail_on_failure: true
 
       - name: Generate JaCoCo Code Coverage Report
+        if: always()
         run: ./gradlew jacocoTestReport
