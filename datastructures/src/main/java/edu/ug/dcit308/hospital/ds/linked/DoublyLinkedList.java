@@ -9,6 +9,11 @@ public class DoublyLinkedList {
         Node next;
         Node prev;
 
+        /**
+         * Creates a node containing the specified data.
+         *
+         * @param data the value stored in the node
+         */
         Node(Object data) {
             this.data = data;
             this.next = null;
@@ -20,6 +25,9 @@ public class DoublyLinkedList {
     private Node tail;
     private int size;
 
+    /**
+     * Creates an empty doubly linked list.
+     */
     public DoublyLinkedList() {
         this.head = null;
         this.tail = null;
@@ -27,7 +35,9 @@ public class DoublyLinkedList {
     }
 
     /**
-     * Inserts an element at the beginning of the list. O(1)
+     * Inserts an element at the beginning of the list.
+     *
+     * @param element the element to insert
      */
     public void addFirst(Object element) {
         Node newNode = new Node(element);
@@ -42,7 +52,9 @@ public class DoublyLinkedList {
     }
 
     /**
-     * Appends an element to the end of the list. O(1)
+     * Appends an element to the end of the list.
+     *
+     * @param element the element to append
      */
     public void addLast(Object element) {
         Node newNode = new Node(element);
@@ -57,7 +69,10 @@ public class DoublyLinkedList {
     }
 
     /**
-     * Removes and returns the first element of the list. O(1)
+     * Removes and returns the first element in the list.
+     *
+     * @return the removed first element
+     * @throws NoSuchElementException if the list is empty
      */
     public Object removeFirst() {
         if (isEmpty()) {
@@ -75,7 +90,10 @@ public class DoublyLinkedList {
     }
 
     /**
-     * Removes and returns the last element of the list. O(1)
+     * Removes the last element from the list.
+     *
+     * @return the removed element
+     * @throws NoSuchElementException if the list is empty
      */
     public Object removeLast() {
         if (isEmpty()) {
@@ -93,8 +111,11 @@ public class DoublyLinkedList {
     }
 
     /**
-     * Retrieves the element at the specified 0-based index.
-     * Traverses from head or tail depending on index proximity. O(n/2)
+     * Retrieves the element at the specified index.
+     *
+     * @param index the zero-based position of the element
+     * @return the element at the specified index
+     * @throws IndexOutOfBoundsException if the index is outside the list bounds
      */
     public Object get(int index) {
         checkIndex(index);
@@ -114,7 +135,10 @@ public class DoublyLinkedList {
     }
 
     /**
-     * Checks if a value exists in the list. O(n)
+     * Determines whether the list contains a specified element.
+     *
+     * @param element the element to search for
+     * @return {@code true} if the element is present, {@code false} otherwise
      */
     public boolean contains(Object element) {
         Node current = head;
@@ -127,20 +151,39 @@ public class DoublyLinkedList {
         return false;
     }
 
+    /**
+     * Determines the number of elements in the list.
+     *
+     * @return the number of elements in the list
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * Determines whether the list contains no elements.
+     *
+     * @return {@code true} if the list is empty, {@code false} otherwise
+     */
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**
+     * Removes all elements from the list.
+     */
     public void clear() {
         head = null;
         tail = null;
         size = 0;
     }
 
+    /**
+     * Validates that an index refers to an element in the list.
+     *
+     * @param index the index to validate
+     * @throws IndexOutOfBoundsException if the index is negative or greater than or equal to the list size
+     */
     private void checkIndex(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);

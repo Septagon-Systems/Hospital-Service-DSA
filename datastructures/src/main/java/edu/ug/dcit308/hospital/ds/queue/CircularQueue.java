@@ -27,10 +27,10 @@ public class CircularQueue {
     }
 
     /**
-     * Inserts an element at the rear of the queue. O(1)
+     * Adds an element to the rear of the queue.
      *
-     * @param element The item to add.
-     * @return true if successfully added, false if the queue is full.
+     * @param element the element to add
+     * @return {@code true} if the element was added, {@code false} if the queue is full
      */
     public boolean enqueue(Object element) {
         if (isFull()) {
@@ -60,10 +60,10 @@ public class CircularQueue {
     }
 
     /**
-     * Returns the element at the front of the queue without removing it. O(1)
+     * Inspects the element at the front of the queue without removing it.
      *
-     * @return The front element.
-     * @throws NoSuchElementException if the queue is empty.
+     * @return the front element
+     * @throws NoSuchElementException if the queue is empty
      */
     public Object peek() {
         if (isEmpty()) {
@@ -72,22 +72,45 @@ public class CircularQueue {
         return data[front];
     }
 
+    /**
+     * Determines whether the queue contains no elements.
+     *
+     * @return {@code true} if the queue is empty, {@code false} otherwise
+     */
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**
+     * Determines whether the queue has reached its fixed capacity.
+     *
+     * @return {@code true} if the queue is full, {@code false} otherwise
+     */
     public boolean isFull() {
         return size == capacity;
     }
 
+    /**
+     * Reports the number of elements currently stored in the queue.
+     *
+     * @return the current number of elements
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * Retrieves the maximum number of elements this queue can hold.
+     *
+     * @return the queue's fixed capacity
+     */
     public int capacity() {
         return capacity;
     }
 
+    /**
+     * Removes all elements from the queue and resets its state.
+     */
     public void clear() {
         for (int i = 0; i < capacity; i++) {
             data[i] = null;

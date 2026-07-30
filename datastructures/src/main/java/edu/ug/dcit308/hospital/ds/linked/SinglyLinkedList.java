@@ -7,6 +7,11 @@ public class SinglyLinkedList<T> {
         T data;
         Node<T> next;
 
+        /**
+         * Creates a node containing the specified data.
+         *
+         * @param data the value stored in the node
+         */
         Node(T data) {
             this.data = data;
             this.next = null;
@@ -17,6 +22,9 @@ public class SinglyLinkedList<T> {
     private Node<T> tail;
     private int size;
 
+    /**
+     * Creates an empty singly linked list.
+     */
     public SinglyLinkedList() {
         this.head = null;
         this.tail = null;
@@ -24,7 +32,9 @@ public class SinglyLinkedList<T> {
     }
 
     /**
-     * Inserts an element at the beginning of the list. O(1)
+     * Adds an element to the beginning of the list.
+     *
+     * @param element the element to add
      */
     public void addFirst(T element) {
         Node<T> newNode = new Node<>(element);
@@ -38,7 +48,9 @@ public class SinglyLinkedList<T> {
     }
 
     /**
-     * Appends an element to the end of the list. O(1)
+     * Appends an element to the end of the list.
+     *
+     * @param element the element to append
      */
     public void addLast(T element) {
         Node<T> newNode = new Node<>(element);
@@ -52,7 +64,10 @@ public class SinglyLinkedList<T> {
     }
 
     /**
-     * Removes and returns the first element of the list. O(1)
+     * Removes the first element from the list.
+     *
+     * @return the removed element
+     * @throws NoSuchElementException if the list is empty
      */
     public T removeFirst() {
         if (isEmpty()) {
@@ -68,7 +83,10 @@ public class SinglyLinkedList<T> {
     }
 
     /**
-     * Removes and returns the last element of the list. O(n)
+     * Removes and returns the last element in the list.
+     *
+     * @return the removed last element
+     * @throws NoSuchElementException if the list is empty
      */
     public T removeLast() {
         if (isEmpty()) {
@@ -91,7 +109,11 @@ public class SinglyLinkedList<T> {
     }
 
     /**
-     * Retrieves the element at the specified 0-based index. O(n)
+     * Retrieves the element at the specified index.
+     *
+     * @param index the zero-based position of the element
+     * @return the element at the specified index
+     * @throws IndexOutOfBoundsException if the index is outside the list bounds
      */
     public T get(int index) {
         checkIndex(index);
@@ -103,7 +125,10 @@ public class SinglyLinkedList<T> {
     }
 
     /**
-     * Checks if a value exists in the list. O(n)
+     * Determines whether the list contains the specified element.
+     *
+     * @param element the element to search for
+     * @return {@code true} if the element is present, {@code false} otherwise
      */
     public boolean contains(T element) {
         Node<T> current = head;
@@ -116,20 +141,39 @@ public class SinglyLinkedList<T> {
         return false;
     }
 
+    /**
+     * Gets the number of elements in the list.
+     *
+     * @return the number of elements in the list
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * Determines whether the list contains no elements.
+     *
+     * @return {@code true} if the list is empty, {@code false} otherwise
+     */
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**
+     * Removes all elements from the list.
+     */
     public void clear() {
         head = null;
         tail = null;
         size = 0;
     }
 
+    /**
+     * Validates that an index refers to an element in the list.
+     *
+     * @param index the index to validate
+     * @throws IndexOutOfBoundsException if the index is negative or greater than or equal to the list size
+     */
     private void checkIndex(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
