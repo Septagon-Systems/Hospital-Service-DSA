@@ -285,9 +285,9 @@ public class RedBlackTree<K extends Comparable<K>, V> {
      * Removes a key and its value from the tree, triggering fixDeletion if a black node is unlinked.
      *
      * @param key key of the node to remove
-     * @return deleted node reference, or null if key was not found
+     * @return original value payload associated with the key, or null if key was not found
      */
-    public Node<K, V> delete(K key) {
+    public V delete(K key) {
         if (key == null || root == null) {
             return null;
         }
@@ -301,6 +301,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 current = current.right;
             } else {
                 Node<K, V> targetNode = current;
+                V oldValue = targetNode.value; // Preserve original value before successor replacement
                 Node<K, V> nodeToSplice;
 
                 // Both nodes are filled
@@ -333,7 +334,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 if (removedColor == Color.BLACK) {
                     this.fixDeletion(childNode, spliceNodeParent);
                 }
-                return targetNode;
+                return oldValue;
             }
         }
         return null;
