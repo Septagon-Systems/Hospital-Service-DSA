@@ -102,6 +102,9 @@ public class RedBlackTree<K extends Comparable<K>, V> {
      * @param value data payload to store
      */
     public void insert(K key, V value) {
+        if (key == null) {
+            throw new IllegalArgumentException("key must not be null");
+        }
         if (root == null) {
             root = new Node<>(key, value, Color.BLACK, null);
             this.fixInsertion(root);
@@ -126,11 +129,10 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         Node<K, V> newNode = new Node<>(key, value, Color.RED, parent);
         if (key.compareTo(parent.key) < 0) {
             parent.left = newNode;
-            size++;
         } else {
             parent.right = newNode;
-            size++;
         }
+        size++;
         this.fixInsertion(newNode);
     }
 
@@ -141,6 +143,11 @@ public class RedBlackTree<K extends Comparable<K>, V> {
      * @return stored value if found, or null if it ghosted us
      */
     public V search(K key) {
+        Node<K, V> node = findNode(key);
+        return (node != null) ? node.value : null;
+    }
+
+    private Node<K, V> findNode(K key) {
         if (key == null) {
             return null;
         }
@@ -148,13 +155,9 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         while (current != null) {
             int cmp = key.compareTo(current.key);
             if (cmp == 0) {
-                return current.value;
+                return current;
             }
-            if (cmp < 0) {
-                current = current.left;
-            } else {
-                current = current.right;
-            }
+            current = (cmp < 0) ? current.left : current.right;
         }
         return null;
     }
@@ -166,7 +169,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
      * @return true if key exists, false otherwise
      */
     public boolean contains(K key) {
-        return search(key) != null;
+        return findNode(key) != null;
     }
 
     private void leftRotate(Node<K, V> x) {
@@ -352,10 +355,10 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 if (sibling == null || (isBlack(sibling.left) && isBlack(sibling.right))) {
                     if (sibling != null) sibling.color = Color.RED;
                     x = parent;
-                    parent = (x != null) ? x.parent : null;
+                    parent = x.parent;
                 } else {
                     if (isRed(sibling.left) && isBlack(sibling.right)) {
-                        if (sibling.left != null) sibling.left.color = Color.BLACK;
+                        sibling.left.color = Color.BLACK;
                         sibling.color = Color.RED;
                         this.rightRotate(sibling);
                         sibling = parent.right;
@@ -381,10 +384,10 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                 if (sibling == null || (isBlack(sibling.left) && isBlack(sibling.right))) {
                     if (sibling != null) sibling.color = Color.RED;
                     x = parent;
-                    parent = (x != null) ? x.parent : null;
+                    parent = x.parent;
                 } else {
                     if (isRed(sibling.right) && isBlack(sibling.left)) {
-                        if (sibling.right != null) sibling.right.color = Color.BLACK;
+                        sibling.right.color = Color.BLACK;
                         sibling.color = Color.RED;
                         this.leftRotate(sibling);
                         sibling = parent.left;
