@@ -3,6 +3,9 @@ package edu.ug.dcit308.hospital.ds.list;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DynamicArrayListTest {
@@ -105,5 +108,34 @@ class DynamicArrayListTest {
 
         assertTrue(list.isEmpty());
         assertEquals(0, list.size());
+    }
+
+    @Test
+    void testIteratorVisitsElementsInOrder() {
+        list.add("Alpha");
+        list.add("Beta");
+        list.add("Gamma");
+
+        StringBuilder visited = new StringBuilder();
+        for (String element : list) {
+            visited.append(element).append(",");
+        }
+
+        assertEquals("Alpha,Beta,Gamma,", visited.toString());
+    }
+
+    @Test
+    void testIteratorOnEmptyListHasNoElements() {
+        Iterator<String> iterator = list.iterator();
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    void testIteratorNextPastEndThrowsException() {
+        list.add("Alpha");
+        Iterator<String> iterator = list.iterator();
+        iterator.next();
+
+        assertThrows(NoSuchElementException.class, iterator::next);
     }
 }
