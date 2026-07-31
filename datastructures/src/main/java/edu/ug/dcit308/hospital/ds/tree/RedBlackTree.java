@@ -43,6 +43,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     public void insert(K key, V value) {
         if (root == null) {
             root = new Node<>(key, value, Color.BLACK, null);
+            this.fixInsertion(root);
             size++;
             return;
         }
@@ -69,6 +70,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             parent.right = newNode;
             size++;
         }
+        this.fixInsertion(newNode);
     }
 
     public V search(K key) {
@@ -83,7 +85,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             }
             if (cmp < 0) {
                 current = current.left;
-            }  else {
+            } else {
                 current = current.right;
             }
         }
@@ -95,24 +97,24 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     private void leftRotate(Node<K, V> x) {
-       Node<K, V> y = x.right;
-       x.right = y.left;
-       if (y.left != null) {
-           y.left.parent = x;
-       }
-       y.parent = x.parent;
-       if (x.parent == null) {
-           this.root = y;
-       } else if (x.parent.left == x) {
-           x.parent.left = y;
-       } else  {
-           x.parent.right = y;
-       }
-       y.left = x;
-       x.parent = y;
+        Node<K, V> y = x.right;
+        x.right = y.left;
+        if (y.left != null) {
+            y.left.parent = x;
+        }
+        y.parent = x.parent;
+        if (x.parent == null) {
+            this.root = y;
+        } else if (x.parent.left == x) {
+            x.parent.left = y;
+        } else {
+            x.parent.right = y;
+        }
+        y.left = x;
+        x.parent = y;
     }
 
-    private void  rightRotate(Node<K, V> x) {
+    private void rightRotate(Node<K, V> x) {
         Node<K, V> y = x.left;
         x.left = y.right;
         if (y.right != null) {
@@ -123,10 +125,61 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             this.root = y;
         } else if (x.parent.left == x) {
             x.parent.left = y;
-        } else  {
+        } else {
             x.parent.right = y;
         }
         y.right = x;
         x.parent = y;
+    }
+
+    private void fixInsertion(Node<K, V> k) {
+        while (k.parent != null && k.parent.color == Color.RED) {
+            if (k.parent == k.parent.parent.left) {
+                Node<K, V> g = k.parent.parent;
+                Node<K, V> u = g.right;
+                boolean isUncleRed = (u != null && u.color == Color.RED);
+
+                if (isUncleRed) {
+                    // Red uncle...
+                    k.parent.color = Color.BLACK;
+                    u.color = Color.BLACK;
+                    g.color = Color.RED;
+                    k = g;
+                } else {
+                    if (k == k.parent.right) {
+                        // Black Uncle, right parent node
+                        k = k.parent;
+                        this.leftRotate(k);
+                    }
+                    // Black uncle, left parent node
+                    k.parent.color = Color.BLACK;
+                    g.color = Color.RED;
+                    this.rightRotate(g);
+                }
+            } else if (k.parent == k.parent.parent.right) {
+                Node<K, V> g = k.parent.parent;
+                Node<K, V> u = g.left;
+                boolean isUncleRed = (u != null && u.color == Color.RED);
+                if (isUncleRed) {
+                    k.parent.color = Color.BLACK;
+                    u.color = Color.BLACK;
+                    g.color = Color.RED;
+                    k = g;
+                } else {
+                    if (k == k.parent.left) {
+                        k = k.parent;
+                        this.rightRotate(k);
+                    }
+                    k.parent.color = Color.BLACK;
+                    g.color = Color.RED;
+                    this.leftRotate(g);
+                }
+
+            }
+
+        }
+
+        root.color = Color.BLACK;
+
     }
 }
