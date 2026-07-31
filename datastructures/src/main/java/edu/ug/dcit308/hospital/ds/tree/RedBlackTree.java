@@ -1,11 +1,28 @@
 package edu.ug.dcit308.hospital.ds.tree;
 
+/**
+ * A self-balancing Red-Black Tree implementation for O(log n) key-value lookup.
+ * Keeps the tree from leaning like the Tower of Pisa during sequential inserts.
+ *
+ * @param <K> key type (must implement Comparable)
+ * @param <V> value payload type
+ */
 public class RedBlackTree<K extends Comparable<K>, V> {
+
+    /**
+     * Node color representation enforcing Red-Black invariants.
+     */
     public enum Color {
         RED,
         BLACK
     }
 
+    /**
+     * Internal tree node holding key, value, color, and structural pointers.
+     *
+     * @param <K> key type
+     * @param <V> value type
+     */
     public static class Node<K, V> {
         private K key;
         private V value;
@@ -14,6 +31,14 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         Node<K, V> right;
         Node<K, V> parent;
 
+        /**
+         * Constructs a new node with a parent reference.
+         *
+         * @param key    sorting key
+         * @param value  associated data payload
+         * @param color  initial node color
+         * @param parent reference to parent node
+         */
         public Node(K key, V value, Color color, Node<K, V> parent) {
             this.key = key;
             this.value = value;
@@ -23,27 +48,59 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             this.right = null;
         }
 
+        /**
+         * @return the node's key
+         */
         public K getKey() { return key; }
+
+        /**
+         * @return the node's stored value
+         */
         public V getValue() { return value; }
+
+        /**
+         * @return the node's current color
+         */
         public Color getColor() { return color; }
     }
 
     private Node<K, V> root;
     private int size;
 
+    /**
+     * Initializes an empty Red-Black Tree.
+     */
     public RedBlackTree() {
         root = null;
         size = 0;
     }
 
+    /**
+     * Checks if the tree has no elements.
+     *
+     * @return true if empty, false otherwise
+     */
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**
+     * Returns the total number of key-value pairs stored.
+     *
+     * @return current tree size
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * Inserts a key-value pair and rebalances the tree if necessary.
+     * Updates the value in-place if the key already exists.
+     * Duplicates not allowed
+     *
+     * @param key   non-null sorting key
+     * @param value data payload to store
+     */
     public void insert(K key, V value) {
         if (root == null) {
             root = new Node<>(key, value, Color.BLACK, null);
@@ -77,6 +134,12 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         this.fixInsertion(newNode);
     }
 
+    /**
+     * Searches for the value associated with a given key in O(log n) time.
+     *
+     * @param key key to locate
+     * @return stored value if found, or null if it ghosted us
+     */
     public V search(K key) {
         if (key == null) {
             return null;
@@ -96,6 +159,12 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         return null;
     }
 
+    /**
+     * Checks if a key exists in the tree.
+     *
+     * @param key key to check
+     * @return true if key exists, false otherwise
+     */
     public boolean contains(K key) {
         return search(key) != null;
     }
@@ -209,6 +278,12 @@ public class RedBlackTree<K extends Comparable<K>, V> {
         return x;
     }
 
+    /**
+     * Removes a key and its value from the tree, triggering fixDeletion if a black node is unlinked.
+     *
+     * @param key key of the node to remove
+     * @return deleted node reference, or null if key was not found
+     */
     public Node<K, V> delete(K key) {
         if (key == null || root == null) {
             return null;
