@@ -67,6 +67,7 @@ class RedBlackTreeTest {
             tree.insert(i, "Hospital #" + i);
         }
         assertEquals(100, tree.getSize());
+        assertTrue(tree.getHeight() <= 14);
         for (int i = 1; i <= 100; i++) {
             assertEquals("Hospital #" + i, tree.search(i));
         }
@@ -77,6 +78,7 @@ class RedBlackTreeTest {
             descTree.insert(i, "Hospital #" + i);
         }
         assertEquals(100, descTree.getSize());
+        assertTrue(descTree.getHeight() <= 14);
         for (int i = 1; i <= 100; i++) {
             assertEquals("Hospital #" + i, descTree.search(i));
         }
@@ -90,6 +92,7 @@ class RedBlackTreeTest {
 
         assertEquals("Single Node", tree.delete(42));
         assertEquals(0, tree.getSize());
+        assertEquals(0, tree.getHeight());
         assertTrue(tree.isEmpty());
         assertNull(tree.search(42));
     }
@@ -106,11 +109,13 @@ class RedBlackTreeTest {
         tree.insert(87, "Right-Right");
 
         assertEquals(7, tree.getSize());
+        int heightBefore = tree.getHeight();
 
         // Delete node 25 (which has 2 children: 12 and 37) and verify original value returned
         assertEquals("Left Child", tree.delete(25));
         assertEquals(6, tree.getSize());
         assertFalse(tree.contains(25));
+        assertTrue(tree.getHeight() <= heightBefore);
 
         // Ensure remaining children are intact
         assertEquals("Left-Left", tree.search(12));
@@ -132,9 +137,11 @@ class RedBlackTreeTest {
         for (int key : keys) {
             assertEquals("Value " + key, tree.delete(key));
             assertFalse(tree.contains(key));
+            assertTrue(tree.getHeight() <= 14);
         }
 
         assertEquals(0, tree.getSize());
+        assertEquals(0, tree.getHeight());
         assertTrue(tree.isEmpty());
     }
 
@@ -156,17 +163,31 @@ class RedBlackTreeTest {
     }
 
     @Test
-    @DisplayName("Normal Case: Calculate tree height for empty, single-node, and balanced trees")
+    @DisplayName("Normal Case: Calculate tree height for empty, single-node, and balanced trees across 100-20,000 record scale")
     void testGetHeight() {
         assertEquals(0, tree.getHeight());
 
         tree.insert(10, "Root");
         assertEquals(1, tree.getHeight());
 
-        // Insert 100 sequential elements and verify self-balancing bounds height <= 2 * log2(101) ~ 14
+        // 100 records scale -> height <= 2 * log2(101) ~ 14
         for (int i = 1; i <= 100; i++) {
             tree.insert(i, "Hospital #" + i);
         }
         assertTrue(tree.getHeight() <= 14);
+
+        // 1,000 records scale -> height <= 2 * log2(1001) ~ 20
+        RedBlackTree<Integer, String> scale1k = new RedBlackTree<>();
+        for (int i = 1; i <= 1000; i++) {
+            scale1k.insert(i, "Record #" + i);
+        }
+        assertTrue(scale1k.getHeight() <= 20);
+
+        // 20,000 records scale -> height <= 2 * log2(20001) ~ 29
+        RedBlackTree<Integer, String> scale20k = new RedBlackTree<>();
+        for (int i = 1; i <= 20000; i++) {
+            scale20k.insert(i, "Record #" + i);
+        }
+        assertTrue(scale20k.getHeight() <= 29);
     }
 }
