@@ -94,6 +94,23 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     /**
+     * Calculates the maximum height of the Red-Black Tree.
+     * An empty tree has height 0, and a single root node has height 1.
+     *
+     * @return the maximum tree height
+     */
+    public int getHeight() {
+        return calculateHeight(root);
+    }
+
+    private int calculateHeight(Node<K, V> node) {
+        if (node == null) {
+            return 0;
+        }
+        return 1 + Math.max(calculateHeight(node.left), calculateHeight(node.right));
+    }
+
+    /**
      * Inserts a key-value pair and rebalances the tree if necessary.
      * Updates the value in-place if the key already exists.
      * Duplicates not allowed
