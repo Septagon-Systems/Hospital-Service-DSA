@@ -22,6 +22,10 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             this.left = null;
             this.right = null;
         }
+
+        public K getKey() { return key; }
+        public V getValue() { return value; }
+        public Color getColor() { return color; }
     }
 
     private Node<K, V> root;
@@ -98,6 +102,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
 
     private void leftRotate(Node<K, V> x) {
         Node<K, V> y = x.right;
+        if (y == null) return;
         x.right = y.left;
         if (y.left != null) {
             y.left.parent = x;
@@ -116,6 +121,7 @@ public class RedBlackTree<K extends Comparable<K>, V> {
 
     private void rightRotate(Node<K, V> x) {
         Node<K, V> y = x.left;
+        if (y == null) return;
         x.left = y.right;
         if (y.right != null) {
             y.right.parent = x;
@@ -174,13 +180,9 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                     g.color = Color.RED;
                     this.leftRotate(g);
                 }
-
             }
-
         }
-
         root.color = Color.BLACK;
-
     }
 
     // Adding these here so I don't have to be checking for null every 5 lines!
@@ -208,19 +210,16 @@ public class RedBlackTree<K extends Comparable<K>, V> {
     }
 
     public Node<K, V> delete(K key) {
-        if (key == null) {
+        if (key == null || root == null) {
             return null;
         }
 
         Node<K, V> current = root;
-        Node<K, V> parent = null;
         while (current != null) {
             int cmp = key.compareTo(current.key);
             if (cmp < 0) {
-                parent = current;
                 current = current.left;
             } else if (cmp > 0) {
-                parent = current;
                 current = current.right;
             } else {
                 Node<K, V> targetNode = current;
@@ -257,68 +256,72 @@ public class RedBlackTree<K extends Comparable<K>, V> {
                     this.fixDeletion(childNode, spliceNodeParent);
                 }
                 return targetNode;
-
             }
         }
-        return current;
+        return null;
     }
 
     private void fixDeletion(Node<K, V> x, Node<K, V> parent) {
-        while (x != this.root && this.isBlack(x)) {
+        while (x != this.root && isBlack(x)) {
+            if (parent == null) break;
+
             if (x == parent.left) {
                 Node<K, V> sibling = parent.right;
                 if (isRed(sibling)) {
                     sibling.color = Color.BLACK;
                     parent.color = Color.RED;
                     this.leftRotate(parent);
+                    sibling = parent.right;
+                }
+
+                if (sibling == null || (isBlack(sibling.left) && isBlack(sibling.right))) {
+                    if (sibling != null) sibling.color = Color.RED;
+                    x = parent;
+                    parent = (x != null) ? x.parent : null;
                 } else {
-                    if ((sibling.left == null && sibling.right == null) ||
-                            (isBlack(sibling.right) && isBlack(sibling.left))) {
-                        sibling.color = Color.RED;
-                        x = parent;
-                        parent = x.parent;
-                    } else if (isRed(sibling.left) && isBlack(sibling.right)) {
-                        sibling.left.color = Color.BLACK;
+                    if (isRed(sibling.left) && isBlack(sibling.right)) {
+                        if (sibling.left != null) sibling.left.color = Color.BLACK;
                         sibling.color = Color.RED;
                         this.rightRotate(sibling);
                         sibling = parent.right;
                     }
 
-                    if (isRed(sibling.right)) {
+                    if (sibling != null) {
+                        sibling.color = parent.color;
                         parent.color = Color.BLACK;
-                        sibling.right.color = Color.BLACK;
+                        if (sibling.right != null) sibling.right.color = Color.BLACK;
                         this.leftRotate(parent);
                     }
                     x = root;
-
                 }
-            } else if (x == parent.right) {
+            } else {
                 Node<K, V> sibling = parent.left;
-                if (sibling.color == Color.RED) {
+                if (isRed(sibling)) {
                     sibling.color = Color.BLACK;
                     parent.color = Color.RED;
                     this.rightRotate(parent);
+                    sibling = parent.left;
+                }
+
+                if (sibling == null || (isBlack(sibling.left) && isBlack(sibling.right))) {
+                    if (sibling != null) sibling.color = Color.RED;
+                    x = parent;
+                    parent = (x != null) ? x.parent : null;
                 } else {
-                    if ((sibling.left == null && sibling.right == null) ||
-                            (isBlack(sibling.right) && isBlack(sibling.left))) {
-                        sibling.color = Color.RED;
-                        x = parent;
-                        parent = x.parent;
-                    } else if (isRed(sibling.right) && isBlack(sibling.left)) {
-                        sibling.right.color = Color.BLACK;
+                    if (isRed(sibling.right) && isBlack(sibling.left)) {
+                        if (sibling.right != null) sibling.right.color = Color.BLACK;
                         sibling.color = Color.RED;
                         this.leftRotate(sibling);
                         sibling = parent.left;
                     }
 
-                    if (isRed(sibling.left)) {
+                    if (sibling != null) {
                         sibling.color = parent.color;
                         parent.color = Color.BLACK;
-                        sibling.left.color = Color.BLACK;
+                        if (sibling.left != null) sibling.left.color = Color.BLACK;
                         this.rightRotate(parent);
-                        x = root;
                     }
-
+                    x = root;
                 }
             }
         }
@@ -326,6 +329,4 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             x.color = Color.BLACK;
         }
     }
-
-
 }
