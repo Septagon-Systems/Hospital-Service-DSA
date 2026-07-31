@@ -42,7 +42,7 @@ class RedBlackTreeTest {
     }
 
     @Test
-    @DisplayName("Boundary Case: Update existing key value without expanding size")
+    @DisplayName("Boundary Case: Update existing key value without expanding size (including null values)")
     void testUpdateExistingKey() {
         tree.insert(100, "Old Name");
         assertEquals(1, tree.getSize());
@@ -51,6 +51,12 @@ class RedBlackTreeTest {
         tree.insert(100, "Updated Hospital Name");
         assertEquals(1, tree.getSize());
         assertEquals("Updated Hospital Name", tree.search(100));
+
+        // Storing null value should still return contains(key) == true!
+        tree.insert(100, null);
+        assertEquals(1, tree.getSize());
+        assertNull(tree.search(100));
+        assertTrue(tree.contains(100));
     }
 
     @Test
@@ -82,14 +88,14 @@ class RedBlackTreeTest {
         tree.insert(42, "Single Node");
         assertEquals(1, tree.getSize());
 
-        assertNotNull(tree.delete(42));
+        assertEquals("Single Node", tree.delete(42));
         assertEquals(0, tree.getSize());
         assertTrue(tree.isEmpty());
         assertNull(tree.search(42));
     }
 
     @Test
-    @DisplayName("Edge Case: Delete node with 2 children (In-order successor replacement)")
+    @DisplayName("Edge Case: Delete node with 2 children (In-order successor replacement preserves original value)")
     void testDeleteNodeWithTwoChildren() {
         tree.insert(50, "Root");
         tree.insert(25, "Left Child");
@@ -101,8 +107,8 @@ class RedBlackTreeTest {
 
         assertEquals(7, tree.getSize());
 
-        // Delete node 25 (which has 2 children: 12 and 37)
-        assertNotNull(tree.delete(25));
+        // Delete node 25 (which has 2 children: 12 and 37) and verify original value returned
+        assertEquals("Left Child", tree.delete(25));
         assertEquals(6, tree.getSize());
         assertFalse(tree.contains(25));
 
@@ -113,7 +119,7 @@ class RedBlackTreeTest {
     }
 
     @Test
-    @DisplayName("Edge Case: Delete multiple nodes in random order triggering fixDeletion rebalancing")
+    @DisplayName("Edge Case: Delete multiple nodes in random order returning original values")
     void testDeleteMultipleNodesRandomOrder() {
         List<Integer> keys = new ArrayList<>();
         for (int i = 1; i <= 50; i++) {
@@ -124,7 +130,7 @@ class RedBlackTreeTest {
         // Shuffle keys to delete in random order
         Collections.shuffle(keys);
         for (int key : keys) {
-            assertNotNull(tree.delete(key));
+            assertEquals("Value " + key, tree.delete(key));
             assertFalse(tree.contains(key));
         }
 
@@ -133,7 +139,7 @@ class RedBlackTreeTest {
     }
 
     @Test
-    @DisplayName("Invalid Input Case: Search or delete non-existent and null keys")
+    @DisplayName("Invalid Input Case: Search, delete, or insert non-existent and null keys")
     void testSearchAndDeleteNonExistentAndNullKey() {
         tree.insert(10, "Hospital A");
 
@@ -145,5 +151,7 @@ class RedBlackTreeTest {
         assertNull(tree.delete(999));
         assertNull(tree.delete(null));
         assertEquals(1, tree.getSize());
+
+        assertThrows(IllegalArgumentException.class, () -> tree.insert(null, "Invalid Null Key"));
     }
 }
