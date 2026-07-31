@@ -163,6 +163,7 @@ class RedBlackTreeTest {
         tree.insert(10, "Root");
         assertEquals(1, tree.getHeight());
 
+        tree = new RedBlackTree<>();
         // Insert 100 sequential elements and verify self-balancing bounds height <= 2 * log2(101) ~ 14
         for (int i = 1; i <= 100; i++) {
             tree.insert(i, "Hospital #" + i);
