@@ -64,6 +64,45 @@ class HospitalNetworkGraphTest {
     }
 
     @Test
+    void testRemoveEdgeUndirectedRemovesBothDirections() {
+        HospitalNetworkGraph graph = new HospitalNetworkGraph(3);
+        graph.addEdge(0, 1, 12.5);
+        graph.addEdge(0, 2, 4.0);
+
+        graph.removeEdge(0, 1);
+
+        assertFalse(graph.hasEdge(0, 1));
+        assertFalse(graph.hasEdge(1, 0));
+        assertTrue(graph.hasEdge(0, 2));
+        assertEquals(1, graph.degree(0));
+        assertEquals(0, graph.degree(1));
+    }
+
+    @Test
+    void testRemoveEdgeDirectedRemovesOnlyOneDirection() {
+        HospitalNetworkGraph graph = new HospitalNetworkGraph(2, true);
+        graph.addEdge(0, 1, 5.0);
+        graph.addEdge(1, 0, 7.0);
+
+        graph.removeEdge(0, 1);
+
+        assertFalse(graph.hasEdge(0, 1));
+        assertTrue(graph.hasEdge(1, 0));
+    }
+
+    @Test
+    void testRemoveMissingEdgeThrowsException() {
+        HospitalNetworkGraph graph = new HospitalNetworkGraph(2);
+        assertThrows(NoSuchElementException.class, () -> graph.removeEdge(0, 1));
+    }
+
+    @Test
+    void testRemoveEdgeVertexOutOfBoundsThrowsException() {
+        HospitalNetworkGraph graph = new HospitalNetworkGraph(2);
+        assertThrows(IndexOutOfBoundsException.class, () -> graph.removeEdge(0, 5));
+    }
+
+    @Test
     void testGetWeightMissingEdgeThrowsException() {
         HospitalNetworkGraph graph = new HospitalNetworkGraph(2);
         assertThrows(NoSuchElementException.class, () -> graph.getWeight(0, 1));

@@ -48,6 +48,18 @@ public class HospitalNetworkGraph {
         }
     }
 
+    public void removeEdge(int source, int destination) {
+        checkVertex(source);
+        checkVertex(destination);
+        boolean removed = removeFromAdjacency(source, destination);
+        if (!removed) {
+            throw new NoSuchElementException("No edge from " + source + " to " + destination);
+        }
+        if (!directed && source != destination) {
+            removeFromAdjacency(destination, source);
+        }
+    }
+
     public Edge[] getNeighbors(int vertex) {
         checkVertex(vertex);
         Edge[] trimmed = new Edge[edgeCounts[vertex]];
@@ -101,6 +113,19 @@ public class HospitalNetworkGraph {
             adjacency[vertex] = resized;
         }
         adjacency[vertex][edgeCounts[vertex]++] = edge;
+    }
+
+    private boolean removeFromAdjacency(int vertex, int destination) {
+        for (int i = 0; i < edgeCounts[vertex]; i++) {
+            if (adjacency[vertex][i].getDestination() == destination) {
+                for (int j = i; j < edgeCounts[vertex] - 1; j++) {
+                    adjacency[vertex][j] = adjacency[vertex][j + 1];
+                }
+                adjacency[vertex][--edgeCounts[vertex]] = null;
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkVertex(int vertex) {
