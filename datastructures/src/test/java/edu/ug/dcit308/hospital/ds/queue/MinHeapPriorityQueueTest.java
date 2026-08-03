@@ -103,4 +103,29 @@ public class MinHeapPriorityQueueTest {
                 () -> queue.enqueue(null)
         );
     }
+
+    @Test
+void testPeekOnEmptyQueueThrowsException() {
+
+    MinHeapPriorityQueue<Integer> queue = new MinHeapPriorityQueue<>();
+
+    assertThrows(
+            IllegalStateException.class,
+            queue::peek
+    );
+}
+
+
+@Test
+void testDequeueLastElementMakesQueueEmpty() {
+
+    MinHeapPriorityQueue<Integer> queue = new MinHeapPriorityQueue<>();
+
+    queue.enqueue(100);
+
+    assertEquals(100, queue.dequeue());
+
+    assertEquals(0, queue.size());
+    assertTrue(queue.isEmpty());
+}
 }
