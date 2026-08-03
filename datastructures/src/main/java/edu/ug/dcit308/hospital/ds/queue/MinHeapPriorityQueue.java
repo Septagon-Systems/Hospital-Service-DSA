@@ -1,22 +1,27 @@
 package edu.ug.dcit308.hospital.ds.queue;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import edu.ug.dcit308.hospital.ds.list.DynamicArrayList;
 
 public class MinHeapPriorityQueue<T extends Comparable<T>> {
 
-    private final List<T> heap;
+    private final DynamicArrayList<T> heap;
 
     // Constructor
     public MinHeapPriorityQueue() {
-        heap = new ArrayList<>();
+        heap = new DynamicArrayList<>();
     }
 
     // Add an element to the priority queue
     public void enqueue(T value) {
-        heap.add(value);
-        heapifyUp(heap.size() - 1);
+
+    if (value == null) {
+        throw new IllegalArgumentException("Null values are not allowed");
     }
+
+    heap.add(value);
+    heapifyUp(heap.size() - 1);
+}
 
     // Remove and return the smallest element
     public T dequeue() {
@@ -125,6 +130,16 @@ public class MinHeapPriorityQueue<T extends Comparable<T>> {
 
     // Optional: display heap
     public void printHeap() {
-        System.out.println(heap);
+    System.out.print("[");
+
+    for (int i = 0; i < heap.size(); i++) {
+        System.out.print(heap.get(i));
+
+        if (i < heap.size() - 1) {
+            System.out.print(", ");
+        }
     }
+
+    System.out.println("]");
+}
 }

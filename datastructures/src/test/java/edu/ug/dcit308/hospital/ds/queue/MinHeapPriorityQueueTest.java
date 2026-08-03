@@ -1,6 +1,7 @@
 package edu.ug.dcit308.hospital.ds.queue;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MinHeapPriorityQueueTest {
@@ -18,7 +19,6 @@ public class MinHeapPriorityQueueTest {
         assertEquals(2, queue.peek());
     }
 
-
     @Test
     void testDequeueReturnsMinimumElement() {
 
@@ -29,13 +29,11 @@ public class MinHeapPriorityQueueTest {
         queue.enqueue(7);
         queue.enqueue(1);
 
-
         assertEquals(1, queue.dequeue());
         assertEquals(3, queue.dequeue());
         assertEquals(7, queue.dequeue());
         assertEquals(10, queue.dequeue());
     }
-
 
     @Test
     void testSize() {
@@ -50,7 +48,6 @@ public class MinHeapPriorityQueueTest {
         assertEquals(2, queue.size());
     }
 
-
     @Test
     void testIsEmpty() {
 
@@ -63,7 +60,6 @@ public class MinHeapPriorityQueueTest {
         assertFalse(queue.isEmpty());
     }
 
-
     @Test
     void testRemoveFromEmptyQueueThrowsException() {
 
@@ -75,7 +71,6 @@ public class MinHeapPriorityQueueTest {
         );
     }
 
-
     @Test
     void testPriorityOrdering() {
 
@@ -85,7 +80,6 @@ public class MinHeapPriorityQueueTest {
         queue.enqueue(10);
         queue.enqueue(30);
         queue.enqueue(5);
-
 
         int previous = Integer.MIN_VALUE;
 
@@ -97,5 +91,16 @@ public class MinHeapPriorityQueueTest {
 
             previous = current;
         }
+    }
+
+    @Test
+    void testEnqueueNullThrowsException() {
+
+        MinHeapPriorityQueue<Integer> queue = new MinHeapPriorityQueue<>();
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> queue.enqueue(null)
+        );
     }
 }
