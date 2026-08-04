@@ -145,8 +145,8 @@ Instead of deleting node `20`, we **copy key 30 and its payload value into root 
 - **Why this works**: `30` is strictly larger than left child `10` and strictly smaller than right child `40`, preserving the Binary Search Tree ordering property 100%!
 ![Step 2B Copy Successor Key](images/rbt_del2b.svg)
 
-#### Sub-Stage 2C: Unlink Original Successor Leaf (30) [Final State]
-Now physically delete original leaf node `30` from the bottom right subtree and return the original value payload of key `20`.
+#### Sub-Stage 2C: Splice Out Original Successor Node (30) [Final State]
+Now splice out the original successor node `30` from the right subtree (promoting its right child to take its place if present, or un-linking it if it is a leaf) and return the original value payload of key `20`.
 ![Step 2C Unlink Successor](images/rbt_del2c.svg)
 
 ---
