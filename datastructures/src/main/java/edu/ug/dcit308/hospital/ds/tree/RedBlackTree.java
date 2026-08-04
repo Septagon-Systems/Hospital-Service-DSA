@@ -129,25 +129,27 @@ public class RedBlackTree<K extends Comparable<K>, V> {
             return;
         }
         Node<K, V> current = root;
-        Node<K, V> parent = null;
-        while (current != null) {
+        Node<K, V> newNode;
+        while (true) {
             int cmp = key.compareTo(current.key);
             if (cmp == 0) {
                 current.value = value;
                 return;
             } else if (cmp < 0) {
-                parent = current;
+                if (current.left == null) {
+                    newNode = new Node<>(key, value, Color.RED, current);
+                    current.left = newNode;
+                    break;
+                }
                 current = current.left;
             } else {
-                parent = current;
+                if (current.right == null) {
+                    newNode = new Node<>(key, value, Color.RED, current);
+                    current.right = newNode;
+                    break;
+                }
                 current = current.right;
             }
-        }
-        Node<K, V> newNode = new Node<>(key, value, Color.RED, parent);
-        if (key.compareTo(parent.key) < 0) {
-            parent.left = newNode;
-        } else {
-            parent.right = newNode;
         }
         size++;
         this.fixInsertion(newNode);
