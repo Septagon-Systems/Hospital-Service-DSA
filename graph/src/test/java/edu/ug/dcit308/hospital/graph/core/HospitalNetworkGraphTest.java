@@ -22,6 +22,19 @@ class HospitalNetworkGraphTest {
     }
 
     @Test
+    void testAddEdgeUpdatesWeightInPlaceInsteadOfDuplicating() {
+        HospitalNetworkGraph graph = new HospitalNetworkGraph(2);
+        graph.addEdge(0, 1, 10.0);
+        graph.addEdge(0, 1, 8.5);
+
+        assertEquals(1, graph.degree(0));
+        assertEquals(1, graph.degree(1));
+        assertEquals(8.5, graph.getWeight(0, 1));
+        assertEquals(8.5, graph.getWeight(1, 0));
+        assertEquals(1, graph.getNeighbors(0).length);
+    }
+
+    @Test
     void testDirectedEdgeIsOneWayOnly() {
         HospitalNetworkGraph graph = new HospitalNetworkGraph(3, true);
         graph.addEdge(0, 1, 12.5);

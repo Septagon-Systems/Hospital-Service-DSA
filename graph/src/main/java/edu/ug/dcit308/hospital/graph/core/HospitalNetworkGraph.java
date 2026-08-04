@@ -36,15 +36,20 @@ public class HospitalNetworkGraph {
         }
     }
 
+    /**
+     * Adds a road between two hospitals, or updates its weight in place if a
+     * road between them already exists (e.g. traffic changing the travel time)
+     * rather than creating a parallel duplicate edge.
+     */
     public void addEdge(int source, int destination, double weight) {
         checkVertex(source);
         checkVertex(destination);
         if (weight < 0) {
             throw new IllegalArgumentException("Edge weight must not be negative");
         }
-        appendEdge(source, new Edge(destination, weight));
+        upsertEdge(source, destination, weight);
         if (!directed && source != destination) {
-            appendEdge(destination, new Edge(source, weight));
+            upsertEdge(destination, source, weight);
         }
     }
 
@@ -102,6 +107,16 @@ public class HospitalNetworkGraph {
 
     public boolean isDirected() {
         return directed;
+    }
+
+    private void upsertEdge(int vertex, int destination, double weight) {
+        for (int i = 0; i < edgeCounts[vertex]; i++) {
+            if (adjacency[vertex][i].getDestination() == destination) {
+                adjacency[vertex][i] = new Edge(destination, weight);
+                return;
+            }
+        }
+        appendEdge(vertex, new Edge(destination, weight));
     }
 
     private void appendEdge(int vertex, Edge edge) {
