@@ -1,12 +1,10 @@
 package edu.ug.dcit308.hospital.ds.tree;
 
+import edu.ug.dcit308.hospital.ds.list.DynamicArrayList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,14 +124,21 @@ class RedBlackTreeTest {
     @Test
     @DisplayName("Edge Case: Delete multiple nodes in random order returning original values")
     void testDeleteMultipleNodesRandomOrder() {
-        List<Integer> keys = new ArrayList<>();
+        DynamicArrayList<Integer> keys = new DynamicArrayList<>();
         for (int i = 1; i <= 50; i++) {
             keys.add(i);
             tree.insert(i, "Value " + i);
         }
 
-        // Shuffle keys to delete in random order
-        Collections.shuffle(keys);
+        // Randomize deletion order using Fisher-Yates shuffle on DynamicArrayList
+        java.util.Random rng = new java.util.Random(42);
+        for (int i = keys.size() - 1; i > 0; i--) {
+            int j = rng.nextInt(i + 1);
+            int temp = keys.get(i);
+            keys.set(i, keys.get(j));
+            keys.set(j, temp);
+        }
+
         for (int key : keys) {
             assertEquals("Value " + key, tree.delete(key));
             assertFalse(tree.contains(key));
