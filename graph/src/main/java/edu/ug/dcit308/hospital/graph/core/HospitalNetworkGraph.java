@@ -44,8 +44,8 @@ public class HospitalNetworkGraph {
     public void addEdge(int source, int destination, double weight) {
         checkVertex(source);
         checkVertex(destination);
-        if (weight < 0) {
-            throw new IllegalArgumentException("Edge weight must not be negative");
+        if (!Double.isFinite(weight) || weight < 0) {
+            throw new IllegalArgumentException("Edge weight must be non-negative and finite");
         }
         upsertEdge(source, destination, weight);
         if (!directed && source != destination) {

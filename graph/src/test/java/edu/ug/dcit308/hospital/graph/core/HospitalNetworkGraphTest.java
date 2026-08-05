@@ -122,9 +122,12 @@ class HospitalNetworkGraphTest {
     }
 
     @Test
-    void testNegativeWeightThrowsException() {
+    void testNegativeOrInvalidWeightThrowsException() {
         HospitalNetworkGraph graph = new HospitalNetworkGraph(2);
         assertThrows(IllegalArgumentException.class, () -> graph.addEdge(0, 1, -1.0));
+        assertThrows(IllegalArgumentException.class, () -> graph.addEdge(0, 1, Double.NaN));
+        assertThrows(IllegalArgumentException.class, () -> graph.addEdge(0, 1, Double.POSITIVE_INFINITY));
+        assertThrows(IllegalArgumentException.class, () -> graph.addEdge(0, 1, Double.NEGATIVE_INFINITY));
     }
 
     @Test
