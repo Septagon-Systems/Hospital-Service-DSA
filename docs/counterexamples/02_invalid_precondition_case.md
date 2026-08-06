@@ -1,29 +1,37 @@
-# Counterexample 2: Invalid Precondition (Binary Search on Unsorted Input)
+# Counterexample & Boundary Case Analysis
 
-> [!NOTE]
-> **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 1 / Pod 7. Replace the sample counterexample details below before final submission.
+## Case 1: Empty Queue Dequeue / Peek Precondition Violation
 
-## Precondition Requirement
-Binary search ($O(\log n)$ complexity) relies on the strict precondition that the input array $A$ is sorted in ascending (or descending) order.
+### Precondition
 
-## Failure Scenario
-An unsorted array of hospital ID records is passed directly to `BinarySearch.search()` without prior sorting:
+`dequeue()` and `peek()` require that the queue size $S > 0$ (`isEmpty() == false`).
+
+### Violation Scenario
+
+An operation calls `dequeue()` or `peek()` on a `CircularQueue` when `size == 0`.
+
+### Handled Behavior
+
 ```java
-Integer[] unsortedHospitals = {45, 12, 8, 99, 3, 20};
-int target = 8;
+if (isEmpty()) {
+    throw new NoSuchElementException("Queue is empty");
+}
 ```
 
-## Step-by-Step Execution Failure
-1. `low = 0`, `high = 5`, `mid = 2`.
-2. `A[mid] = 8`. Target is `8`.
-3. `cmp = 8.compareTo(8) == 0`. Match found by coincidence.
+## Case 2: Out of Bounds Indexing on Linked Lists
 
-Now search for target `12`:
-1. `low = 0`, `high = 5`, `mid = 2`.
-2. `A[mid] = 8`. Target `12 > 8`.
-3. Algorithm assumes elements to the left of index 2 are $\le 8$ (which is false! `45` and `12` are at index 0 and 1).
-4. `low` is updated to `mid + 1 = 3`. Sub-array `[0..2]` is permanently discarded.
-5. Search terminates returning `-1` (Not Found), even though `12` exists at index 1!
+### Precondition
 
-## Conclusion
-Binary search fails silently or produces incorrect results if its precondition (sorted input array) is violated. The unit test `BinarySearchTest.testInvalidPreconditionCase()` explicitly verifies that unsorted inputs fail.
+Indexed retrieval `get(index)` requires $0 \le \text{index} < \text{size}$.
+
+### Violation Scenario
+
+Calling `get(-1)` or `get(size)` on a `SinglyLinkedList` or `DoublyLinkedList`.
+
+### Handled Behavior
+
+```java
+if (index < 0 || index >= size) {
+        throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+}
+```
