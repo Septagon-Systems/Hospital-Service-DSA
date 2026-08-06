@@ -1,16 +1,47 @@
 # Trace Table 1: Binary Search Algorithm
 
-> [!NOTE]
-> **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 1. Replace the sample data below with your team's actual execution trace using your dataset and student index parameters before final submission.
-
 ## Algorithm Description
-Custom binary search implemented in `edu.ug.dcit308.hospital.algo.search.BinarySearch`. Searches for a specific hospital ID or patient request ID in a sorted array.
+
+The custom Binary Search algorithm is implemented in
+`edu.ug.dcit308.hospital.algo.search.BinarySearch`.
+
+It searches for a target value in a sorted array by repeatedly dividing the
+search interval into two halves. The algorithm has a time complexity of
+`O(log n)`.
+
+## Input Used
+
+- Sorted array: `[2, 4, 6, 8, 10]`
+- Target value: `8`
+- Expected result: index `3`
 
 ## Trace Table Execution
+
 | Step | `low` index | `high` index | `mid` index | Element at `mid` | Target | Comparison | Action |
-|---|---|---|---|---|---|---|---|
-| 1 | 0 | 15 | 7 | Hospital_08 (Korle Bu) | Hospital_12 (Tema Gen) | `Target > Mid` | `low = mid + 1` (8) |
-| 2 | 8 | 15 | 11 | Hospital_12 (Tema Gen) | Hospital_12 (Tema Gen) | `Target == Mid` | **Match Found at index 11** |
+|---|---:|---:|---:|---:|---:|---|---|
+| 1 | 0 | 4 | 2 | 6 | 8 | `Target > Mid` | Set `low = mid + 1`, therefore `low = 3` |
+| 2 | 3 | 4 | 3 | 8 | 8 | `Target == Mid` | **Match found at index 3** |
+
+## Result
+
+The target value `8` was found at index `3` after two iterations.
 
 ## Correctness Invariant
-At the start of each iteration of the `while (low <= high)` loop, if the target key exists in the array `A[0..N-1]`, then `A[low] <= target <= A[high]`.
+
+At the beginning of every iteration of the `while (low <= high)` loop, if the
+target exists in the array, then it is located within the current search
+interval from index `low` to index `high`.
+
+When the midpoint value is smaller than the target, all elements from `low`
+through `mid` can be safely discarded. When the midpoint value is greater than
+the target, all elements from `mid` through `high` can be safely discarded.
+
+Therefore, the algorithm never removes the target from the search interval when
+the target exists.
+
+## Complexity
+
+- Best case: `O(1)` — the target is found at the first midpoint.
+- Average case: `O(log n)`
+- Worst case: `O(log n)`
+- Auxiliary space: `O(1)` for the iterative implementation.
