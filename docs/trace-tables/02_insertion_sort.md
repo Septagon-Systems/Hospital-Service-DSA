@@ -37,7 +37,7 @@ Before : [45,  15,  20,  10]
 j = 0 : array[0]=45 > 15 → array[1] = array[0] → [45, 45, 20, 10]
 j = -1: loop exits
 
-array[-1+1] = array[0] = 15
+array[j + 1] = key → array[0] = 15
 
 After  : [15,  45,  20,  10]
 ```
@@ -52,7 +52,7 @@ Before : [15,  45,  20,  10]
 j = 1 : array[1]=45 > 20 → array[2] = array[1] → [15, 45, 45, 10]
 j = 0 : array[0]=15 ≤ 20 → loop exits
 
-array[0+1] = array[1] = 20
+array[j + 1] = key → array[1] = 20
 
 After  : [15,  20,  45,  10]
 ```
@@ -69,7 +69,7 @@ j = 1 : array[1]=20 > 10 → array[2] = array[1] → [15, 20, 20, 45]
 j = 0 : array[0]=15 > 10 → array[1] = array[0] → [15, 15, 20, 45]
 j = -1: loop exits
 
-array[-1+1] = array[0] = 10
+array[j + 1] = key → array[0] = 10
 
 After  : [10,  15,  20,  45]
 ```
