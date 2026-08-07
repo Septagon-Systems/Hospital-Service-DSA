@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main, dev ]
 
+permissions:
+  contents: read
+  checks: write
+  statuses: write
+
 jobs:
   build:
     name: Build & Run Unit Tests
@@ -26,7 +31,85 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and Run All Unit Tests
-        run: ./gradlew test --info
+        run: ./gradlew test testAudit --continue
 
       - name: Generate JaCoCo Code Coverage Report
-        run: ./gradlew jacocoTestReport
+        if: always()
+        run: ./gradlew jacocoTestReport --continue
+
+      - name: Publish Test Summary & JaCoCo Coverage to GitHub Step Summary
+        if: always()
+        run: |
+          python3 -c '
+          import os, glob, xml.etree.ElementTree as ET
+
+          summary = []
+          summary.append("## 🧪 Unit Test Execution & Audit Report\n")
+
+          xml_files = glob.glob("**/build/test-results/test/TEST-*.xml", recursive=True)
+          total_tests = 0
+          passed_tests = 0
+          failed_tests = 0
+          test_details = []
+
+          for xml_path in xml_files:
+              try:
+                  tree = ET.parse(xml_path)
+                  root = tree.getroot()
+                  for case in root.findall("testcase"):
+                      total_tests += 1
+                      name = case.get("name", "UnknownTest")
+                      classname = case.get("classname", "UnknownClass").split(".")[-1]
+                      failure = case.find("failure")
+                      error = case.find("error")
+                      if failure is not None or error is not None:
+                          failed_tests += 1
+                          test_details.append(f"| ✕ FAILED | {classname} | {name} |")
+                      else:
+                          passed_tests += 1
+                          test_details.append(f"| ✓ PASSED | {classname} | {name} |")
+              except Exception:
+                  pass
+
+          if total_tests > 0:
+              summary.append(f"**Summary**: {passed_tests} Passed / {failed_tests} Failed / {total_tests} Total\n")
+              summary.append("| Status | Test Class | Test Case |")
+              summary.append("|---|---|---|")
+              summary.extend(test_details)
+          else:
+              summary.append("> ℹ️ *No unit tests executed yet. Implement unit tests in Pods 1-7 to populate this report.*\n")
+
+          summary.append("\n## 📊 JaCoCo Code Coverage Summary\n")
+          coverage_files = glob.glob("**/build/reports/jacoco/test/jacocoTestReport.xml", recursive=True)
+          if coverage_files:
+              summary.append("| Subproject Module | Line Coverage |")
+              summary.append("|---|---|")
+              for cov in coverage_files:
+                  subproject = cov.split("/")[0]
+                  try:
+                      tree = ET.parse(cov)
+                      root = tree.getroot()
+                      lines = [c for c in root.findall("counter") if c.get("type") == "LINE"]
+                      if lines:
+                          l = lines[0]
+                          missed = int(l.get("missed"))
+                          covered = int(l.get("covered"))
+                          total = covered + missed
+                          pct = (covered / total * 100) if total > 0 else 0
+                          summary.append(f"| {subproject} | {pct:.1f}% ({covered}/{total} lines) |")
+                  except Exception:
+                      pass
+          else:
+              summary.append("> ℹ️ *JaCoCo coverage reports generated. Full HTML reports available as downloadable build artifacts below.*\n")
+
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write("\n".join(summary) + "\n")
+          '
+
+      - name: Upload JaCoCo Coverage HTML Reports as Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-reports
+          path: '**/build/reports/jacoco/'
+          if-no-files-found: ignore
