@@ -1,8 +1,10 @@
 package edu.ug.dcit308.hospital.algo.sort;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SelectionSortTest {
 
@@ -52,5 +54,28 @@ class SelectionSortTest {
 
         assertEquals(10, sorter.getComparisonCount());
         assertEquals(2, sorter.getSwapCount());
+    }
+
+    @Test
+    void sortsStringArray() {
+        String[] values = {"pear", "apple", "orange"};
+        SelectionSort<String> sorter = new SelectionSort<>();
+
+        sorter.sort(values);
+
+        assertArrayEquals(
+                new String[]{"apple", "orange", "pear"},
+                values
+        );
+    }
+
+    @Test
+    void rejectsNullArray() {
+        SelectionSort<Integer> sorter = new SelectionSort<>();
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> sorter.sort(null)
+        );
     }
 }

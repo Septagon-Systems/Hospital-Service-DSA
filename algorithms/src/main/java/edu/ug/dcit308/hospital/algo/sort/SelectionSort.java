@@ -1,11 +1,15 @@
 package edu.ug.dcit308.hospital.algo.sort;
 
-public class SelectionSort<T extends Comparable<T>> {
+public class SelectionSort<T extends Comparable<? super T>> {
 
     private int comparisonCount;
     private int swapCount;
 
     public void sort(T[] array) {
+        if (array == null) {
+            throw new IllegalArgumentException("Array cannot be null");
+        }
+
         comparisonCount = 0;
         swapCount = 0;
 
