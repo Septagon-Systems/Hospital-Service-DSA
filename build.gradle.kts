@@ -20,8 +20,14 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        
         testLogging {
             events("passed", "skipped", "failed")
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            showExceptions = true
+            showCauses = true
+            showStackTraces = true
+            showStandardStreams = true
         }
     }
 
