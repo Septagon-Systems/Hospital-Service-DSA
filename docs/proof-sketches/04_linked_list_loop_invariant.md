@@ -3,6 +3,15 @@
 ## Problem Statement
 Verification of correctness for indexed retrieval `get(index)` in `SinglyLinkedList<T>` and `DoublyLinkedList<T>`.
 
+### Concrete Ghana Hospital Dataset Instantiation
+Consider a list of Ghana hospital records:
+- Node 0 (`head`): Korle Bu Teaching Hospital (`"Korle Bu"`)
+- Node 1: Ridge Hospital (`"Ridge"`)
+- Node 2: 37 Military Hospital (`"37 Military"`)
+- Node 3: Komfo Anokye Teaching Hospital (`"KATH"`)
+
+**Goal**: Retrieve record at `index = 2` (`"37 Military"`). Below, we prove that `get(2)` correctly returns `"37 Military"`.
+
 ---
 
 ## 1. Loop Invariant for `SinglyLinkedList.get(index)`
