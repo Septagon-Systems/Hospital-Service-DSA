@@ -109,10 +109,10 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
      * @return sorted array of all keys
      */
     @SuppressWarnings("unchecked")
-    public K[] inOrder() {
-        Comparable[] result = new Comparable[size];
+    public Comparable<K>[] inOrder() {
+        Comparable<K>[] result = new Comparable[size];
         inOrderRec(root, result, new int[]{0});
-        return (K[]) result;
+        return result;
     }
 
     /**
