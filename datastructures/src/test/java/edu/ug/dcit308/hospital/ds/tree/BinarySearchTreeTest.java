@@ -211,6 +211,24 @@ class BinarySearchTreeTest {
 
         assertTrue(bst.isEmpty());
         assertEquals(0, bst.size());
+        assertEquals(0, bst.height());
         assertNull(bst.search(1));
+    }
+
+    @Test
+    void testHeightCalculation() {
+        assertEquals(0, bst.height());
+        assertEquals(0, bst.getHeight());
+
+        bst.insert(5, "root");
+        assertEquals(1, bst.height());
+        assertEquals(1, bst.getHeight());
+
+        bst.insert(3, "left");
+        bst.insert(7, "right");
+        assertEquals(2, bst.height());
+
+        bst.insert(2, "left-left");
+        assertEquals(3, bst.height());
     }
 }

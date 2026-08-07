@@ -146,6 +146,21 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
         return size;
     }
 
+    /**
+     * Calculates the maximum height of the Binary Search Tree.
+     * An empty tree has height 0, and a single root node has height 1.
+     *
+     * @return maximum tree height
+     */
+    public int height() {
+        return heightRec(root);
+    }
+
+    /** Alias for {@link #height()} to maintain accessor naming consistency. */
+    public int getHeight() {
+        return height();
+    }
+
     /** Returns {@code true} if the tree contains no elements. */
     public boolean isEmpty() {
         return size == 0;
@@ -222,5 +237,12 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
         inOrderRec(node.left,  result, index);
         result[index[0]++] = node.key;
         inOrderRec(node.right, result, index);
+    }
+
+    private int heightRec(Node<K, V> node) {
+        if (node == null) {
+            return 0;
+        }
+        return 1 + Math.max(heightRec(node.left), heightRec(node.right));
     }
 }
