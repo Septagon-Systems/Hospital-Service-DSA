@@ -17,7 +17,14 @@ class BinarySearchTest {
         int result = binarySearch.search(values, 8);
 
         assertEquals(3, result);
-    }
+    }@Test
+void searchesArrayThatSatisfiesSortedPrecondition() {
+    Integer[] values = {1, 3, 5, 7, 9};
+
+    BinarySearch search = new BinarySearch();
+
+    assertEquals(3, search.search(values, 7));
+}
 
     @Test
     void returnsMinusOneWhenElementIsNotFound() {
