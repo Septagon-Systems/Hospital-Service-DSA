@@ -40,7 +40,7 @@ public final class InsertionSort {
      * @param array the array to be sorted in-place; must not be {@code null}
      * @throws IllegalArgumentException if {@code array} is {@code null}
      */
-    public static <T extends Comparable<T>> void sort(T[] array) {
+    public static <T extends Comparable<? super T>> void sort(T[] array) {
         if (array == null) {
             throw new IllegalArgumentException("Array must not be null");
         }
@@ -118,7 +118,7 @@ public final class InsertionSort {
      * @throws IllegalArgumentException  if {@code array} is {@code null}
      * @throws IndexOutOfBoundsException if {@code n < 0} or {@code n >= array.length}
      */
-    public static <T extends Comparable<T>> void insertSorted(T[] array, int n) {
+    public static <T extends Comparable<? super T>> void insertSorted(T[] array, int n) {
         if (array == null) {
             throw new IllegalArgumentException("Array must not be null");
         }
