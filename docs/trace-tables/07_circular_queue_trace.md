@@ -25,4 +25,4 @@ Hospital service request buffer operating with a fixed capacity of $N = 3$.
 ## Final Output
 * `peek()` item: `"REQ-102"`
 * Final `size`: 3
-* Front pointer wrapped successfully without memory re-allocation.
+* Rear pointer wrapped successfully without memory re-allocation.
