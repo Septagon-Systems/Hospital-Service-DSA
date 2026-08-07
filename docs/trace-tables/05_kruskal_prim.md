@@ -56,9 +56,9 @@ Initial `DisjointSet`: `{0},{1},{2},{3},{4}` — 5 components
 | 1 | (3, 4) KATH↔Manhyia | 3.1 | 3 | 4 | ✅ Yes | **Add to MST** | 3.1 | 4 |
 | 2 | (1, 2) Ridge↔37 Mil | 4.8 | 1 | 2 | ✅ Yes | **Add to MST** | 7.9 | 3 |
 | 3 | (0, 1) Korle Bu↔Ridge | 5.2 | 0 | 1 | ✅ Yes | **Add to MST** | 13.1 | 2 |
-| 4 | (1, 3) Ridge↔KATH | 7.5 | 0 | 3 | ✅ Yes | **Add to MST** | 20.6 | 1 |
-| – | (0, 2) Korle Bu↔37 Mil | 9.1 | 0 | 0 | ❌ No | Skip (cycle) | 20.6 | 1 |
-| – | (0, 3) Korle Bu↔KATH | 12.0 | 0 | 0 | ❌ No | Skip (cycle) | 20.6 | 1 |
+| 4 | (1, 3) Ridge↔KATH | 7.5 | 1 | 3 | ✅ Yes | **Add to MST** | 20.6 | 1 |
+| – | (0, 2) Korle Bu↔37 Mil | 9.1 | — | — | — | *Unreached (loop exits as mstSize = V - 1)* | 20.6 | 1 |
+| – | (0, 3) Korle Bu↔KATH | 12.0 | — | — | — | *Unreached (loop exits as mstSize = V - 1)* | 20.6 | 1 |
 
 ### Kruskal MST Result
 
