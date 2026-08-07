@@ -1,7 +1,7 @@
 # Proof Sketch: Linked List Traversal & Boundary Invariants
 
 ## Problem Statement
-Verification of correctness for indexed retrieval `get(index)` in `SinglyLinkedList<T>` and `DoublyLinkedList<T>`[cite: 1].
+Verification of correctness for indexed retrieval `get(index)` in `SinglyLinkedList<T>` and `DoublyLinkedList<T>`
 
 ---
 
