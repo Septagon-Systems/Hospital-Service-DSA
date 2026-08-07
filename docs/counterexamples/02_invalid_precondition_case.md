@@ -1,37 +1,25 @@
-# Counterexample & Boundary Case Analysis
+# Counterexample & Boundary Case Analysis: Queue & Linked List Preconditions
 
 ## Case 1: Empty Queue Dequeue / Peek Precondition Violation
 
 ### Precondition
-
-`dequeue()` and `peek()` require that the queue size $S > 0$ (`isEmpty() == false`).
+Operations `dequeue()` and `peek()` on `CircularQueue` require that the queue size is strictly greater than zero ($size > 0$ or `isEmpty() == false`).
 
 ### Violation Scenario
+An operation calls `dequeue()` or `peek()` on a `CircularQueue` when $size = 0$ (empty queue state).
 
-An operation calls `dequeue()` or `peek()` on a `CircularQueue` when `size == 0`.
+### Impact / Result
+Invoking `dequeue()` or `peek()` on an empty queue violates queue state invariants and throws an `IllegalStateException` or `NoSuchElementException`, halting pipeline execution.
 
-### Handled Behavior
+---
 
-```java
-if (isEmpty()) {
-    throw new NoSuchElementException("Queue is empty");
-}
-```
-
-## Case 2: Out of Bounds Indexing on Linked Lists
+## Case 2: Out of Bounds Indexing on Linked List
 
 ### Precondition
-
-Indexed retrieval `get(index)` requires $0 \le \text{index} < \text{size}$.
+The `get(index)` and `remove(index)` operations on `SinglyLinkedList` and `DoublyLinkedList` require that $0 \le index < size$.
 
 ### Violation Scenario
+An operation attempts to access `get(5)` when $size = 3$, or passes a negative index such as `get(-1)`.
 
-Calling `get(-1)` or `get(size)` on a `SinglyLinkedList` or `DoublyLinkedList`.
-
-### Handled Behavior
-
-```java
-if (index < 0 || index >= size) {
-        throw new IndexOutOfBoundsException("Index out of bounds: " + index);
-}
-```
+### Impact / Result
+Violates boundary constraints and throws an `IndexOutOfBoundsException`, preventing invalid pointer dereferencing or `NullPointerException`.
