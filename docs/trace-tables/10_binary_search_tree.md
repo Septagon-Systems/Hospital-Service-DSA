@@ -78,12 +78,12 @@ Node `30` has two children (`20` and `40`).
 
 ### BST Invariants
 1. **Ordering Invariant**: For every node $N$, $L.\text{key} < N.\text{key} < R.\text{key}$ for all $L \in N.\text{left}$ and $R \in N.\text{right}$.
-2. **In-Order Sorting Invariant**: An in-order traversal of a valid BST always yields keys in strictly non-decreasing sorted order.
+2. **In-Order Sorting Invariant**: An in-order traversal of a valid BST always yields keys in strictly increasing sorted order (duplicate key insertions update existing values in-place).
 
 ### Complexity Bounds
 | Operation | Average Case | Worst Case (Degenerate Tree) | Space Complexity |
-|:---|:---:|:---:|:---:|
-| `insert(K, V)` | $O(\log n)$ | $O(n)$ | $O(1)$ auxiliary |
-| `search(K)` | $O(\log n)$ | $O(n)$ | $O(1)$ auxiliary |
-| `delete(K)` | $O(\log n)$ | $O(n)$ | $O(1)$ auxiliary |
-| `inOrder()` | $O(n)$ | $O(n)$ | $O(n)$ result array |
+|:---|:---:|:---:|:---|
+| `insert(K, V)` | $O(\log n)$ | $O(n)$ | $O(h)$ recursive stack |
+| `search(K)` | $O(\log n)$ | $O(n)$ | $O(h)$ recursive stack |
+| `delete(K)` | $O(\log n)$ | $O(n)$ | $O(h)$ recursive stack |
+| `inOrder()` | $O(n)$ | $O(n)$ | $O(n)$ result array + $O(h)$ stack |

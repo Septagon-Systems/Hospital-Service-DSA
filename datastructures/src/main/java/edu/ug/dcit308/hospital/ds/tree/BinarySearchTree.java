@@ -17,6 +17,7 @@ import java.util.NoSuchElementException;
  *   <li>{@link #delete(Comparable)}         – O(h)</li>
  *   <li>{@link #inOrder()}                  – O(n)</li>
  *   <li>{@link #min()} / {@link #max()}     – O(h)</li>
+ *   <li>{@link #height()}                   – O(n)</li>
  *   <li>{@link #size()} / {@link #isEmpty()} / {@link #clear()} – O(1)</li>
  * </ul>
  *
