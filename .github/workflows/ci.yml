@@ -55,7 +55,8 @@ jobs:
           module_stats = {}
 
           for xml_path in xml_files:
-              subproject = xml_path.split("/")[0]
+              parts = [p for p in xml_path.replace("\\", "/").split("/") if p and p != "."]
+              subproject = parts[0]
               if subproject not in module_stats:
                   module_stats[subproject] = {"tests": 0, "passed": 0, "failed": 0}
               try:
@@ -89,7 +90,8 @@ jobs:
           coverage_files = glob.glob("**/build/reports/jacoco/test/jacocoTestReport.xml", recursive=True)
           coverage_map = {}
           for cov in coverage_files:
-              subproject = cov.split("/")[0]
+              parts = [p for p in cov.replace("\\", "/").split("/") if p and p != "."]
+              subproject = parts[0]
               try:
                   tree = ET.parse(cov)
                   root = tree.getroot()

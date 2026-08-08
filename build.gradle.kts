@@ -31,6 +31,13 @@ subprojects {
         }
     }
 
+    tasks.withType<JacocoReport> {
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+    }
+
     dependencies {
         testImplementation(rootProject.libs.junit.jupiter)
     }
