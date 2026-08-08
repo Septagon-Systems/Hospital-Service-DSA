@@ -17,14 +17,28 @@ class BinarySearchTest {
         int result = binarySearch.search(values, 8);
 
         assertEquals(3, result);
-    }@Test
-void searchesArrayThatSatisfiesSortedPrecondition() {
-    Integer[] values = {1, 3, 5, 7, 9};
+    }
+    @Test
+    void searchesArrayThatSatisfiesSortedPrecondition() {
+        Integer[] values = {1, 3, 5, 7, 9};
 
-    BinarySearch search = new BinarySearch();
+        BinarySearch search = new BinarySearch();
 
-    assertEquals(3, search.search(values, 7));
-}
+        assertEquals(3, search.search(values, 7));
+    }
+
+    @Test
+    void demonstratesPreconditionViolationOnUnsortedInputArray() {
+        // Counterexample: {45, 12, 8, 99, 3, 20} is unsorted.
+        // Target 12 is present at index 1, but binary search fails (-1) because the sorted precondition is violated.
+        Integer[] unsortedValues = {45, 12, 8, 99, 3, 20};
+        BinarySearch binarySearch = new BinarySearch();
+
+        int result = binarySearch.search(unsortedValues, 12);
+
+        // BinarySearch does not perform runtime sortedness checks; it returns -1 because the array violates the precondition.
+        assertEquals(-1, result);
+    }
 
     @Test
     void returnsMinusOneWhenElementIsNotFound() {
