@@ -54,6 +54,8 @@ jobs:
 
           module_stats = {}
 
+          unreadable_reports = 0
+
           for xml_path in xml_files:
               parts = [p for p in xml_path.replace("\\", "/").split("/") if p and p != "."]
               subproject = parts[0]
@@ -74,14 +76,19 @@ jobs:
                           passed_tests += 1
                           module_stats[subproject]["passed"] += 1
               except Exception:
-                  pass
+                  unreadable_reports += 1
 
           if total_tests > 0:
               summary.append(f"**Total Test Cases Executed**: `{total_tests}` | **Passed**: `{passed_tests}` | **Failed**: `{failed_tests}`\n")
-              if total_tests >= 40:
-                  summary.append(f"**✓ Target Met**: `{total_tests}` / `40+` required unit tests PASSED ({total_tests/40*100:.1f}% of target)\n")
+              if passed_tests >= 40 and failed_tests == 0:
+                  summary.append(f"**✓ Target Met**: `{passed_tests}` / `40+` required unit tests PASSED ({passed_tests/40*100:.1f}% of target, zero failures)\n")
               else:
-                  summary.append(f"**! Target Pending**: `{total_tests}` / `40+` required unit tests ({40 - total_tests} more needed)\n")
+                  summary.append(f"**! Target Pending**: `{passed_tests}` / `40+` required unit tests PASSED (Failures: `{failed_tests}`)\n")
+          else:
+              if unreadable_reports > 0:
+                  summary.append(f"**! Compliance Status Undetermined**: `{unreadable_reports}` required test XML reports could not be parsed.\n")
+              else:
+                  summary.append(f"**! Target Pending**: `0` / `40+` required unit tests executed.\n")
 
           summary.append("#### 📈 Module Coverage & Test Breakdown\n")
           summary.append("| Subproject Module | Tests Executed | Passed | Failed | Line Coverage |")

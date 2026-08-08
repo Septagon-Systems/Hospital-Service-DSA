@@ -47,6 +47,7 @@ subprojects {
 tasks.register("testAudit") {
     group = "verification"
     description = "Non-blocking audit checking unit test coverage and total test count against 40+ test requirement."
+    dependsOn(subprojects.map { it.tasks.named("test") })
 
     doLast {
         println("\n=============================================================")
@@ -57,6 +58,7 @@ tasks.register("testAudit") {
         var testedClasses = 0
         var totalTestCases = 0
         var totalFailedTestCases = 0
+        var totalSkippedTestCases = 0
 
         subprojects.forEach { subproject ->
             val mainSrc = subproject.file("src/main/java")
@@ -91,27 +93,31 @@ tasks.register("testAudit") {
                         val testsMatch = Regex("tests=\"(\\d+)\"").find(content)
                         val failuresMatch = Regex("failures=\"(\\d+)\"").find(content)
                         val errorsMatch = Regex("errors=\"(\\d+)\"").find(content)
+                        val skippedMatch = Regex("skipped=\"(\\d+)\"").find(content)
 
                         if (testsMatch != null) {
                             val tests = testsMatch.groupValues[1].toInt()
                             val failures = (failuresMatch?.groupValues?.get(1)?.toInt() ?: 0) +
                                            (errorsMatch?.groupValues?.get(1)?.toInt() ?: 0)
+                            val skipped = skippedMatch?.groupValues?.get(1)?.toInt() ?: 0
                             totalTestCases += tests
                             totalFailedTestCases += failures
+                            totalSkippedTestCases += skipped
                         }
                     }
             }
         }
 
+        val passedTestCases = totalTestCases - totalFailedTestCases - totalSkippedTestCases
         val percentage = if (totalClasses > 0) (testedClasses.toDouble() / totalClasses * 100) else 0.0
         println("-------------------------------------------------------------")
         println(String.format("CLASSES TESTED: %d / %d classes (%.1f%%)", testedClasses, totalClasses, percentage))
-        println(String.format("TOTAL TEST CASES EXECUTED: %d (Passed: %d, Failed: %d)", totalTestCases, totalTestCases - totalFailedTestCases, totalFailedTestCases))
+        println(String.format("TOTAL TEST CASES EXECUTED: %d (Passed: %d, Failed: %d, Skipped: %d)", totalTestCases, passedTestCases, totalFailedTestCases, totalSkippedTestCases))
         val targetRequirement = 40
-        if (totalTestCases >= targetRequirement) {
-            println("✓ TARGET MET: ${totalTestCases} / ${targetRequirement}+ required unit tests PASSED (${String.format("%.1f", totalTestCases.toDouble() / targetRequirement * 100)}% of target)")
+        if (passedTestCases >= targetRequirement && totalFailedTestCases == 0) {
+            println("✓ TARGET MET: ${passedTestCases} / ${targetRequirement}+ required unit tests PASSED (${String.format("%.1f", passedTestCases.toDouble() / targetRequirement * 100)}% of target, zero failures)")
         } else {
-            println("! TARGET NOT MET: ${totalTestCases} / ${targetRequirement}+ required unit tests (${targetRequirement - totalTestCases} more tests needed)")
+            println("! TARGET NOT MET: ${passedTestCases} / ${targetRequirement}+ required unit tests PASSED (Failures: ${totalFailedTestCases}, Need ${if (passedTestCases < targetRequirement) targetRequirement - passedTestCases else 0} more passing tests)")
         }
         println("=============================================================\n")
     }
