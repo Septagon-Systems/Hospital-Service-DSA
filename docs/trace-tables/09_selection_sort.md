@@ -8,6 +8,25 @@ Selection Sort is implemented from scratch in:
 
 The algorithm repeatedly finds the smallest element in the unsorted portion of the array and swaps it into its correct position.
 
+---
+
+## Step-by-Step Trace Table Execution
+
+**Input Array**: `[64, 25, 12, 22, 11]`  
+**Expected Output**: `[11, 12, 22, 25, 64]`
+
+| Step (`i`) | Unsorted Sub-array | Min Index (`minIdx`) | Min Value | Comparisons | Action / Swap Performed | Array State After Step | Total Swaps |
+|:---:|:---|:---:|:---:|:---:|:---|:---|:---:|
+| 0 | `[64, 25, 12, 22, 11]` | 4 | `11` | 4 | Swap `A[0]` (64) with `A[4]` (11) | `[11, 25, 12, 22, 64]` | 1 |
+| 1 | `[25, 12, 22, 64]` | 2 | `12` | 3 | Swap `A[1]` (25) with `A[2]` (12) | `[11, 12, 25, 22, 64]` | 2 |
+| 2 | `[25, 22, 64]` | 3 | `22` | 2 | Swap `A[2]` (25) with `A[3]` (22) | `[11, 12, 22, 25, 64]` | 3 |
+| 3 | `[25, 64]` | 3 | `25` | 1 | `minIdx == 3 == i` $\to$ No swap needed | `[11, 12, 22, 25, 64]` | 3 |
+
+**Execution Metrics Summary**:
+- **Total Comparisons**: $4 + 3 + 2 + 1 = 10$ comparisons.
+- **Total Swaps**: $3$ swaps.
+- **Final Sorted Output**: `[11, 12, 22, 25, 64]`.
+
 ## Time Complexity
 
 Selection Sort performs comparisons using nested loops.
