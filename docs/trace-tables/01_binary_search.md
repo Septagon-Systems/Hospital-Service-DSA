@@ -1,16 +1,47 @@
-# Trace Table 1: Binary Search Algorithm
+## Successful Search Trace
 
-> [!NOTE]
-> **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 1. Replace the sample data below with your team's actual execution trace using your dataset and student index parameters before final submission.
+### Input
 
-## Algorithm Description
-Custom binary search implemented in `edu.ug.dcit308.hospital.algo.search.BinarySearch`. Searches for a specific hospital ID or patient request ID in a sorted array.
+- Sorted array: `[2, 4, 6, 8, 10]`
+- Target value: `8`
+- Expected result: index `3`
 
-## Trace Table Execution
-| Step | `low` index | `high` index | `mid` index | Element at `mid` | Target | Comparison | Action |
-|---|---|---|---|---|---|---|---|
-| 1 | 0 | 15 | 7 | Hospital_08 (Korle Bu) | Hospital_12 (Tema Gen) | `Target > Mid` | `low = mid + 1` (8) |
-| 2 | 8 | 15 | 11 | Hospital_12 (Tema Gen) | Hospital_12 (Tema Gen) | `Target == Mid` | **Match Found at index 11** |
+| Step | low index | high index | mid index | Element at mid | Target | Comparison | Action |
+|------|-----------|------------|-----------|----------------|--------|------------|--------|
+| 1 | 0 | 4 | 2 | 6 | 8 | Target > Mid | low = mid + 1 = 3 |
+| 2 | 3 | 4 | 3 | 8 | 8 | Target == Mid | Match found at index 3 |
 
-## Correctness Invariant
-At the start of each iteration of the `while (low <= high)` loop, if the target key exists in the array `A[0..N-1]`, then `A[low] <= target <= A[high]`.
+---
+
+## Unsuccessful Search Trace
+
+### Input
+
+- Sorted array: `[2, 4, 6, 8, 10]`
+- Target value: `7`
+- Expected result: `-1`
+
+| Step | low index | high index | mid index | Element at mid | Target | Comparison | Action |
+|------|-----------|------------|-----------|----------------|--------|------------|--------|
+| 1 | 0 | 4 | 2 | 6 | 7 | Target > Mid | low = 3 |
+| 2 | 3 | 4 | 3 | 8 | 7 | Target < Mid | high = 2 |
+| 3 | 3 | 2 | - | - | 7 | low > high | return -1 |
+
+---
+
+## Binary Search Precondition
+
+Binary Search assumes that the input array is already sorted according to the same ordering used for searching.
+
+The implementation does not verify that the array is sorted because checking this would require O(n) time and would remove the algorithm's O(log n) efficiency.
+
+Therefore, supplying a sorted array is the caller's responsibility.
+
+---
+
+## Complexity
+
+- Best Case: O(1)
+- Average Case: O(log n)
+- Worst Case: O(log n)
+- Auxiliary Space: O(1)
