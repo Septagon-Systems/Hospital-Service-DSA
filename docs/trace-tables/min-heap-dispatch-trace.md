@@ -1,9 +1,6 @@
 
 ---
 
-# 4. `min-heap-dispatch-trace.md`
-
-```markdown
 # MinHeapPriorityQueue Hospital Dispatch Trace
 
 ## Data Structure
@@ -46,3 +43,4 @@ Therefore, the expected dispatch order is:
 
 ```text
 1 → 2 → 3 → 5
+```

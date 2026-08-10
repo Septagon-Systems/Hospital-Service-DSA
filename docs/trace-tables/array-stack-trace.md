@@ -1,9 +1,6 @@
 
 ---
 
-# 2. `array-stack-trace.md`
-
-```markdown
 # ArrayStack Undo Log Trace
 
 ## Data Structure
@@ -59,3 +56,4 @@ The insertion order was:
 
 ```text
 A → B → C
+```

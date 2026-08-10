@@ -53,3 +53,4 @@ Before adding the 11th element:
 ```text
 Size     = 10
 Capacity = 10
+```

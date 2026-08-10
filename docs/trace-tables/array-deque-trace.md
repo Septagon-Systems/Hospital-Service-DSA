@@ -1,9 +1,6 @@
 
 ---
 
-# 3. `array-deque-trace.md`
-
-```markdown
 # ArrayDeque Urgent Request Trace
 
 ## Data Structure
@@ -66,3 +63,4 @@ addLast(A)
 addLast(B)
 addLast(C)
 addFirst(URGENT)
+```
