@@ -17,6 +17,7 @@ import java.util.NoSuchElementException;
  *   <li>{@link #delete(Comparable)}         – O(h)</li>
  *   <li>{@link #inOrder()}                  – O(n)</li>
  *   <li>{@link #min()} / {@link #max()}     – O(h)</li>
+ *   <li>{@link #height()}                   – O(n)</li>
  *   <li>{@link #size()} / {@link #isEmpty()} / {@link #clear()} – O(1)</li>
  * </ul>
  *
@@ -109,10 +110,10 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
      * @return sorted array of all keys
      */
     @SuppressWarnings("unchecked")
-    public K[] inOrder() {
-        Object[] result = new Object[size];
+    public Comparable<K>[] inOrder() {
+        Comparable<K>[] result = new Comparable[size];
         inOrderRec(root, result, new int[]{0});
-        return (K[]) result;
+        return result;
     }
 
     /**
@@ -144,6 +145,21 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
     /** Returns the number of key-value pairs stored in the tree. */
     public int size() {
         return size;
+    }
+
+    /**
+     * Calculates the maximum height of the Binary Search Tree.
+     * An empty tree has height 0, and a single root node has height 1.
+     *
+     * @return maximum tree height
+     */
+    public int height() {
+        return heightRec(root);
+    }
+
+    /** Alias for {@link #height()} to maintain accessor naming consistency. */
+    public int getHeight() {
+        return height();
     }
 
     /** Returns {@code true} if the tree contains no elements. */
@@ -222,5 +238,12 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
         inOrderRec(node.left,  result, index);
         result[index[0]++] = node.key;
         inOrderRec(node.right, result, index);
+    }
+
+    private int heightRec(Node<K, V> node) {
+        if (node == null) {
+            return 0;
+        }
+        return 1 + Math.max(heightRec(node.left), heightRec(node.right));
     }
 }

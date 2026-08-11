@@ -101,17 +101,17 @@ class BinarySearchTreeTest {
             bst.insert(k, "v" + k);
         }
 
-        Integer[] sorted = bst.inOrder();
+        Comparable[] sorted = bst.inOrder();
         assertEquals(toInsert.length, sorted.length);
         for (int i = 1; i < sorted.length; i++) {
-            assertTrue(sorted[i - 1] < sorted[i],
+            assertTrue(sorted[i - 1].compareTo(sorted[i]) < 0,
                     "inOrder not sorted at index " + i);
         }
     }
 
     @Test
     void testInOrderOnEmptyTreeReturnsEmptyArray() {
-        Integer[] result = bst.inOrder();
+        Comparable[] result = bst.inOrder();
         assertNotNull(result);
         assertEquals(0, result.length);
     }
@@ -168,9 +168,9 @@ class BinarySearchTreeTest {
         assertEquals(4, bst.size());
 
         // Tree must still satisfy BST property (verified via inOrder sort)
-        Integer[] sorted = bst.inOrder();
+        Comparable[] sorted = bst.inOrder();
         for (int i = 1; i < sorted.length; i++) {
-            assertTrue(sorted[i - 1] < sorted[i]);
+            assertTrue(sorted[i - 1].compareTo(sorted[i]) < 0);
         }
     }
 
@@ -211,6 +211,24 @@ class BinarySearchTreeTest {
 
         assertTrue(bst.isEmpty());
         assertEquals(0, bst.size());
+        assertEquals(0, bst.height());
         assertNull(bst.search(1));
+    }
+
+    @Test
+    void testHeightCalculation() {
+        assertEquals(0, bst.height());
+        assertEquals(0, bst.getHeight());
+
+        bst.insert(5, "root");
+        assertEquals(1, bst.height());
+        assertEquals(1, bst.getHeight());
+
+        bst.insert(3, "left");
+        bst.insert(7, "right");
+        assertEquals(2, bst.height());
+
+        bst.insert(2, "left-left");
+        assertEquals(3, bst.height());
     }
 }
