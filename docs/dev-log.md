@@ -46,10 +46,23 @@ Per Brief Section 15.iv, each team must maintain a development log showing weekl
 
 ---
 
+## Week 3: Stack/Deque/MinHeap Integration, SelectionSort PR Merge & CI Reporting
+- **Date Range**: 9 August 2026 – 12 August 2026
+- **Key Milestones Accomplished**:
+  - **Pod 3 & 4 Integration (PR #33 Merged)**: Merged `ArrayStack`, `ArrayDeque`, and `MinHeapPriorityQueue` backed by custom `DynamicArrayList` (zero `java.util` collections used). Included unit tests and trace documents (`array-stack-trace.md`, `array-deque-trace.md`, `dynamic-array-resize-trace.md`, `min-heap-dispatch-trace.md`).
+  - **Selection Sort Integration (PR #36 Merged)**: Merged `SelectionSort` featuring PECS generics `<T extends Comparable<? super T>>`, benchmark counters (`comparisonCount`, `swapCount`), unit tests, and trace table (`09_selection_sort.md`).
+  - **Automated CI Reporting (PR #45 Merged)**: Enabled JaCoCo XML reports (`xml.required.set(true)` in `build.gradle.kts`), enhanced `testAudit` to count individual test cases and verify the 40+ test requirement, and added automated sticky PR coverage comments in `.github/workflows/ci.yml`.
+  - **MergeSort Optimization**: Refactored `MergeSort` to use a single auxiliary workspace array (`aux`), implemented PECS generics, primitive `int[]` overload, unit test suite (`MergeSortTest.java`), and trace table (`03_merge_quick_sort.md`).
+- **Challenges & Decisions**:
+  - Resolved `N/A` line coverage reporting in GitHub Actions by explicitly enabling JaCoCo XML output in `build.gradle.kts` and normalizing relative path splitting in `ci.yml`.
+  - Configured `testAudit` to depend on subproject `test` tasks (`dependsOn(subprojects.map { it.tasks.named("test") })`) to guarantee report availability before auditing.
+
+---
+
 ## Current Status & Next Steps
 - **Branch**: `dev`
-- **Module Build Status**: `BUILD SUCCESSFUL` across all modules (100% unit tests passing).
+- **Module Build Status**: `BUILD SUCCESSFUL` across all modules (179 passing unit tests).
 - **Next Objectives**:
-  - Merge remaining Pod PRs (MergeSort #6, QuickSort #7, B-Tree #39).
+  - Merge open PRs (`merge-sort`, `QuickSort`, `B-Tree` #39).
   - Implement higher-level collection wrappers (`CustomMap` #41, `CustomSet` #42).
   - Construct DB index page simulation and CLI application interface (`app`).
