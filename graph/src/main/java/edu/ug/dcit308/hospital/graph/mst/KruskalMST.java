@@ -1,5 +1,6 @@
 package edu.ug.dcit308.hospital.graph.mst;
 
+import edu.ug.dcit308.hospital.algo.sort.MergeSort;
 import edu.ug.dcit308.hospital.ds.unionfind.DisjointSet;
 import edu.ug.dcit308.hospital.graph.core.Edge;
 import edu.ug.dcit308.hospital.graph.core.HospitalNetworkGraph;
@@ -34,8 +35,8 @@ public class KruskalMST {
         WeightedEdge[] allEdges = collectEdges(graph);
         int edgeCount = allEdges.length;
 
-        // Step 2: sort by weight ascending
-        insertionSortEdges(allEdges, edgeCount);
+        // Step 2: sort by weight ascending using MergeSort (O(n log n))
+        MergeSort.sort(allEdges, (a, b) -> Double.compare(a.weight, b.weight));
 
         // Step 3: greedily pick edges using Union-Find
         DisjointSet ds  = new DisjointSet(V);
@@ -94,16 +95,4 @@ public class KruskalMST {
         return edges;
     }
 
-    // insertion sort by edge weight
-    private static void insertionSortEdges(WeightedEdge[] edges, int n) {
-        for (int i = 1; i < n; i++) {
-            WeightedEdge key = edges[i];
-            int j = i - 1;
-            while (j >= 0 && edges[j].weight > key.weight) {
-                edges[j + 1] = edges[j];
-                j--;
-            }
-            edges[j + 1] = key;
-        }
-    }
 }
