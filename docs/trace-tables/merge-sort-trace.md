@@ -51,3 +51,4 @@ The final sorted array is:
 
 ```text
 [5, 12, 27, 38]
+```

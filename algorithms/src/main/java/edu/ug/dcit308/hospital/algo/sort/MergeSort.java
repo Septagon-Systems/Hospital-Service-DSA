@@ -11,8 +11,8 @@ public final class MergeSort {
     private MergeSort() {
     }
     
-     // 1. Generic Comparable overload 
-    public static <T extends Comparable<T>> void sort(T[] array) {
+    // 1. Generic Comparable overload 
+    public static <T extends Comparable<? super T>> void sort(T[] array) {
         sort(array, Comparator.naturalOrder());
     }
 
