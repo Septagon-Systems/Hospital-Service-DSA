@@ -56,8 +56,8 @@ class MergeSortTest {
     @Test
     void testSortStringArrayWithComparator() {
         String[] arr = {"Tema", "Accra", "Kumasi"};
-        MergeSort.sort(arr, Comparator.naturalOrder());
-        assertArrayEquals(new String[]{"Accra", "Kumasi", "Tema"}, arr);
+        MergeSort.sort(arr, Comparator.reverseOrder());
+        assertArrayEquals(new String[]{"Tema", "Kumasi", "Accra"}, arr);
     }
 
     @Test
