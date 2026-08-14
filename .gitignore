@@ -35,3 +35,18 @@ data/*.sqlite
 # OS Generated Files
 .DS_Store
 Thumbs.db
+
+# Astro Starlight & Web Build Artifacts
+node_modules/
+**/node_modules/
+docs-site/node_modules/
+docs-site/dist/
+docs-site/.astro/
+.astro/
+dist/
+.pnpm-store/
+pnpm-debug.log*
+.env
+.env.*
+extracted_brief.txt
+*.pdf

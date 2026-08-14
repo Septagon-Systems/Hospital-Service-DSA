@@ -1,8 +1,10 @@
-// Septagon Global Fullscreen Table Modal, Dynamic Popular Topics & Floating Glass Header Script
+// Septagon Global Fullscreen Table Modal & Dynamic Popular Topics Script
 document.addEventListener('DOMContentLoaded', () => {
   initTableModals();
   initPopularTopics();
   initScrollFloatingHeader();
+  initMobileLogoSwitch();
+  initSidebarScrollWatcher();
 });
 
 // Re-run on client-side page transitions (Astro view transitions)
@@ -10,17 +12,100 @@ document.addEventListener('astro:page-load', () => {
   initTableModals();
   initPopularTopics();
   initScrollFloatingHeader();
+  initMobileLogoSwitch();
+  initSidebarScrollWatcher();
 });
 
-// Floating Glass Header & 3D Sidebar Scroll Animation
+// ---------------------------------------------------- //
+// DETACHED SIDEBAR SCROLLBAR AUTO-HIDE SYSTEM          //
+// ---------------------------------------------------- //
+function initSidebarScrollWatcher() {
+  const sidebarPane = document.querySelector('.sidebar-pane');
+  if (!sidebarPane || sidebarPane.__scrollWatcherAttached) return;
+  sidebarPane.__scrollWatcherAttached = true;
+
+  let scrollTimeout;
+  sidebarPane.addEventListener('scroll', () => {
+    if (!document.body.classList.contains('is-scrolled')) return;
+    sidebarPane.classList.add('is-scrolling');
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      sidebarPane.classList.remove('is-scrolling');
+    }, 900);
+  }, { passive: true });
+}
+
+// ---------------------------------------------------- //
+// MOBILE COMPACT LOGO SWITCH SYSTEM                    //
+// ---------------------------------------------------- //
+function initMobileLogoSwitch() {
+  const siteTitles = document.querySelectorAll('.site-title');
+  siteTitles.forEach((siteTitle) => {
+    siteTitle.querySelectorAll('img').forEach((img) => {
+      img.setAttribute('data-image-component', 'true');
+      img.setAttribute('loading', 'eager');
+    });
+
+    if (siteTitle.querySelector('.logo-compact-dark')) return;
+
+    const compactDark = document.createElement('img');
+    compactDark.className = 'logo-compact logo-compact-dark light:sl-hidden';
+    compactDark.src = '/logo-compact-dark.png';
+    compactDark.alt = 'Septagon';
+    compactDark.setAttribute('data-image-component', 'true');
+    compactDark.setAttribute('loading', 'eager');
+
+    const compactLight = document.createElement('img');
+    compactLight.className = 'logo-compact logo-compact-light dark:sl-hidden';
+    compactLight.src = '/logo-compact-light.png';
+    compactLight.alt = 'Septagon';
+    compactLight.setAttribute('data-image-component', 'true');
+    compactLight.setAttribute('loading', 'eager');
+
+    siteTitle.insertBefore(compactDark, siteTitle.firstChild);
+    siteTitle.insertBefore(compactLight, siteTitle.firstChild);
+  });
+}
+
+// ---------------------------------------------------- //
+// FLOATING GLASS CAPSULE HEADER — SCROLL LISTENER      //
+// ---------------------------------------------------- //
 function initScrollFloatingHeader() {
-  const handleScroll = () => {
-    const isScrolled = window.scrollY > 15;
-    document.body.classList.toggle('is-scrolled', isScrolled);
+  // Prevent duplicate listeners across page transitions
+  if (window.__scrollFloatingHeaderActive) return;
+  window.__scrollFloatingHeaderActive = true;
+
+  const SCROLL_THRESHOLD = 20;   // px to scroll before detaching
+  const SCROLL_RELEASE = 5;      // px hysteresis to re-attach
+  let isScrolled = false;
+  let ticking = false;
+
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+
+      if (!isScrolled && y > SCROLL_THRESHOLD) {
+        isScrolled = true;
+        document.body.classList.add('is-scrolled');
+      } else if (isScrolled && y < SCROLL_RELEASE) {
+        isScrolled = false;
+        document.body.classList.remove('is-scrolled');
+      }
+
+      ticking = false;
+    });
   };
 
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  handleScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Set initial state in case page loads already scrolled
+  if (window.scrollY > SCROLL_THRESHOLD) {
+    isScrolled = true;
+    document.body.classList.add('is-scrolled');
+  }
 }
 
 // Complete Topic Catalog Pool for Random Discovery Selection
@@ -68,6 +153,7 @@ function getIconSvg(type) {
 
 // Randomly Select 6 Distinct Topics from Full Catalog
 function getRandomTopics(count = 6) {
+  // Harvest active sidebar links if available
   const sidebarLinks = Array.from(document.querySelectorAll('nav.sidebar a, .sidebar a'))
     .map((a) => ({
       title: a.innerText.trim(),
@@ -78,6 +164,7 @@ function getRandomTopics(count = 6) {
 
   const pool = sidebarLinks.length >= count ? sidebarLinks : TOPIC_CATALOG;
 
+  // Shuffle pool (Fisher-Yates)
   const shuffled = [...pool];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -99,11 +186,13 @@ function initPopularTopics() {
 
       const form = dialog.querySelector('.pagefind-ui__form') || input.closest('form') || input.parentNode;
 
+      // Create or locate initial view container (Popular Topics & Quick Pills)
       let initialView = dialog.querySelector('.search-modal-initial-view');
       if (!initialView) {
         initialView = document.createElement('div');
         initialView.className = 'search-modal-initial-view';
         
+        // Randomly pick 6 topics for initial render
         const randomTopics = getRandomTopics(6);
         const pillsHtml = randomTopics
           .map(
@@ -128,6 +217,7 @@ function initPopularTopics() {
         }
       }
 
+      // Re-shuffle random topics whenever search modal opens
       const openBtn = document.querySelector('button[data-open-modal]');
       if (openBtn && !openBtn.dataset.randomTopicListener) {
         openBtn.dataset.randomTopicListener = 'true';
@@ -203,7 +293,6 @@ function initTableModals() {
         <line x1="21" y1="3" x2="14" y2="10"></line>
         <line x1="3" y1="21" x2="10" y2="14"></line>
       </svg>
-      <span>Fullscreen</span>
     `;
 
     toolbar.appendChild(expandBtn);
