@@ -77,6 +77,7 @@ export default defineConfig({
               label: 'Hashing & Key-Value Stores',
               items: [
                 { label: 'Custom Hash Table', slug: 'data-structures/hashing/custom-hash-table' },
+                { label: 'Custom Map & Set Wrappers', slug: 'data-structures/hashing/custom-map-set' },
               ],
             },
           ],
