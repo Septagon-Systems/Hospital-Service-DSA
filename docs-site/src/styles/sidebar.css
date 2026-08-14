@@ -49,8 +49,47 @@
   }
 }
 
-/* Tablet (50rem–71.99rem): drops below detached header, flush to left edge */
-@media (min-width: 50rem) and (max-width: 71.99rem) {
+/* Tablet (50rem to 1459.98px): 2-column layout (left sidebar visible, right sidebar desktop panel hidden, TOC moved to top dropdown) */
+@media (min-width: 50rem) and (max-width: 1459.98px) {
+  .main-frame {
+    grid-template-columns: var(--sl-sidebar-width) minmax(0, 1fr) !important;
+    padding-inline-end: 0 !important;
+  }
+
+  .main-pane {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .right-sidebar-container {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+  }
+
+  .right-sidebar {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  .right-sidebar > div.lg\:sl-hidden,
+  .lg\:sl-hidden,
+  mobile-starlight-toc {
+    display: block !important;
+  }
+
+  .right-sidebar-panel,
+  .lg\:sl-block {
+    display: none !important;
+  }
+
   body.is-scrolled .sidebar-pane {
     top: calc(var(--sl-nav-height) + 1.4rem) !important;
     inset-block-start: calc(var(--sl-nav-height) + 1.4rem) !important;
@@ -127,8 +166,24 @@
   background: var(--scrollbar-thumb);
 }
 
-/* Desktop (>= 72rem): detached floating cards for left and right sidebars */
-@media (min-width: 72rem) {
+/* Desktop (>= 1450px): 3-column layout with detached floating cards for left and right sidebars */
+@media (min-width: 1460px) {
+  .main-frame {
+    grid-template-columns: var(--sl-sidebar-width) minmax(0, 1fr) var(--sl-sidebar-width) !important;
+  }
+
+  .right-sidebar-panel,
+  .lg\:sl-block {
+    display: block !important;
+  }
+
+  .right-sidebar > div.lg\:sl-hidden,
+  .lg\:sl-hidden,
+  mobile-starlight-toc,
+  nav[aria-labelledby="starlight__on-this-page--mobile"] {
+    display: none !important;
+  }
+
   .sidebar-pane {
     position: fixed;
     top: var(--sl-nav-height);

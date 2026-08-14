@@ -228,7 +228,7 @@ body.is-scrolled nav[aria-labelledby="starlight__on-this-page--mobile"] {
   }
 }
 
-@media (min-width: 50rem) and (max-width: 72rem) {
+@media (min-width: 50rem) and (max-width: 1499.98px) {
   body.is-scrolled mobile-starlight-toc nav,
   body.is-scrolled nav[aria-labelledby="starlight__on-this-page--mobile"] {
     top: calc(var(--sl-nav-height) + 2.1rem);
