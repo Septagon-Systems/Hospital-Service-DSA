@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 10: Binary Search Tree (BST) Operations"
+title: "Binary Search Tree (BST) Operations"
 ---
 
 # Trace Table 10: Binary Search Tree (BST) Operations

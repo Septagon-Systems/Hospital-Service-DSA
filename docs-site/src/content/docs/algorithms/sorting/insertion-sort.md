@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 2: Insertion Sort Algorithm"
+title: "Insertion Sort Algorithm"
 ---
 
 # Trace Table 2: Insertion Sort Algorithm

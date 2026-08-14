@@ -1,5 +1,5 @@
 ---
-title: "Counterexample & Boundary Case Analysis: Queue & Linked List Preconditions"
+title: "Unsorted Precondition Violation Counterexample"
 ---
 
 # Counterexample & Boundary Case Analysis: Queue & Linked List Preconditions

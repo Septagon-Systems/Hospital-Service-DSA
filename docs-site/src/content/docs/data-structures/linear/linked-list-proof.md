@@ -1,5 +1,5 @@
 ---
-title: "Proof Sketch: Linked List Traversal & Boundary Invariants"
+title: "Linked List Loop Invariants"
 ---
 
 # Proof Sketch: Linked List Traversal & Boundary Invariants

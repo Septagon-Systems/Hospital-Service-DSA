@@ -1,31 +1,5 @@
 ---
-title: "---"
----
-
-
----
-
-# ArrayStack Undo Log Trace
-
-## Data Structure
-
-`ArrayStack<T>`
-
-## Purpose
-
-The ArrayStack implements a Last-In, First-Out (LIFO) data structure.
-
-The main operations are:
-
-- `push(item)`
-- `pop()`
-- `peek()`
-- `isEmpty()`
-- `size()`
-
-The stack is useful for representing an undo history because the most
-recent action must be undone before earlier actions.
-
+title: "ArrayStack Undo Log Trace"
 ---
 
 ## Hospital Operations Undo Example

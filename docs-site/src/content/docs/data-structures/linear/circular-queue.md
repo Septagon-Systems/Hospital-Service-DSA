@@ -1,5 +1,5 @@
 ---
-title: "Trace Table: Circular Queue Operations & Wrap-Around"
+title: "Circular Queue Operations & Wrap-Around"
 ---
 
 # Trace Table: Circular Queue Operations & Wrap-Around

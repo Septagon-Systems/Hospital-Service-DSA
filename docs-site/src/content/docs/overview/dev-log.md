@@ -1,5 +1,5 @@
 ---
-title: "Team Weekly Development Log"
+title: "Weekly Development Log"
 ---
 
 # Team Weekly Development Log

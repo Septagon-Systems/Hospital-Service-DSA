@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 8: Red-Black Tree Operations & Self-Balancing"
+title: "Red-Black Tree Operations & Balancing"
 ---
 
 # Trace Table 8: Red-Black Tree Operations & Self-Balancing

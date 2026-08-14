@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 7: DynamicArrayList Operations"
+title: "DynamicArrayList Implementation"
 ---
 
 # Trace Table 7: DynamicArrayList Operations

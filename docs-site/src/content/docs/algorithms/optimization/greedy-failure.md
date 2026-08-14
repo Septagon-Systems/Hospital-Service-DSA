@@ -1,5 +1,5 @@
 ---
-title: "Counterexample 1: Greedy Strategy Failure in Hospital Bed / Resource Budget Allocation"
+title: "Greedy Failure Counterexample"
 ---
 
 # Counterexample 1: Greedy Strategy Failure in Hospital Bed / Resource Budget Allocation

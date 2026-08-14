@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 3: Merge Sort / Quick Sort Algorithm"
+title: "Merge Sort Algorithm"
 ---
 
 # Trace Table 3: Merge Sort / Quick Sort Algorithm

@@ -1,5 +1,5 @@
 ---
-title: "Proof Sketch 2: Proof by Mathematical Induction for Recursive Algorithms"
+title: "Recursion & Induction Proof"
 ---
 
 # Proof Sketch 2: Proof by Mathematical Induction for Recursive Algorithms

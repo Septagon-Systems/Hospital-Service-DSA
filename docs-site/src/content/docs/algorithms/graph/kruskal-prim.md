@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 5: Minimum Spanning Tree (Prim / Kruskal)"
+title: "Kruskal & Prim MST Algorithms"
 ---
 
 # Trace Table 5: Minimum Spanning Tree (Prim / Kruskal)

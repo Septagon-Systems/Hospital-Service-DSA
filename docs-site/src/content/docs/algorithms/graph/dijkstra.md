@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 4: Dijkstra's Shortest Path Algorithm"
+title: "Dijkstra Shortest Path Algorithm"
 ---
 
 # Trace Table 4: Dijkstra's Shortest Path Algorithm

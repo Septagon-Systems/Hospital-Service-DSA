@@ -1,33 +1,5 @@
 ---
-title: "---"
----
-
-
----
-
-# MinHeapPriorityQueue Hospital Dispatch Trace
-
-## Data Structure
-
-`MinHeapPriorityQueue<T>`
-
-## Purpose
-
-The MinHeapPriorityQueue implements a priority queue using a min-heap.
-
-For this demonstration, a smaller priority number represents a more urgent
-hospital logistics request.
-
-The implemented operations include:
-
-- `enqueue(item)`
-- `dequeue()`
-- `peek()`
-- `isEmpty()`
-- `size()`
-
-The heap maintains the minimum element at the root.
-
+title: "MinHeap Priority Queue Dispatch Trace"
 ---
 
 ## Hospital Dispatch Scenario

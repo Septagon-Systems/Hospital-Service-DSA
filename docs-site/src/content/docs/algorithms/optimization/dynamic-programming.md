@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 6: Dynamic Programming (Hospital Capacity Optimization)"
+title: "Dynamic Programming Routing"
 ---
 
 # Trace Table 6: Dynamic Programming (Hospital Capacity Optimization)

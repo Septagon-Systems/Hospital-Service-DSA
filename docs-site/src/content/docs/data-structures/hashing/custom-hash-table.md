@@ -1,5 +1,5 @@
 ---
-title: "Trace Table 11: Custom Hash Table Operations & Collision Metrics"
+title: "Custom Hash Table & Collision Metrics"
 ---
 
 # Trace Table 11: Custom Hash Table Operations & Collision Metrics

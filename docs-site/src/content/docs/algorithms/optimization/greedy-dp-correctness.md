@@ -1,5 +1,5 @@
 ---
-title: "Proof Sketch 3: Correctness of Dijkstra's Algorithm (Greedy Choice Property)"
+title: "Greedy & DP Correctness Proof"
 ---
 
 # Proof Sketch 3: Correctness of Dijkstra's Algorithm (Greedy Choice Property)
