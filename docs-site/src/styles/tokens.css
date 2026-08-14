@@ -8,17 +8,17 @@
   --sl-content-width: 56rem;
   --sl-sidebar-width: 18.5rem;
 
-  --glass-ease: 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  --ui-ease: 0.35s ease;
-  --logo-ease: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  --glass-ease: 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  --ui-ease: 0.55s ease;
+  --logo-ease: 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   --glass-radius: 18px;
   --glass-radius-header: 20px;
   --glass-blur: blur(28px) saturate(1.6);
   --glass-blur-light: blur(28px) saturate(1.8);
-  --glass-blur-soft: blur(20px);
+  --glass-blur-soft: blur(25px);
   --glass-blur-header: blur(14px) saturate(1.4);
 
-  --float-panel-top: calc(var(--sl-nav-height) + 1.8rem);
+  --float-panel-top: calc(var(--sl-nav-height) + 2.5rem);
   --float-panel-height: calc(100vh - var(--sl-nav-height) - 3rem);
   --float-panel-inset: 0.7rem;
 

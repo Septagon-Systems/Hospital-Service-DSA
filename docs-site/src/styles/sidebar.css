@@ -102,7 +102,8 @@
     border-bottom-right-radius: var(--glass-radius) !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
-    border: var(--glass-border-width) solid var(--glass-border) !important;
+    /* border: var(--glass-border-width) solid var(--glass-border) !important; */
+    border: var(--glass-border-width) solid transparent;
     border-left: none !important;
     box-shadow: var(--glass-shadow) !important;
     background-color: var(--glass-bg) !important;
@@ -155,13 +156,9 @@
   transition: background-color 0.25s ease;
 }
 
-.sidebar-pane:hover::-webkit-scrollbar-thumb,
 .sidebar-pane.is-scrolling::-webkit-scrollbar-thumb,
-.sidebar-content:hover::-webkit-scrollbar-thumb,
 .sidebar-content.is-scrolling::-webkit-scrollbar-thumb,
-.right-sidebar:hover::-webkit-scrollbar-thumb,
 .right-sidebar.is-scrolling::-webkit-scrollbar-thumb,
-.right-sidebar-panel:hover::-webkit-scrollbar-thumb,
 .right-sidebar-panel.is-scrolling::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
 }
@@ -223,9 +220,14 @@
     height: var(--float-panel-height);
     border-radius: var(--glass-radius);
     border-right: none;
-    border: var(--glass-border-width) solid var(--glass-border);
+    /* border: var(--glass-border-width) solid var(--glass-border); */
+    border: var(--glass-border-width) solid transparent;
     background-color: var(--glass-bg);
     box-shadow: var(--glass-shadow);
+  }
+
+  body.is-scrolled .sidebar-pane:hover, body.is-scrolled .right-sidebar:hover {
+        border: var(--glass-border-width) solid var(--glass-border);
   }
 
   .right-sidebar {
@@ -267,7 +269,8 @@
     overflow-y: auto;
     overflow-x: hidden;
     border-left: none;
-    border: var(--glass-border-width) solid var(--glass-border);
+    /* border: var(--glass-border-width) solid var(--glass-border); */
+    border: var(--glass-border-width) solid transparent;
     background-color: var(--glass-bg);
     box-shadow: var(--glass-shadow);
   }
