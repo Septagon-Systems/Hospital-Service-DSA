@@ -1,29 +1,29 @@
-name: Docs Sync & Build Verification
+name: Docs Sync Pipeline
 
 on:
   push:
-    branches: [ main, dev, feature/** ]
+    branches: [ main, dev ]
     paths:
       - 'docs/**'
-      - 'docs-site/**'
+      - 'docs-site/populate_docs.py'
       - '.github/workflows/docs-sync.yml'
   pull_request:
     branches: [ main, dev ]
     paths:
       - 'docs/**'
-      - 'docs-site/**'
+      - 'docs-site/populate_docs.py'
       - '.github/workflows/docs-sync.yml'
 
 permissions:
   contents: write
 
 jobs:
-  sync-and-build:
-    name: Sync Docs & Verify Astro Build
+  sync-docs:
+    name: Populate & Sync Astro Docs
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -34,29 +34,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Set up Node.js 22 LTS
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
-          cache-dependency-path: 'docs-site/pnpm-lock.yaml'
-
-      - name: Install Dependencies
-        run: pnpm --dir docs-site install
-
-      - name: Populate & Sync Astro Content from docs/
+      - name: Run Markdown & Asset Sync Script
         run: python3 docs-site/populate_docs.py
 
-      - name: Build Astro Documentation Site
-        run: pnpm --dir docs-site run build
-
       - name: Auto-Commit Synced Content (on Push to main/dev)
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+        if: github.event_name == 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
