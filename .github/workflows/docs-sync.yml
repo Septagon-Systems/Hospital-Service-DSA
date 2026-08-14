@@ -1,0 +1,81 @@
+name: Docs Sync & Build Verification
+
+on:
+  push:
+    branches: [ main, dev, feature/** ]
+    paths:
+      - 'docs/**'
+      - 'docs-site/**'
+      - '.github/workflows/docs-sync.yml'
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'docs/**'
+      - 'docs-site/**'
+      - '.github/workflows/docs-sync.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-and-build:
+    name: Sync Docs & Verify Astro Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install Dependencies
+        run: pnpm --dir docs-site install --frozen-lockfile
+
+      - name: Populate & Sync Astro Content from docs/
+        run: python3 docs-site/populate_docs.py
+
+      - name: Build Astro Documentation Site
+        run: pnpm --dir docs-site run build
+
+      - name: Auto-Commit Synced Content (on Push to main/dev)
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain docs-site/src/content/docs/ docs-site/public/images/)" ]; then
+            git add docs-site/src/content/docs/ docs-site/public/images/
+            git commit -m "chore(docs): auto-sync docs/ to docs-site/ [skip ci]"
+            git push
+          else
+            echo "No sync changes detected; workspace is up to date."
+          fi

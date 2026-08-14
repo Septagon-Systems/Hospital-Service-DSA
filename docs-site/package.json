@@ -3,8 +3,10 @@
   "type": "module",
   "version": "1.0.0",
   "scripts": {
+    "predev": "python3 populate_docs.py",
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "python3 populate_docs.py",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
