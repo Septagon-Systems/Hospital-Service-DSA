@@ -1,0 +1,134 @@
+/* Search pills, scrollbars, pagination, asides */
+
+.search-modal-initial-view {
+  padding: 1.2rem 1.4rem;
+}
+
+.search-modal-section-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.8rem;
+  color: var(--sl-color-accent);
+}
+
+.search-modal-quick-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.search-modal-quick-pills a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: var(--pill-bg);
+  color: var(--pill-color);
+  border: 1px solid var(--pill-border);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.search-modal-quick-pills a:hover {
+  background: var(--pill-hover-bg);
+  color: var(--pill-hover-color);
+  border-color: var(--pill-hover-border);
+  transform: translateY(-1px);
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-left: 1px solid var(--scrollbar-track-border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 5px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+:is(.pagination-links a, a.card[rel="prev"], a.card[rel="next"]) {
+  position: relative;
+  border: 2px solid transparent;
+  background-image:
+    linear-gradient(var(--pagination-fill), var(--pagination-fill)),
+    var(--pagination-border-grad);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border-radius: 12px;
+  color: var(--pagination-text);
+  overflow: hidden;
+  z-index: 1;
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:is(.pagination-links a, a.card[rel="prev"], a.card[rel="next"]) span,
+:is(.pagination-links a, a.card[rel="prev"], a.card[rel="next"]) .link-title {
+  color: var(--pagination-text);
+}
+
+:is(.pagination-links a, a.card[rel="prev"], a.card[rel="next"]) .link-title {
+  font-weight: 700;
+}
+
+:is(.pagination-links a, a.card[rel="prev"], a.card[rel="next"]) .link-label {
+  color: var(--pagination-label);
+}
+
+:is(.pagination-links a, a.card[rel="prev"], a.card[rel="next"])::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: var(--pagination-hover-wash);
+  transition: opacity 0.35s ease;
+  z-index: -1;
+}
+
+:is(.pagination-links a, a.card[rel="prev"], a.card[rel="next"]):hover::before {
+  opacity: 1;
+}
+
+:is(.pagination-links a, a.card[rel="prev"], a.card[rel="next"]):hover {
+  transform: translateY(-2px);
+  box-shadow: var(--pagination-hover-shadow);
+}
+
+.starlight-aside {
+  border-radius: 8px;
+  border-left-width: 4px;
+}
+
+.starlight-aside--note {
+  border-color: var(--aside-note);
+}
+
+.starlight-aside--tip {
+  border-color: var(--aside-tip);
+}
+
+.starlight-aside--caution,
+.starlight-aside--warning {
+  border-color: var(--aside-caution);
+}

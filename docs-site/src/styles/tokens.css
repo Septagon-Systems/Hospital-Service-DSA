@@ -1,0 +1,228 @@
+/* SEPTAGON Enterprise Theme — design tokens */
+
+:root {
+  --sl-font:
+    "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --sl-font-mono: "JetBrains Mono", monospace;
+  --sl-content-width: 56rem;
+  --sl-sidebar-width: 18.5rem;
+
+  --glass-ease: 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  --ui-ease: 0.35s ease;
+  --logo-ease: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  --glass-radius: 18px;
+  --glass-radius-header: 20px;
+  --glass-blur: blur(28px) saturate(1.6);
+  --glass-blur-light: blur(28px) saturate(1.8);
+  --glass-blur-soft: blur(20px);
+  --glass-blur-header: blur(14px) saturate(1.4);
+
+  --float-panel-top: calc(var(--sl-nav-height) + 1.8rem);
+  --float-panel-height: calc(100vh - var(--sl-nav-height) - 3rem);
+  --float-panel-inset: 0.7rem;
+
+  --aside-note: #0284c7;
+  --aside-tip: #16a34a;
+  --aside-caution: #ea580c;
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #ffedd5;
+  --sl-color-accent: #ea580c;
+  --sl-color-accent-high: #9a3412;
+  --sl-color-white: #0f172a;
+  --sl-color-gray-1: #1e293b;
+  --sl-color-gray-2: #334155;
+  --sl-color-gray-3: #64748b;
+  --sl-color-gray-4: #94a3b8;
+  --sl-color-gray-5: #e2e8f0;
+  --sl-color-gray-6: #f1f5f9;
+  --sl-color-gray-7: #f8fafc;
+  --sl-color-bg: #ffffff;
+  --sl-color-bg-nav: rgba(255, 255, 255, 0.8);
+  --sl-color-bg-sidebar: #f8fafc;
+
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-bg-header: rgba(255, 255, 255, 0.68);
+  --glass-bg-toc: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(234, 88, 12, 0.45);
+  --glass-border-width: 2px;
+  --glass-shadow:
+    0 20px 50px -10px rgba(0, 0, 0, 0.16), 0 4px 14px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --glass-blur-active: var(--glass-blur-light);
+  --header-border-bottom: rgba(234, 88, 12, 0.15);
+
+  --heading-h1: #ea580c;
+  --heading-h2: #c2410c;
+  --heading-h3: #0284c7;
+  --heading-underline: linear-gradient(90deg, #ea580c 0%, #0284c7 100%);
+
+  --table-card-bg: #ffffff;
+  --table-card-border: #cbd5e1;
+  --table-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --table-th-bg: #f1f5f9;
+  --table-th-color: #c2410c;
+  --table-th-border: #fdba74;
+  --table-td-color: #1e293b;
+  --table-td-border: #e2e8f0;
+  --table-row-odd: #ffffff;
+  --table-row-even: #f8fafc;
+  --table-row-hover: #ffedd5;
+
+  --expand-bg: #ffffff;
+  --expand-color: #0284c7;
+  --expand-border: #bae6fd;
+  --expand-hover-bg: #0284c7;
+  --expand-hover-color: #ffffff;
+  --expand-hover-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+
+  --modal-overlay: rgba(248, 250, 252, 0.88);
+  --modal-card-bg: #ffffff;
+  --modal-card-border: #cbd5e1;
+  --modal-card-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  --modal-header-bg: #f1f5f9;
+  --modal-header-border: #e2e8f0;
+  --modal-title: #c2410c;
+  --modal-close-bg: #ffedd5;
+  --modal-close-color: #9a3412;
+  --modal-close-border: #fed7aa;
+  --modal-close-hover-bg: #ea580c;
+  --modal-close-hover-color: #ffffff;
+
+  --pagination-fill: #ffffff;
+  --pagination-border-grad: linear-gradient(90deg, #ea580c, #0284c7);
+  --pagination-text: #0f172a;
+  --pagination-label: #64748b;
+  --pagination-hover-wash: linear-gradient(
+    135deg,
+    rgba(234, 88, 12, 0.08) 0%,
+    rgba(2, 132, 199, 0.08) 100%
+  );
+  --pagination-hover-shadow: 0 8px 24px -6px rgba(234, 88, 12, 0.25);
+
+  --inline-code-bg: #f1f5f9;
+  --inline-code-color: #c2410c;
+  --inline-code-border: #fed7aa;
+  --katex-color: #0284c7;
+
+  --pill-bg: #f8fafc;
+  --pill-color: #0f172a;
+  --pill-border: #e2e8f0;
+  --pill-hover-bg: #ffedd5;
+  --pill-hover-color: #ea580c;
+  --pill-hover-border: #fdba74;
+
+  --menu-btn-bg: #ffffff;
+  --menu-btn-color: #0f172a;
+  --menu-btn-border: #fed7aa;
+
+  --sidebar-active-bg: rgba(234, 88, 12, 0.12);
+  --mobile-toc-border-bottom: rgba(0, 0, 0, 0.08);
+
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-track-border: #e2e8f0;
+  --scrollbar-thumb: #ea580c;
+  --scrollbar-thumb-hover: #c2410c;
+}
+
+:root[data-theme="dark"] {
+  --sl-color-accent-low: #2a1610;
+  --sl-color-accent: #e07a5f;
+  --sl-color-accent-high: #ffbba6;
+  --sl-color-white: #f8fafc;
+  --sl-color-gray-1: #f1f5f9;
+  --sl-color-gray-2: #cbd5e1;
+  --sl-color-gray-3: #94a3b8;
+  --sl-color-gray-4: #475569;
+  --sl-color-gray-5: #1e293b;
+  --sl-color-gray-6: #131826;
+  --sl-color-gray-7: #0e111a;
+  --sl-color-bg: #0c0e14;
+  --sl-color-bg-nav: rgba(12, 14, 20, 0.72);
+  --sl-color-bg-sidebar: #0e111a;
+
+  --glass-bg: rgba(14, 17, 26, 0.88);
+  --glass-bg-header: rgba(14, 17, 26, 0.68);
+  --glass-bg-toc: rgba(14, 17, 26, 0.92);
+  --glass-border: rgba(224, 122, 95, 0.45);
+  --glass-border-width: 2px;
+  --glass-shadow:
+    0 22px 55px -10px rgba(0, 0, 0, 0.85), 0 6px 18px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --glass-blur-active: var(--glass-blur);
+  --header-border-bottom: rgba(224, 122, 95, 0.15);
+
+  --heading-h1: #e07a5f;
+  --heading-h2: #e07a5f;
+  --heading-h3: #38bdf8;
+  --heading-underline: linear-gradient(90deg, #e07a5f 0%, #38bdf8 100%);
+
+  --table-card-bg: #0e111a;
+  --table-card-border: rgba(224, 122, 95, 0.25);
+  --table-card-shadow: none;
+  --table-th-bg: #161b26;
+  --table-th-color: #e07a5f;
+  --table-th-border: rgba(224, 122, 95, 0.35);
+  --table-td-color: #f8fafc;
+  --table-td-border: rgba(255, 255, 255, 0.05);
+  --table-row-odd: #0e111a;
+  --table-row-even: #141926;
+  --table-row-hover: rgba(224, 122, 95, 0.12);
+
+  --expand-bg: #131826;
+  --expand-color: #38bdf8;
+  --expand-border: rgba(56, 189, 248, 0.3);
+  --expand-hover-bg: #38bdf8;
+  --expand-hover-color: #0c0e14;
+  --expand-hover-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+
+  --modal-overlay: rgba(5, 6, 8, 0.88);
+  --modal-card-bg: #0e111a;
+  --modal-card-border: rgba(224, 122, 95, 0.4);
+  --modal-card-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(224, 122, 95, 0.2);
+  --modal-header-bg: #161b26;
+  --modal-header-border: rgba(224, 122, 95, 0.25);
+  --modal-title: #e07a5f;
+  --modal-close-bg: rgba(224, 122, 95, 0.12);
+  --modal-close-color: #ffbba6;
+  --modal-close-border: rgba(224, 122, 95, 0.35);
+  --modal-close-hover-bg: #e07a5f;
+  --modal-close-hover-color: #0c0e14;
+
+  --pagination-fill: #0e111a;
+  --pagination-border-grad: linear-gradient(90deg, #e07a5f, #38bdf8);
+  --pagination-text: #f8fafc;
+  --pagination-label: #94a3b8;
+  --pagination-hover-wash: linear-gradient(
+    135deg,
+    rgba(224, 122, 95, 0.2) 0%,
+    rgba(56, 189, 248, 0.2) 100%
+  );
+  --pagination-hover-shadow: 0 8px 24px -6px rgba(224, 122, 95, 0.25);
+
+  --inline-code-bg: #161b26;
+  --inline-code-color: #fb923c;
+  --inline-code-border: rgba(224, 122, 95, 0.25);
+  --katex-color: #38bdf8;
+
+  --pill-bg: #141926;
+  --pill-color: #f8fafc;
+  --pill-border: rgba(224, 122, 95, 0.2);
+  --pill-hover-bg: rgba(224, 122, 95, 0.2);
+  --pill-hover-color: #e07a5f;
+  --pill-hover-border: #e07a5f;
+
+  --menu-btn-bg: #181d2a;
+  --menu-btn-color: #f8fafc;
+  --menu-btn-border: rgba(224, 122, 95, 0.3);
+
+  --sidebar-active-bg: rgba(224, 122, 95, 0.12);
+
+  --scrollbar-track: #080a0e;
+  --scrollbar-track-border: rgba(224, 122, 95, 0.15);
+  --scrollbar-thumb: #e07a5f;
+  --scrollbar-thumb-hover: #ffbba6;
+}

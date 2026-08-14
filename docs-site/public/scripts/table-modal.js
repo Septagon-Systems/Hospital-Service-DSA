@@ -17,22 +17,23 @@ document.addEventListener('astro:page-load', () => {
 });
 
 // ---------------------------------------------------- //
-// DETACHED SIDEBAR SCROLLBAR AUTO-HIDE SYSTEM          //
+// DETACHED & IDLE SIDEBAR SCROLLBAR AUTO-HIDE SYSTEM  //
 // ---------------------------------------------------- //
 function initSidebarScrollWatcher() {
-  const sidebarPane = document.querySelector('.sidebar-pane');
-  if (!sidebarPane || sidebarPane.__scrollWatcherAttached) return;
-  sidebarPane.__scrollWatcherAttached = true;
+  const sidebars = document.querySelectorAll('.sidebar-pane, .right-sidebar, .sidebar-content, .right-sidebar-panel');
+  sidebars.forEach((sidebar) => {
+    if (sidebar.__scrollWatcherAttached) return;
+    sidebar.__scrollWatcherAttached = true;
 
-  let scrollTimeout;
-  sidebarPane.addEventListener('scroll', () => {
-    if (!document.body.classList.contains('is-scrolled')) return;
-    sidebarPane.classList.add('is-scrolling');
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      sidebarPane.classList.remove('is-scrolling');
-    }, 900);
-  }, { passive: true });
+    let scrollTimeout;
+    sidebar.addEventListener('scroll', () => {
+      sidebar.classList.add('is-scrolling');
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        sidebar.classList.remove('is-scrolling');
+      }, 800);
+    }, { passive: true });
+  });
 }
 
 // ---------------------------------------------------- //
