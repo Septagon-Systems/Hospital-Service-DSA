@@ -8,7 +8,7 @@
   --sl-content-width: 56rem;
   --sl-sidebar-width: 18.5rem;
 
-  --glass-ease: 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  --glass-ease: 1.55s cubic-bezier(0.22, 1, 0.36, 1);
   --ui-ease: 0.55s ease;
   --logo-ease: 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   --glass-radius: 18px;
