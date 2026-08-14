@@ -88,9 +88,9 @@ Initial state: `key = [0.0, ∞, ∞, ∞, ∞]`, `parent = [-1, -1, -1, -1, -1]
 
 ## Correctness Argument
 
-Both algorithms always produce an optimal MST (minimum total weight spanning tree). This follows from the **Cut Property**:
+For a connected undirected graph, both algorithms produce an optimal MST (minimum total weight spanning tree). This follows from the **Cut Property**:
 
-> For any cut of the graph into two non-empty sets S and V∖S, the minimum-weight crossing edge is always safe to add to any MST.
+> For any cut of the graph into two non-empty sets S and V∖S, a minimum-weight crossing edge is safe because some MST contains it.
 
 - **Kruskal's**: At each step, the cheapest edge that crosses between two different components (checked via Union-Find) is the minimum-weight crossing edge for the cut `{component of u}` vs `{everything else}`. By the Cut Property, it is always safe.  
 - **Prim's**: The cheapest edge from the current tree set `S` to any vertex in `V∖S` is the minimum-weight crossing edge for the cut `{S}` vs `{V∖S}`. By the Cut Property, it is always safe.
