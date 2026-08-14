@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="250" viewBox="0 0 500 250">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="250" y="25" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#c0392b">Step 5A: Insert 50 — RED-RED Violation (40-50) in Right Subtree</text>
+  <line x1="250" y1="60" x2="140" y2="130" stroke="#7f8c8d" stroke-width="3"/>
+  <line x1="250" y1="60" x2="360" y2="130" stroke="#7f8c8d" stroke-width="3"/>
+  <line x1="360" y1="130" x2="420" y2="190" stroke="#7f8c8d" stroke-width="3"/>
+  <line x1="420" y1="190" x2="470" y2="230" stroke="#7f8c8d" stroke-width="3"/>
+  <circle cx="250" cy="60" r="22" fill="#2c3e50" stroke="#1a252f" stroke-width="3"/>
+  <text x="250" y="65" font-family="Arial" font-size="13" font-weight="bold" text-anchor="middle" fill="#ffffff">20(B)</text>
+  <circle cx="140" cy="130" r="22" fill="#2c3e50" stroke="#1a252f" stroke-width="3"/>
+  <text x="140" y="135" font-family="Arial" font-size="13" font-weight="bold" text-anchor="middle" fill="#ffffff">10(B)</text>
+  <circle cx="360" cy="130" r="22" fill="#2c3e50" stroke="#1a252f" stroke-width="3"/>
+  <text x="360" y="135" font-family="Arial" font-size="13" font-weight="bold" text-anchor="middle" fill="#ffffff">30(B)</text>
+  <circle cx="420" cy="190" r="22" fill="#e74c3c" stroke="#c0392b" stroke-width="3"/>
+  <text x="420" y="195" font-family="Arial" font-size="13" font-weight="bold" text-anchor="middle" fill="#ffffff">40(R)</text>
+  <circle cx="470" cy="230" r="20" fill="#e74c3c" stroke="#c0392b" stroke-width="3"/>
+  <text x="470" y="235" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#ffffff">50(R)</text>
+</svg>
