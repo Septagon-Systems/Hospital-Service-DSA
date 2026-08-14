@@ -61,10 +61,36 @@ Per Brief Section 15.iv, each team must maintain a development log showing weekl
 
 ---
 
+## Week 4: Astro Documentation Portal, Canonical Restructuring & Cloudflare Deployment
+- **Date Range**: 13 August 2026 – 16 August 2026
+- **Key Milestones Accomplished**:
+  - **Astro Starlight Documentation Portal (`docs-site`)**:
+    - Scaffolded and deployed an interactive technical documentation portal built with Astro 5, Starlight, KaTeX math typesetting, and Pagefind client-side search indexing.
+    - Implemented a bespoke glassmorphism design system featuring a centered floating capsule top header with backdrop blur, symmetrical detached floating sidebars, and auto-hiding scrollbars.
+    - Added responsive mobile brand transitions that crossfade smoothly from the full "SEPTAGON SYSTEMS" logo to a compact "SEPTAGON" brand mark on scroll.
+    - Built lightweight fullscreen table inspection modals with clean square icon toggles.
+  - **Canonical `docs/` Taxonomy Restructuring**:
+    - Reorganized legacy flat folders (`trace-tables/`, `proof-sketches/`, `counterexamples/`) into clean, modular categories: `overview/`, `data-structures/{linear,trees,hashing,graphs}`, and `algorithms/{searching,sorting,graph,optimization}` using `git mv` to preserve commit history.
+  - **Dynamic Content Synchronization & CI Automation**:
+    - Authored `docs-site/populate_docs.py` with dynamic recursive directory traversal (`rglob`) and automatic frontmatter title extraction from markdown H1 headers.
+    - Added `"prebuild"` and `"predev"` lifecycle hooks in `package.json` to guarantee documentation sync on every local and cloud build.
+    - Created a streamlined pure-Python GitHub Actions workflow (`.github/workflows/docs-sync.yml`) for instant PR validation and automated sync commits on merge.
+  - **Cloudflare Pages Production Deployment**:
+    - Configured Cloudflare Pages static assets pipeline via `docs-site/wrangler.jsonc` and approved pnpm build dependencies in `.npmrc`.
+    - Deployed 27 static documentation pages globally with clean builds in ~3.8 seconds.
+  - **Algorithm & Graph Complexity Verification**:
+    - Verified `MergeSort` integration with $O(E \log E)$ edge sorting in `KruskalMST.java` and synchronized complexity documentation in `kruskal-prim.md`.
+- **Challenges & Decisions**:
+    - Resolved fixed positioning centering in CSS by combining `left: 0; right: 0;` with `margin: 0 auto; width: 95%; max-width: 1480px;`.
+    - Solved Starlight TOC width overflow and text margin truncation by resetting inner container widths to 100% and applying explicit padding to the parent card container.
+    - Streamlined CI docs sync to pure Python 3.11, removing Node/pnpm overhead from GitHub Actions while letting Cloudflare handle static builds.
+
+---
+
 ## Current Status & Next Steps
 - **Branch**: `dev`
-- **Module Build Status**: `BUILD SUCCESSFUL` across all modules (179 passing unit tests).
+- **Module Build Status**: `BUILD SUCCESSFUL` across all modules (179 passing unit tests + 27 static documentation pages compiled).
 - **Next Objectives**:
-  - Merge open PRs (`merge-sort`, `QuickSort`, `B-Tree` #39).
-  - Implement higher-level collection wrappers (`CustomMap` #41, `CustomSet` #42).
-  - Construct DB index page simulation and CLI application interface (`app`).
+  - Merge `feature/custom-map-set-wrappers` (`CustomMap` #41, `CustomSet` #42) into `dev`.
+  - Complete `QuickSort` and `B-Tree` (#39) implementations and benchmarks.
+  - Finalize database index page simulation and CLI application interface (`app`).
