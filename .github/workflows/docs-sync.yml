@@ -34,32 +34,20 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
-          run_install: false
 
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
+      - name: Set up Node.js 22 LTS
+        uses: actions/setup-node@v4
         with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: '22'
+          cache: 'pnpm'
+          cache-dependency-path: 'docs-site/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: pnpm --dir docs-site install --frozen-lockfile
+        run: pnpm --dir docs-site install
 
       - name: Populate & Sync Astro Content from docs/
         run: python3 docs-site/populate_docs.py
