@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="220" viewBox="0 0 400 220">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="200" y="25" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#2980b9">Step 6B: After Right Rotate(10) — Structural Rotation Done</text>
+  <line x1="200" y1="60" x2="120" y2="130" stroke="#7f8c8d" stroke-width="3"/>
+  <line x1="200" y1="60" x2="280" y2="130" stroke="#7f8c8d" stroke-width="3"/>
+  <circle cx="200" cy="60" r="25" fill="#e74c3c" stroke="#c0392b" stroke-width="3"/>
+  <text x="200" y="65" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff">8(R)</text>
+  <circle cx="120" cy="130" r="25" fill="#e74c3c" stroke="#c0392b" stroke-width="3"/>
+  <text x="120" y="135" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff">5(R)</text>
+  <circle cx="280" cy="130" r="25" fill="#2c3e50" stroke="#1a252f" stroke-width="3"/>
+  <text x="280" y="135" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff">10(B)</text>
+</svg>
