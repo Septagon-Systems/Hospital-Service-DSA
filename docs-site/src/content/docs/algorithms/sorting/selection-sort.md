@@ -2,8 +2,6 @@
 title: "Selection Sort Implementation"
 ---
 
-# Selection Sort Implementation
-
 ## Algorithm Description
 
 Selection Sort is implemented from scratch in:

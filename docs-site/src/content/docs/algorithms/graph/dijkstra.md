@@ -1,8 +1,6 @@
 ---
-title: "Dijkstra Shortest Path Algorithm"
+title: "Trace Table 4: Dijkstra's Shortest Path Algorithm"
 ---
-
-# Trace Table 4: Dijkstra's Shortest Path Algorithm
 
 > [!NOTE]
 > **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 6. Replace the sample graph nodes below with your team's actual hospital locations and route distances before final submission.

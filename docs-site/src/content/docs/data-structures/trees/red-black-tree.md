@@ -1,8 +1,6 @@
 ---
-title: "Red-Black Tree Operations & Balancing"
+title: "Trace Table 8: Red-Black Tree Operations & Self-Balancing"
 ---
-
-# Trace Table 8: Red-Black Tree Operations & Self-Balancing
 
 ## Data Structure Description
 Custom self-balancing binary search tree implemented in `edu.ug.dcit308.hospital.ds.tree.RedBlackTree`. Each node stores a key-value pair `(K key, V value)` and a color attribute (`RED` or `BLACK`). Guaranteed search, insertion, and deletion time complexity of O(log n) by maintaining a maximum tree height of h <= 2 log2(n + 1).

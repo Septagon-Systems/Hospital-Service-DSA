@@ -1,5 +1,5 @@
 ---
-title: "Binary Search Algorithm"
+title: "Binary Search"
 ---
 
 ## Successful Search Trace

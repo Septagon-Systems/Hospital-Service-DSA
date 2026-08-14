@@ -1,8 +1,6 @@
 ---
-title: "Insertion Sort Algorithm"
+title: "Trace Table 2: Insertion Sort Algorithm"
 ---
-
-# Trace Table 2: Insertion Sort Algorithm
 
 ## Algorithm Description
 

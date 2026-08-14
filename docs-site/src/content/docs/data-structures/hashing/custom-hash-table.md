@@ -1,8 +1,6 @@
 ---
-title: "Custom Hash Table & Collision Metrics"
+title: "Trace Table 11: Custom Hash Table Operations & Collision Metrics"
 ---
-
-# Trace Table 11: Custom Hash Table Operations & Collision Metrics
 
 ## Data Structure Description
 Custom generic Hash Table implemented in `edu.ug.dcit308.hospital.ds.hash.CustomHashTable`. Implements collision resolution via **Separate Chaining** using internal singly linked `Entry<K, V>` bucket chains. Capacity starts at `16` and automatically doubles with a full entry rehash whenever the load factor $\alpha = \frac{\text{size}}{\text{capacity}}$ exceeds `0.75`.

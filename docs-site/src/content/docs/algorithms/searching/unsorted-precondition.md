@@ -1,8 +1,6 @@
 ---
-title: "Unsorted Precondition Violation Counterexample"
+title: "Counterexample & Boundary Case Analysis: Queue & Linked List Preconditions"
 ---
-
-# Counterexample & Boundary Case Analysis: Queue & Linked List Preconditions
 
 ## Case 1: Empty Queue Dequeue / Peek Precondition Violation
 

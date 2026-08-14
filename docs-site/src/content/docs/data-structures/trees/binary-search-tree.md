@@ -1,8 +1,6 @@
 ---
-title: "Binary Search Tree (BST) Operations"
+title: "Trace Table 10: Binary Search Tree (BST) Operations"
 ---
-
-# Trace Table 10: Binary Search Tree (BST) Operations
 
 ## Data Structure Description
 Custom generic Binary Search Tree (BST) implemented in `edu.ug.dcit308.hospital.ds.tree.BinarySearchTree`. Each node stores a key-value pair `(K key, V value)` where `K extends Comparable<K>`. No `java.util` collections are used. Maintains the fundamental BST invariant: for any node $N$, all keys in $N$'s left subtree are strictly smaller than $N.\text{key}$, and all keys in $N$'s right subtree are strictly greater than $N.\text{key}$.

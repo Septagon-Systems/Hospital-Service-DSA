@@ -1,5 +1,34 @@
 ---
-title: "ArrayDeque Urgent Request Trace"
+title: "Array Deque"
+---
+
+---
+
+# ArrayDeque Urgent Request Trace
+
+## Data Structure
+
+`ArrayDeque<T>`
+
+## Purpose
+
+The ArrayDeque is a double-ended queue that allows elements to be inserted
+and removed from both the front and the rear.
+
+The implemented operations include:
+
+- `addFirst(item)`
+- `addLast(item)`
+- `removeFirst()`
+- `removeLast()`
+- `getFirst()`
+- `getLast()`
+- `isEmpty()`
+- `size()`
+
+The deque uses circular storage so that available positions at the
+beginning of the underlying array can be reused.
+
 ---
 
 ## Hospital Urgent Request Example

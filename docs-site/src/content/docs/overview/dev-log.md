@@ -1,8 +1,6 @@
 ---
-title: "Weekly Development Log"
+title: "Team Weekly Development Log"
 ---
-
-# Team Weekly Development Log
 
 Per Brief Section 15.iv, each team must maintain a development log showing weekly progress, challenges, and decisions across all project phases.
 

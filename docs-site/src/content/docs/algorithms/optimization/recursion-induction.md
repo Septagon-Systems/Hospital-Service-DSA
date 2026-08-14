@@ -1,8 +1,6 @@
 ---
-title: "Recursion & Induction Proof"
+title: "Proof Sketch 2: Proof by Mathematical Induction for Recursive Algorithms"
 ---
-
-# Proof Sketch 2: Proof by Mathematical Induction for Recursive Algorithms
 
 > [!NOTE]
 > **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 2. Replace the formal induction proof steps below with your team's recursive algorithm proof before final submission.

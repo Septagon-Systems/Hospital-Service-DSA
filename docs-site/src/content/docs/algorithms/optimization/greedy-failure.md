@@ -1,8 +1,6 @@
 ---
-title: "Greedy Failure Counterexample"
+title: "Counterexample 1: Greedy Strategy Failure in Hospital Bed / Resource Budget Allocation"
 ---
-
-# Counterexample 1: Greedy Strategy Failure in Hospital Bed / Resource Budget Allocation
 
 ## Context & Requirement
 Per Brief Section 7 (Greedy and DP section) & Brief Section 10 (Counterexamples requirement), the project must document a counterexample where a greedy heuristic fails to yield the optimal solution.

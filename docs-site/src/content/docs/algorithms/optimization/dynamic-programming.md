@@ -1,8 +1,6 @@
 ---
-title: "Dynamic Programming Routing"
+title: "Trace Table 6: Dynamic Programming (Hospital Capacity Optimization)"
 ---
-
-# Trace Table 6: Dynamic Programming (Hospital Capacity Optimization)
 
 > [!NOTE]
 > **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 6 / Pod 2. Replace the sample DP memoization table below with your team's actual dataset before final submission.

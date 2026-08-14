@@ -1,8 +1,6 @@
 ---
-title: "DynamicArrayList Implementation"
+title: "Trace Table 7: DynamicArrayList Operations"
 ---
-
-# Trace Table 7: DynamicArrayList Operations
 
 ## Data Structure Description
 Custom resizable array list implemented in `edu.ug.dcit308.hospital.ds.list.DynamicArrayList`. Backed by a raw `Object[]` buffer that doubles in capacity whenever a write operation would overflow it. Implements `Iterable<T>` for enhanced-for support.

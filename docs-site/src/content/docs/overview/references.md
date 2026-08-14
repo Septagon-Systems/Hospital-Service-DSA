@@ -1,5 +1,5 @@
 ---
-title: "Academic References & Bibliography"
+title: "References & Academic Bibliography"
 ---
 
 Per Project Brief specifications, the theoretical complexity analyses, data structure invariants, geospatial models, and implementation frameworks utilized across this project are grounded in authoritative academic literature and official specifications.

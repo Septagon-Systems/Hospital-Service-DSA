@@ -862,21 +862,31 @@ div.sidebar {
 }
 
 .table-expand-btn {
-  border-radius: 8px;
-  padding: 0.3rem 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  padding: 0;
   background: var(--expand-bg);
   color: var(--expand-color);
   border: 1px solid var(--expand-border);
+  cursor: pointer;
   transition:
     background 0.2s ease,
     color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .table-expand-btn:hover {
   background: var(--expand-hover-bg);
   color: var(--expand-hover-color);
+  border-color: var(--expand-hover-bg);
   box-shadow: var(--expand-hover-shadow);
+  transform: scale(1.05);
 }
 
 .table-card-wrapper {

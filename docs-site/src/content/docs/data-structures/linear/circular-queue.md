@@ -1,8 +1,6 @@
 ---
-title: "Circular Queue Operations & Wrap-Around"
+title: "Trace Table: Circular Queue Operations & Wrap-Around"
 ---
-
-# Trace Table: Circular Queue Operations & Wrap-Around
 
 ## Problem Context
 Hospital service request buffer operating with a fixed capacity of $N = 3$.

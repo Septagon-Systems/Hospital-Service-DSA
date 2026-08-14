@@ -14,8 +14,8 @@ export default defineConfig({
       description: 'Smart Hospital Operations Optimizer - Data Structures & Algorithms Documentation',
       favicon: '/favicon.svg',
       logo: {
-        dark: './public/logo-dark.png',
-        light: './public/logo-light.png',
+        dark: './src/assets/logo-dark.png',
+        light: './src/assets/logo-light.png',
         replacesTitle: false,
       },
       social: {
@@ -58,6 +58,7 @@ export default defineConfig({
               label: 'Linear Collections',
               items: [
                 { label: 'Dynamic Array List', slug: 'data-structures/linear/dynamic-array' },
+                { label: 'Dynamic Array Resize Trace', slug: 'data-structures/linear/dynamic-array-resize' },
                 { label: 'Array Stack (Undo Log)', slug: 'data-structures/linear/array-stack' },
                 { label: 'Array Deque (Urgent Queue)', slug: 'data-structures/linear/array-deque' },
                 { label: 'Circular Queue', slug: 'data-structures/linear/circular-queue' },

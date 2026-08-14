@@ -1,8 +1,6 @@
 ---
-title: "Kruskal & Prim MST Algorithms"
+title: "Trace Table 5: Minimum Spanning Tree (Prim / Kruskal)"
 ---
-
-# Trace Table 5: Minimum Spanning Tree (Prim / Kruskal)
 
 > [!NOTE]
 > **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 6. Replace the sample MST edge selection steps below with your team's actual graph data before final submission.

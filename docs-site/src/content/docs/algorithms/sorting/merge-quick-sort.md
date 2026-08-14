@@ -1,8 +1,6 @@
 ---
-title: "Merge Sort Algorithm"
+title: "Trace Table 3: Merge Sort / Quick Sort Algorithm"
 ---
-
-# Trace Table 3: Merge Sort / Quick Sort Algorithm
 
 > [!NOTE]
 > **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 2. Replace the sample partition steps below with your team's actual trace before final submission.

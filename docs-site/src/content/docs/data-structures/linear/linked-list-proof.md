@@ -1,8 +1,6 @@
 ---
-title: "Linked List Loop Invariants"
+title: "Proof Sketch: Linked List Traversal & Boundary Invariants"
 ---
-
-# Proof Sketch: Linked List Traversal & Boundary Invariants
 
 ## Problem Statement
 Verification of correctness for indexed retrieval `get(index)` in `SinglyLinkedList<T>` and `DoublyLinkedList<T>`.

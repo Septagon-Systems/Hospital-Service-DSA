@@ -1,8 +1,6 @@
 ---
-title: "Greedy & DP Correctness Proof"
+title: "Proof Sketch 3: Correctness of Dijkstra's Algorithm (Greedy Choice Property)"
 ---
-
-# Proof Sketch 3: Correctness of Dijkstra's Algorithm (Greedy Choice Property)
 
 > [!NOTE]
 > **TEMPLATE & EXAMPLE ONLY**: This is a starter template for Pod 6. Replace the formal greedy choice proof below with your team's proof before final submission.

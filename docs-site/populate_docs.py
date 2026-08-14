@@ -1,95 +1,102 @@
-import os
-import shutil
+"""
+Populate the Astro Starlight docs-site from the canonical docs/ directory.
+
+Walks docs/ recursively and mirrors the structure into
+docs-site/src/content/docs/, adding clean YAML frontmatter to every .md file
+and copying non-.md assets (e.g. SVGs) into both the content tree and
+docs-site/public/images/ for web access.
+"""
+
 import re
+import shutil
+from pathlib import Path
 
-base_docs = '/home/ahorts/Documents/Projects/308/Hospital-Service-DSA/docs'
-site_docs = '/home/ahorts/Documents/Projects/308/Hospital-Service-DSA/docs-site/src/content/docs'
-public_dir = '/home/ahorts/Documents/Projects/308/Hospital-Service-DSA/docs-site/public'
+# ---------------------------------------------------------------------------
+# Paths – all relative to *this* script so the repo can live anywhere
+# ---------------------------------------------------------------------------
+SCRIPT_DIR = Path(__file__).resolve().parent          # docs-site/
+PROJECT_ROOT = SCRIPT_DIR.parent                       # repo root
+DOCS_SRC = PROJECT_ROOT / "docs"
+CONTENT_DEST = SCRIPT_DIR / "src" / "content" / "docs"
+PUBLIC_DEST = SCRIPT_DIR / "public"
 
-categories = [
-    f'{site_docs}/overview',
-    f'{site_docs}/data-structures/linear',
-    f'{site_docs}/data-structures/trees',
-    f'{site_docs}/data-structures/hashing',
-    f'{site_docs}/algorithms/searching',
-    f'{site_docs}/algorithms/sorting',
-    f'{site_docs}/algorithms/graph',
-    f'{site_docs}/algorithms/optimization',
-]
+# Pre-existing landing page we never overwrite
+SKIP_FILENAMES = {"index.md"}
 
-for cat in categories:
-    os.makedirs(cat, exist_ok=True)
+# Regex that matches a YAML frontmatter block at the very start of a file
+FRONTMATTER_RE = re.compile(r"\A---\s*\n.*?\n---\s*\n?", re.DOTALL)
 
-# Copy SVG diagram assets for Red-Black Tree and others
-src_images = f'{base_docs}/trace-tables/images'
-if os.path.exists(src_images):
-    shutil.copytree(src_images, f'{site_docs}/data-structures/trees/images', dirs_exist_ok=True)
-    shutil.copytree(src_images, f'{public_dir}/images', dirs_exist_ok=True)
-    print('Copied diagram SVG assets!')
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
-mappings = {
-    # Overview
-    f'{base_docs}/dev-log.md': (f'{site_docs}/overview/dev-log.md', 'Weekly Development Log'),
-    f'{base_docs}/references.md': (f'{site_docs}/overview/references.md', 'Academic References & Bibliography'),
-    
-    # Linear Data Structures
-    f'{base_docs}/trace-tables/07_dynamic_array_list.md': (f'{site_docs}/data-structures/linear/dynamic-array.md', 'DynamicArrayList Implementation'),
-    f'{base_docs}/trace-tables/array-stack-trace.md': (f'{site_docs}/data-structures/linear/array-stack.md', 'ArrayStack Undo Log Trace'),
-    f'{base_docs}/trace-tables/array-deque-trace.md': (f'{site_docs}/data-structures/linear/array-deque.md', 'ArrayDeque Urgent Request Trace'),
-    f'{base_docs}/trace-tables/07_circular_queue_trace.md': (f'{site_docs}/data-structures/linear/circular-queue.md', 'Circular Queue Operations & Wrap-Around'),
-    f'{base_docs}/proof-sketches/04_linked_list_loop_invariant.md': (f'{site_docs}/data-structures/linear/linked-list-proof.md', 'Linked List Loop Invariants'),
+def _slug_from_path(path: Path) -> str:
+    """Derive a human-readable title from a filename stem."""
+    return path.stem.replace("-", " ").replace("_", " ").title()
 
-    # Trees & Priority Structures
-    f'{base_docs}/trace-tables/10_binary_search_tree.md': (f'{site_docs}/data-structures/trees/binary-search-tree.md', 'Binary Search Tree (BST) Operations'),
-    f'{base_docs}/trace-tables/08_red_black_tree.md': (f'{site_docs}/data-structures/trees/red-black-tree.md', 'Red-Black Tree Operations & Balancing'),
-    f'{base_docs}/trace-tables/min-heap-dispatch-trace.md': (f'{site_docs}/data-structures/trees/min-heap-dispatch.md', 'MinHeap Priority Queue Dispatch Trace'),
 
-    # Hashing & Maps
-    f'{base_docs}/trace-tables/11_custom_hash_table.md': (f'{site_docs}/data-structures/hashing/custom-hash-table.md', 'Custom Hash Table & Collision Metrics'),
+def _process_markdown(src: Path, dst: Path) -> None:
+    """Read a .md file, strip old frontmatter, extract H1, write with clean frontmatter."""
+    content = src.read_text(encoding="utf-8")
 
-    # Searching Algorithms
-    f'{base_docs}/trace-tables/01_binary_search.md': (f'{site_docs}/algorithms/searching/binary-search.md', 'Binary Search Algorithm'),
-    f'{base_docs}/counterexamples/02_invalid_precondition_case.md': (f'{site_docs}/algorithms/searching/unsorted-precondition.md', 'Unsorted Precondition Violation Counterexample'),
+    # Strip existing YAML frontmatter
+    content = FRONTMATTER_RE.sub("", content).lstrip()
 
-    # Sorting Algorithms
-    f'{base_docs}/trace-tables/02_insertion_sort.md': (f'{site_docs}/algorithms/sorting/insertion-sort.md', 'Insertion Sort Algorithm'),
-    f'{base_docs}/trace-tables/09_selection_sort.md': (f'{site_docs}/algorithms/sorting/selection-sort.md', 'Selection Sort Implementation'),
-    f'{base_docs}/trace-tables/03_merge_quick_sort.md': (f'{site_docs}/algorithms/sorting/merge-quick-sort.md', 'Merge Sort Algorithm'),
-    f'{base_docs}/proof-sketches/01_loop_invariant_search_sort.md': (f'{site_docs}/algorithms/sorting/search-sort-loop-invariants.md', 'Search & Sort Loop Invariants'),
+    # Extract H1 title (first line starting with '# ')
+    lines = content.split("\n")
+    title = _slug_from_path(src)  # fallback
+    if lines and lines[0].startswith("# "):
+        title = lines[0].lstrip("# ").strip()
+        lines = lines[1:]  # remove H1 – Starlight generates it from frontmatter
+        content = "\n".join(lines).lstrip()
 
-    # Graph Algorithms
-    f'{base_docs}/trace-tables/04_dijkstra.md': (f'{site_docs}/algorithms/graph/dijkstra.md', 'Dijkstra Shortest Path Algorithm'),
-    f'{base_docs}/trace-tables/05_kruskal_prim.md': (f'{site_docs}/algorithms/graph/kruskal-prim.md', 'Kruskal & Prim MST Algorithms'),
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text(
+        f'---\ntitle: "{title}"\n---\n\n{content}',
+        encoding="utf-8",
+    )
 
-    # Optimization Algorithms
-    f'{base_docs}/trace-tables/06_dynamic_programming.md': (f'{site_docs}/algorithms/optimization/dynamic-programming.md', 'Dynamic Programming Routing'),
-    f'{base_docs}/counterexamples/01_greedy_failure_case.md': (f'{site_docs}/algorithms/optimization/greedy-failure.md', 'Greedy Failure Counterexample'),
-    f'{base_docs}/proof-sketches/03_greedy_dp_correctness.md': (f'{site_docs}/algorithms/optimization/greedy-dp-correctness.md', 'Greedy & DP Correctness Proof'),
-    f'{base_docs}/proof-sketches/02_recursion_induction_proof.md': (f'{site_docs}/algorithms/optimization/recursion-induction.md', 'Recursion & Induction Proof'),
-}
 
-for src, (dst, custom_title) in mappings.items():
-    if os.path.exists(src):
-        with open(src, 'r') as f:
-            content = f.read()
-        
-        # Strip leading --- horizontal rules or empty lines
-        content = content.lstrip()
-        while content.startswith('---'):
-            content = content[3:].lstrip()
-            if '---' in content:
-                content = content.split('---', 1)[1].lstrip()
-        
-        # Remove top duplicate H1 line if it matches or repeats title
-        lines = content.split('\n')
-        if lines and lines[0].startswith('# '):
-            lines = lines[1:]
-        content = '\n'.join(lines).lstrip()
+def _copy_asset(src: Path, rel: Path) -> None:
+    """Copy a non-.md file into the content tree and into public/images/."""
+    # Mirror into content docs tree
+    content_dst = CONTENT_DEST / rel
+    content_dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, content_dst)
 
-        # Write clean YAML frontmatter
-        clean_content = f'---\ntitle: "{custom_title}"\n---\n\n' + content
+    # Also copy to public/images/ for direct web access
+    public_dst = PUBLIC_DEST / "images" / rel
+    public_dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, public_dst)
 
-        with open(dst, 'w') as f:
-            f.write(clean_content)
 
-print('All markdown files cleaned, duplicate titles removed, and frontmatter titles updated!')
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main() -> None:
+    md_count = 0
+    asset_count = 0
+
+    for src in sorted(DOCS_SRC.rglob("*")):
+        if not src.is_file():
+            continue
+
+        rel = src.relative_to(DOCS_SRC)
+
+        if rel.name in SKIP_FILENAMES:
+            continue
+
+        if src.suffix == ".md":
+            dst = CONTENT_DEST / rel
+            _process_markdown(src, dst)
+            md_count += 1
+        else:
+            _copy_asset(src, rel)
+            asset_count += 1
+
+    print(f"Synced {md_count} markdown files and {asset_count} assets.")
+
+
+if __name__ == "__main__":
+    main()
