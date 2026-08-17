@@ -1,0 +1,13 @@
+packages:
+  - .
+
+allowBuilds:
+  esbuild: true
+  sharp: true
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - "@pagefind/linux-x64"
+  - "@pagefind/darwin-arm64"
+  - "@pagefind/darwin-x64"

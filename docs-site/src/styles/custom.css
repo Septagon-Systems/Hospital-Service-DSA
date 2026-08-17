@@ -1,0 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+
+@import "./tokens.css";
+@import "./header.css";
+@import "./sidebar.css";
+@import "./content.css";
+@import "./tables.css";
+@import "./components.css";

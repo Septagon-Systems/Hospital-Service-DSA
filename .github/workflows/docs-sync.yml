@@ -1,0 +1,51 @@
+name: Docs Sync Pipeline
+
+on:
+  push:
+    branches: [ main, dev ]
+    paths:
+      - 'docs/**'
+      - 'docs-site/populate_docs.py'
+      - '.github/workflows/docs-sync.yml'
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'docs/**'
+      - 'docs-site/populate_docs.py'
+      - '.github/workflows/docs-sync.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-docs:
+    name: Populate & Sync Astro Docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Markdown & Asset Sync Script
+        run: python3 docs-site/populate_docs.py
+
+      - name: Auto-Commit Synced Content (on Push to main/dev)
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain docs-site/src/content/docs/ docs-site/public/images/)" ]; then
+            git add docs-site/src/content/docs/ docs-site/public/images/
+            git commit -m "chore(docs): auto-sync docs/ to docs-site/ [skip ci]"
+            git push
+          else
+            echo "No sync changes detected; workspace is up to date."
+          fi

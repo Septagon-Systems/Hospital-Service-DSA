@@ -1,0 +1,35 @@
+name: Automated 3-Day Dev to Main Sync
+
+on:
+  schedule:
+    - cron: '0 0 */3 * *' # Runs every 3 days at midnight UTC
+  workflow_dispatch: # Allows manual trigger from GitHub Actions UI
+
+jobs:
+  sync-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git User
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for changes in dev
+        run: |
+          git fetch origin dev
+          BEHIND_COUNT=$(git rev-list --count main..origin/dev)
+          echo "Commits in dev ahead of main: $BEHIND_COUNT"
+          echo "BEHIND_COUNT=$BEHIND_COUNT" >> $GITHUB_ENV
+
+      - name: Fast-forward merge dev into main
+        if: env.BEHIND_COUNT != '0'
+        run: |
+          git merge origin/dev --ff-only -m "chore(sync): automated 3-day merge of dev into main"
+          git push origin main
