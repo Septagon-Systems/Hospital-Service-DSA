@@ -6,6 +6,10 @@ application {
     mainClass.set("edu.ug.dcit308.hospital.app.Main")
 }
 
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
 dependencies {
     implementation(project(":datastructures"))
     implementation(project(":algorithms"))
