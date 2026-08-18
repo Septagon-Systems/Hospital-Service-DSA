@@ -2,6 +2,8 @@ package edu.ug.dcit308.hospital.algo.sort;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,6 +62,48 @@ class QuickSortTest {
 
     @Test
     void testSortNullArrayThrows() {
-        assertThrows(IllegalArgumentException.class, () -> QuickSort.sort(null));
+        assertThrows(IllegalArgumentException.class, () -> QuickSort.sort((Integer[]) null));
+        assertThrows(IllegalArgumentException.class, () -> QuickSort.sort((int[]) null));
+    }
+
+    @Test
+    void testSortNullComparatorThrows() {
+        Integer[] arr = {1, 2, 3};
+        assertThrows(IllegalArgumentException.class, () -> QuickSort.sort(arr, null));
+    }
+
+    @Test
+    void testSortStringArrayWithComparator() {
+        String[] arr = {"Korle Bu", "37 Military", "Komfo Anokye", "Ridge"};
+        QuickSort.sort(arr, Comparator.reverseOrder());
+        assertArrayEquals(new String[]{"Ridge", "Korle Bu", "Komfo Anokye", "37 Military"}, arr);
+    }
+
+    @Test
+    void testSortPrimitiveIntArray() {
+        int[] arr = {38, 12, 27, 5};
+        QuickSort.sort(arr);
+        assertArrayEquals(new int[]{5, 12, 27, 38}, arr);
+    }
+
+    @Test
+    void testSortPrimitiveIntEmptyArray() {
+        int[] arr = {};
+        QuickSort.sort(arr);
+        assertArrayEquals(new int[]{}, arr);
+    }
+
+    @Test
+    void testSortPrimitiveIntSingleElement() {
+        int[] arr = {42};
+        QuickSort.sort(arr);
+        assertArrayEquals(new int[]{42}, arr);
+    }
+
+    @Test
+    void testSortPrimitiveDuplicates() {
+        int[] arr = {5, 3, 5, 2, 5, 8, 3};
+        QuickSort.sort(arr);
+        assertArrayEquals(new int[]{2, 3, 3, 5, 5, 5, 8}, arr);
     }
 }
