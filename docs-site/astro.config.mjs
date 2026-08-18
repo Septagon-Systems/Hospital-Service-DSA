@@ -36,6 +36,10 @@ export default defineConfig({
         },
         {
           tag: 'script',
+          attrs: { src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js', defer: true },
+        },
+        {
+          tag: 'script',
           attrs: { src: '/scripts/table-modal.js', defer: true },
         },
       ],
