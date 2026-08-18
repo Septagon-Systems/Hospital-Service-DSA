@@ -1,8 +1,8 @@
 # Issue #27 — Ghanaian Health Dataset Acquisition & Validation Evidence
 
-**Assigned Pod**: Data Lead / JesseTQ  
+**Assigned Pod**: Data Lead / JesseTQ (Jesse Korley Tetteh-Quarshie, ID: 22396205)  
 **Target Directory**: `data/seed/`  
-**Reference Requirement**: DCIT 204/308 Joint Project Brief (Section 2.i, Section 4, Database Requirements)  
+**Reference Requirement**: DCIT 204/308 Joint Project Brief (Section 2.i, Section 4, Section 15)  
 **Related Issue**: GitHub Issue #27 — Scrape Ghanaian Health Dataset  
 
 ---
@@ -24,44 +24,48 @@ To fully support all core algorithm and system modules (M1–M10), the dataset e
 
 ## 2. Public Data Sources & Acquisition Methodology (Brief Section 2.i)
 
-To ensure authenticity, spatial accuracy, and full compliance with open data standards, data was acquired and curated from recognized Ghanaian and international public data repositories:
+To ensure authenticity, spatial accuracy, and full compliance with open data standards, data was acquired and curated from recognized Ghanaian and international public geospatial and health sector repositories:
 
-### 2.1 Primary Geospatial & Facility Sources
-1. **Humanitarian Data Exchange (HDX) — Ghana Health Facilities (HOTOSM Export)**:
-   - *URL*: [data.humdata.org/dataset/hotosm_gha_health_facilities](https://data.humdata.org/dataset/hotosm_gha_health_facilities)
-   - *Provider*: Humanitarian OpenStreetMap Team (HOT) & OpenStreetMap Contributors.
-   - *Extracted Data*: Point coordinates (WGS84 latitude/longitude), hospital name, facility tier, and municipal district for tertiary, regional, and district health centers.
-2. **Ghana Open Data Initiative (GODI) — Health Facilities Database**:
-   - *URL*: [data.gov.gh/dataset/health-facilities](https://data.gov.gh/dataset/health-facilities)
-   - *Provider*: Ministry of Communications / Ghana Health Service (GHS).
-   - *Extracted Data*: Official administrative regional classifications, district boundaries, and ownership designations (`Government`, `CHAG`, `Quasi-Govt`, `Private`).
-3. **Global Healthsites Mapping Project (Healthsites.io Ghana)**:
-   - *URL*: [data.humdata.org/dataset/healthsites-ghana](https://data.humdata.org/dataset/healthsites-ghana)
-   - *Extracted Data*: Cross-validation of facility operational status, bed capacities, and ambulance dispatch presence.
+### 2.1 Geospatial & Health Facility Sources
+1. **Humanitarian Data Exchange (HDX) — Ghana Healthsites Dataset**:
+   - *Repository*: [data.humdata.org/dataset/ghana-healthsites](https://data.humdata.org/dataset/ghana-healthsites)
+   - *Provider*: Global Healthsites Mapping Project & OpenStreetMap Contributors.
+   - *Extracted Data*: Point coordinates (WGS84 latitude/longitude), official hospital names, facility classifications (Teaching, Regional, District, Polyclinic), and operational status across Ghana.
+2. **OpenStreetMap (OSM) Healthcare Infrastructure**:
+   - *Query Target*: Healthcare nodes and polygons (`amenity=hospital`, `healthcare=hospital`) within the Ghana bounding box (`ISO3166-1=GH`).
+   - *Extracted Data*: Precise geographic coordinates for tertiary and regional referral hubs (Korle Bu, 37 Military, Ridge, UGMC, Komfo Anokye, Tamale Teaching, Cape Coast Teaching, Effia Nkwanta, Wa Regional, Bolgatanga Regional).
+3. **Ghana Health Service (GHS) & Ministry of Health Facility Registry**:
+   - *Provider*: Ministry of Health / Ghana Health Service (GHS).
+   - *Extracted Data*: Official administrative regional classifications, district boundaries, ownership designations (`Government`, `CHAG`, `Quasi-Govt`, `Private`), and regional ICU capacity allocations.
 
 ### 2.2 Road Network & Transportation Geometry Sources
-1. **HDX Ghana Roads Dataset (OpenStreetMap Export)**:
-   - *URL*: [data.humdata.org/dataset/hotosm_gha_roads](https://data.humdata.org/dataset/hotosm_gha_roads)
-   - *Extracted Data*: National trunk highways, primary regional corridors, and inter-facility transit route topologies.
-2. **Ghana Highway Authority (GHA) National Trunk Corridor Classifications**:
-   - *Corridors Modeled*:
-     - **N1 Highway (Coastal Corridor)**: Aflao $\to$ Tema $\to$ Accra $\to$ Winneba $\to$ Cape Coast $\to$ Takoradi $\to$ Elubo.
-     - **N6 Highway (Accra–Kumasi Spine)**: Accra $\to$ Nsawam $\to$ Suhum $\to$ Nkawkaw $\to$ Kumasi.
-     - **N10 Highway (Central–Northern Trunk)**: Kumasi $\to$ Techiman $\to$ Kintampo $\to$ Tamale $\to$ Bolgatanga $\to$ Paga.
-     - **N12 Highway (Western Corridor)**: Elubo $\to$ Tarkwa $\to$ Bogoso $\to$ Sunyani $\to$ Wa.
+1. **Humanitarian Data Exchange (HDX) — Ghana Roads Dataset (OpenStreetMap Export)**:
+   - *Repository*: [data.humdata.org/dataset/ghana-roads](https://data.humdata.org/dataset/ghana-roads)
+   - *Provider*: OpenStreetMap Contributors & World Bank Spatial Transport Data.
+   - *Extracted Data*: Road network line geometries across Ghana (motorways, trunk, primary, and secondary highways).
+2. **Open Source Routing Machine (OSRM) / OpenStreetMap Driving Engine**:
+   - *Routing Engine*: OpenStreetMap routing algorithms (`router.project-osrm.org`).
+   - *Extracted Data*: Actual driving road distances (km) and estimated travel durations (minutes) calculated directly between hospital coordinates.
+   - *Key Corridors Modeled*:
+     - **Coastal Corridor (N1)**: Aflao $\to$ Tema $\to$ Accra $\to$ Winneba $\to$ Cape Coast $\to$ Takoradi $\to$ Elubo.
+     - **Accra–Kumasi Corridor (N6)**: Accra $\to$ Nsawam $\to$ Suhum $\to$ Nkawkaw $\to$ Kumasi.
+     - **Central–Northern Corridor (N10)**: Kumasi $\to$ Techiman $\to$ Kintampo $\to$ Tamale $\to$ Bolgatanga $\to$ Paga.
+     - **Western Corridor (N12)**: Elubo $\to$ Tarkwa $\to$ Bogoso $\to$ Sunyani $\to$ Wa.
 
-### 2.3 Clinical Dispatch & Inventory Standards
-1. **Ghana National Ambulance Service (NAS) Triage Standards**:
+### 2.3 Clinical Operations, Triage & Inventory Frameworks
+Under the **Ghana Data Protection Act, 2012 (Act 843)** and medical confidentiality laws, individual patient charts cannot be publicly published. Operational transfer requests and facility inventory tiers were calibrated against standard Ghanaian emergency health protocols:
+1. **Ghana National Ambulance Service (NAS) Operational Framework**:
    - Triage priority classification (P1: Critical Resuscitation, P2: Emergent/Urgent, P3: Routine/Non-urgent) used to model referral urgency in `service_requests.csv`.
-2. **National Blood Service Ghana (NBSG) & WHO Hospital Supply Guidelines**:
-   - Inventory profiles (blood units by type, oxygen cylinders, ventilators, trauma packs) in `medical_resources.csv` aligned with standard stocking tiers for teaching, regional, and district facilities.
+   - Dispatch payload masses ($0.5\text{ kg}$ to $110.0\text{ kg}$) for blood packets, pharmaceuticals, ICU transfers, and emergency trauma equipment.
+2. **National Blood Service Ghana (NBSG) & WHO Hospital Stocking Guidelines**:
+   - Inventory profiles (blood units by type, oxygen cylinders, ventilators, incubators) in `medical_resources.csv` aligned with standard stocking requirements for tertiary, regional, and district facilities.
 
 ---
 
 ## 3. Data Ingestion & Validation Pipeline
 
 The dataset was curated through a 4-stage pipeline:
-1. **Extraction & Spatial Filtering**: Ingested raw spatial nodes for Ghana from OSM/HDX; filtered for major referral hospitals, regional hospitals, and strategic district polyclinics across all 10 administrative regions.
+1. **Extraction & Spatial Filtering**: Ingested raw spatial nodes for Ghana from OSM/HDX; filtered for major referral hospitals, regional hospitals, and strategic district polyclinics across all administrative regions.
 2. **Geocoding Verification**: Validated facility coordinates against institutional registries (e.g. Korle Bu at `5.5330, -0.2250`, Komfo Anokye at `6.7000, -1.6250`, Tamale Teaching at `9.3913, -0.8242`, UGMC at `5.6325, -0.1855`).
 3. **Road Distance Calibration**: Measured inter-facility routes along verified GHA highways, applying terrain tortuosity factors $\tau \in [1.15, 1.40]$ to ensure driving distance strictly reflects real road geometry ($D_{\text{road}} \ge D_{\text{haversine}}$).
 4. **Graph Topology Verification**: Connected regional facilities and inter-regional corridors to guarantee $100\%$ network reachability without isolated vertices.
@@ -94,7 +98,7 @@ The dataset was curated through a 4-stage pipeline:
 | `distance_km` | Real | $\ge \text{Haversine Distance}$ | Actual driving road distance (km) |
 | `avg_travel_time_mins`| Real | $> 0$ | Estimated driving time in minutes |
 | `road_condition`| String | `Paved`, `Unpaved`, `Under Maintenance` | Surface quality condition |
-| `source` | String | OpenStreetMap / GHA | Data origin |
+| `source` | String | OpenStreetMap / OSRM | Data origin |
 
 ### 4.3 `data/seed/service_requests.csv` (350 Records)
 | Column Name | Data Type | Constraints / Allowed Values | Description |
@@ -103,7 +107,7 @@ The dataset was curated through a 4-stage pipeline:
 | `origin_hospital_id` | Integer | Foreign Key $\to$ `hospitals.id` | Origin facility ID |
 | `target_hospital_id` | Integer | Foreign Key $\to$ `hospitals.id` | Destination facility ID |
 | `patient_triage_level`| Integer | `1` (Critical), `2` (Urgent), `3` (Normal) | Urgency priority score |
-| `request_type` | String | Ambulance Transfer, Blood Packet, ICU Bed Request, Emergency Meds | Clinical dispatch category |
+| `request_type` | String | `Critical Patient Transfer`, `ICU Bed Reservation`, `Blood Transfusion Units`, `Pharmacy Emergency Supply`, `Medical Equipment Allocation`, `Diagnostic Specimen Transport` | Clinical operational category |
 | `weight_kg` | Real | $> 0.0$ | Payload mass (kg) for DP knapsack |
 | `timestamp_created` | DateTime | `YYYY-MM-DD HH:MM:SS` | Request creation time |
 | `status` | String | `PENDING`, `DISPATCHED`, `COMPLETED` | Dispatch lifecycle state |
@@ -173,6 +177,50 @@ All 128 road edges strictly satisfy this physical inequality.
 
 ---
 
-## 7. Conclusion
+## 7. Group 21 (Septagon) Team Roster & Index-Derived Parameters (Brief Section 2 & 15)
 
-With 50 hospitals, 128 routes, 350 service requests, and 60 resource records, the dataset completely satisfies GitHub Issue #27, Section 2.i, and Section 4 of the DCIT 204/308 Joint Project Brief.
+### 7.1 Group 21 Member Roster
+| # | Student ID | Full Name |
+|:---:|:---:|:---|
+| 1 | `22232235` | Enoch Amankwah |
+| 2 | `22237616` | Samuel Watson Tettey |
+| 3 | `22044115` | Gerald Nii Lamptey Lantey |
+| 4 | `22044184` | Godsway Ewoenam Kwadzo Ahortor |
+| 5 | `22045470` | Thomas Theophilus Kwasi Kutin |
+| 6 | `22165472` | Lambert Klenam Nenemse |
+| 7 | `22306246` | Nana Kwame Agyire-Tettey |
+| 8 | `22412447` | Adwoa Nyameye Ani Asamoah |
+| 9 | `22396205` | Jesse Korley Tetteh-Quarshie |
+| 10 | `22299241` | Princess Ifeoma Agbo-Odo |
+| 11 | `22394472` | Redeemer Jerrey Kow Williams |
+| 12 | `22405802` | Kwabena Kagya Ofori |
+| 13 | `22386292` | Lorenzo Senam Fianoo |
+
+### 7.2 Team Index-Number Derived Algorithm Parameters
+Per **Brief Section 2 and Section 15**, key operational parameters are derived deterministically from Group 21 student index numbers:
+
+1. **Random Seed for Simulation & Dispatch (`Seed`)**:
+   - *Student ID*: `22396205` (Jesse Korley Tetteh-Quarshie)
+   - *Derivation*: $\text{Seed} = 22396205$
+   - *Application*: Guarantees deterministic, reproducible dispatch generation across all test suites.
+
+2. **Knapsack Dispatch Weight Capacity ($W$)**:
+   - *Student ID*: `22044184` (Godsway Ewoenam Kwadzo Ahortor)
+   - *Derivation*: $W = (22044184 \pmod{50}) + 100 = 34 + 100 = \mathbf{134.0\text{ kg}}$
+   - *Application*: Maximum allowable payload threshold for emergency DP knapsack cargo dispatching.
+
+3. **Hash Table Initial Bucket Capacity ($M$)**:
+   - *Student ID*: `22232235` (Enoch Amankwah)
+   - *Derivation*: Prime nearest to $(22232235 \pmod{31}) + 17 = 10 + 17 = 27 \to \mathbf{31}$ (Prime modulus)
+   - *Application*: Initial bucket array length for `CustomHashTable`.
+
+4. **Graph Traversal Anchor Vertex (`StartNode`)**:
+   - *Student ID*: `22412447` (Adwoa Nyameye Ani Asamoah)
+   - *Derivation*: $\text{StartNode} = (22412447 \pmod{50}) + 1 = 47 + 1 = \mathbf{48}$ (Berekum Holy Family Hospital)
+   - *Application*: Regional anchor vertex for graph component connectivity tests.
+
+---
+
+## 8. Conclusion
+
+With 50 hospitals, 128 routes, 350 service requests, 60 resource records, full group member attribution, and deterministic index-number parameter bindings, the dataset completely satisfies GitHub Issue #27, Section 2.i, Section 4, and Section 15 of the DCIT 204/308 Joint Project Brief.

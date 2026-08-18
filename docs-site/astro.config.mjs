@@ -47,6 +47,7 @@ export default defineConfig({
         {
           label: 'Project Overview',
           items: [
+            { label: 'Dataset & Local Context', slug: 'overview/data-acquisition' },
             { label: 'Weekly Development Log', slug: 'overview/dev-log' },
             { label: 'Academic References', slug: 'overview/references' },
           ],
