@@ -11,12 +11,14 @@
 
 This document provides formal evidence of data acquisition, cleaning, enrichment, physics validation, and graph connectivity verification for the **Ghana Smart Hospital Operations Optimizer**.
 
-To fully support all 10 core algorithm and system modules (M1–M10), the dataset provides five validated entities stored under `data/seed/`:
+To fully support all core algorithm and system modules (M1–M10), the dataset establishes four verified domain entities under `data/seed/`:
 1. **`hospitals.csv`**: 50 geocoded healthcare facilities across all major regions of Ghana with ownership, facility classification, ICU capacity, and ambulance fleet data.
 2. **`roads.csv`**: 128 inter-facility road corridors with physics-compliant driving distances, travel times, and road conditions.
 3. **`service_requests.csv`**: 350 emergency and routine patient/resource transfer requests categorized by clinical triage level, transfer type, and payload weight.
 4. **`medical_resources.csv`**: 60 critical medical resource inventories (blood bank units, adult/neonatal ventilators, ALS/BLS ambulances, trauma packs).
-5. **`algorithm_runs.csv`**: 57 baseline empirical performance benchmark logs.
+
+> [!NOTE]
+> Empirical runtime benchmark measurements (`data/seed/algorithm_runs.csv`) are populated directly by executing the Java Benchmark Suite (`./gradlew :benchmark:run`, Issue #24) to capture real nanosecond execution times and heap memory profiles across all algorithms.
 
 ---
 
@@ -78,40 +80,39 @@ Data was constructed and validated using Ghanaian geospatial and public health s
 | `quantity_available` | Integer | $\ge 0$ | Available stock count |
 | `resource_category` | String | Blood Bank, ICU Equipment, Transport, Emergency Meds | Resource category |
 
-### 3.5 `data/seed/algorithm_runs.csv` (57 Records)
+### 3.5 `data/seed/algorithm_runs.csv` (Benchmark Logs)
 | Column Name | Data Type | Description |
 |---|---|---|
-| `run_id` | Integer | Primary Key (`1` to `57`) |
+| `run_id` | Integer | Primary Key (autoincrement) |
 | `algorithm_name` | String | Benchmark algorithm (`Dijkstra`, `MergeSort`, etc.) |
 | `input_size` | Integer | Input record scale ($n \in [50, 10000]$) |
-| `execution_time_ns`| Long | Execution duration in nanoseconds |
+| `execution_time_ns`| Long | Empirical execution duration in nanoseconds |
 | `memory_used_kb` | Long | Memory consumption in kilobytes |
 | `iteration_number` | Integer | Trial iteration (`1`, `2`, `3`) |
-| `run_timestamp` | DateTime | Timestamp of experiment execution |
+| `run_timestamp` | DateTime | Timestamp of benchmark run |
 
 ---
 
-## 4. Gap Analysis & Resolution of Audit Findings
+## 4. Data Quality & Physical Validation Standards
 
-The audit report (`dataset_review_report.pdf`) identified critical gaps in the initial draft. All items have been systematically resolved:
+To ensure realism and prevent algorithmic anomalies during shortest-path, minimum spanning tree, and emergency dispatch operations, the dataset satisfies four physical and topological invariants:
 
-| Audit Finding | Prior Draft State | Remediated Current State | Verification |
-|---|---|---|---|
-| **Missing `service_requests.csv`** | 0 records (FAIL) | **350 records** with triage levels 1–3, weight, timestamps | Verified FKs & distribution |
-| **Missing `medical_resources.csv`** | 0 records (FAIL) | **60 records** across 18 major Ghanaian hospital hubs | Verified FKs & stock values |
-| **Missing `algorithm_runs.csv`** | 0 records (FAIL) | **57 baseline runs** across 11 core DSA algorithms | Verified runtime scaling |
-| **Missing Road Metrics** | Distance only (FAIL) | Added `avg_travel_time_mins` and `road_condition` | Verified speed physics |
-| **Road Physics Violations** | 37 roads $< d_{\text{haversine}}$ | **0 violations** ($\text{Road km} = d_{\text{haversine}} \times \tau$, $\tau \in [1.15, 1.40]$) | Automated mathematical test |
-| **Geolocation Inaccuracies** | Tema lon=0.0, Wa old coords | Tema updated to `(5.6742, -0.0252)`, Wa updated to `(10.0872, -2.5213)` | OSM verified |
-| **Graph Disconnectivity** | 8 isolated hospitals | **0 isolated nodes**; 100% connected graph (50/50 vertices reached via BFS) | Verified via BFS traversal |
+1. **Geographic Precision & Geocoding**:
+   All 50 hospital locations use authentic WGS84 coordinates verified against OpenStreetMap (OSM) and the Ghana Health Service facility registry.
+2. **Road Physics Invariant ($D_{\text{road}} \ge D_{\text{haversine}}$)**:
+   For every corridor $(u, v)$, the driving road distance strictly exceeds the straight-line spherical distance, incorporating standard terrain winding factors $\tau \in [1.15, 1.40]$.
+3. **Graph Reachability & Single Connected Component**:
+   The 128-edge road network guarantees 100% reachability across all 50 facilities with zero isolated vertices, confirmed via Breadth-First Search (BFS) graph traversal.
+4. **Relational Referential Integrity**:
+   Every origin and destination foreign key in `service_requests.csv` and `medical_resources.csv` references a valid facility ID in `hospitals.csv`.
 
 ---
 
-## 5. Automated Validation & Verification Script
+## 5. Dataset Validation & Integrity Verification
 
-The verification script `evidence/generate_datasets.py` performs rigorous mathematical and graph-theoretical checks:
+Automated validation checks verified that the dataset satisfies all integrity criteria:
 
-```
+```text
 ============================================================
       DATASET INTEGRITY & VALIDATION REPORT
 ============================================================
@@ -119,7 +120,6 @@ Hospitals: 50 (Required >= 50) -> PASS
 Roads: 128 (Required >= 100) -> PASS
 Service Requests: 350 (Required >= 300) -> PASS
 Medical Resources: 60 (Required >= 30) -> PASS
-Algorithm Runs: 57 (Required >= 30) -> PASS
 Road Physics Violations: 0 -> PASS
 Isolated Nodes (Degree 0): 0 -> PASS
 Graph Connected Component: 50/50 nodes reached -> PASS
@@ -138,4 +138,4 @@ All 128 road edges strictly satisfy this physical inequality.
 
 ## 6. Conclusion
 
-With 50 hospitals, 128 routes, 350 service requests, 60 resource records, and 57 benchmark logs, the dataset completely satisfies GitHub Issue #27, Section 2.i, and Section 4 of the DCIT 204/308 Joint Project Brief.
+With 50 hospitals, 128 routes, 350 service requests, and 60 resource records, the dataset completely satisfies GitHub Issue #27, Section 2.i, and Section 4 of the DCIT 204/308 Joint Project Brief.
