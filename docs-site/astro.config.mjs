@@ -53,6 +53,12 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Service Operations',
+          items: [
+            { label: 'Flowcharts & Formal Pseudocode', slug: 'service-operations/flowcharts-pseudocode' },
+          ],
+        },
+        {
           label: 'Custom Data Structures',
           items: [
             {
