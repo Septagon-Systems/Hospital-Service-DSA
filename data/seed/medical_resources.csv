@@ -1,0 +1,61 @@
+resource_id,hospital_id,resource_name,quantity_available,resource_category
+1,1,Dialysis Machine,2,ICU Equipment
+2,1,B-Positive Blood Units,27,Blood Bank
+3,2,A-Positive Blood Units,41,Blood Bank
+4,2,Dialysis Machine,4,ICU Equipment
+5,2,Oxygen Cylinder 50L,19,Emergency Meds
+6,2,Type B BLS Ambulance,7,Transport
+7,4,Ventilator Unit (Adult),3,ICU Equipment
+8,4,A-Positive Blood Units,40,Blood Bank
+9,4,Defibrillator Kit,7,Emergency Meds
+10,4,Oxygen Cylinder 50L,47,Emergency Meds
+11,6,Type B BLS Ambulance,6,Transport
+12,6,Neonatal Incubator,7,ICU Equipment
+13,6,Ventilator Unit (Adult),6,ICU Equipment
+14,6,O-Negative Blood Units,18,Blood Bank
+15,9,Type B BLS Ambulance,3,Transport
+16,9,Dialysis Machine,5,ICU Equipment
+17,16,Type A ALS Ambulance,3,Transport
+18,16,B-Positive Blood Units,23,Blood Bank
+19,16,O-Negative Blood Units,24,Blood Bank
+20,16,AB-Negative Blood Units,5,Blood Bank
+21,17,Neonatal Incubator,3,ICU Equipment
+22,17,Type A ALS Ambulance,3,Transport
+23,17,Defibrillator Kit,7,Emergency Meds
+24,17,Type B BLS Ambulance,6,Transport
+25,18,Type B BLS Ambulance,6,Transport
+26,18,B-Positive Blood Units,14,Blood Bank
+27,18,AB-Negative Blood Units,5,Blood Bank
+28,24,Type B BLS Ambulance,6,Transport
+29,24,O-Negative Blood Units,11,Blood Bank
+30,24,Oxygen Cylinder 50L,22,Emergency Meds
+31,24,Emergency Trauma Pack,24,Emergency Meds
+32,27,Oxygen Cylinder 50L,42,Emergency Meds
+33,27,Dialysis Machine,4,ICU Equipment
+34,27,Type A ALS Ambulance,4,Transport
+35,27,Type B BLS Ambulance,5,Transport
+36,30,Type A ALS Ambulance,5,Transport
+37,30,Neonatal Incubator,8,ICU Equipment
+38,30,Defibrillator Kit,5,Emergency Meds
+39,34,Emergency Trauma Pack,19,Emergency Meds
+40,34,B-Positive Blood Units,27,Blood Bank
+41,35,Emergency Trauma Pack,52,Emergency Meds
+42,35,Oxygen Cylinder 50L,31,Emergency Meds
+43,35,Defibrillator Kit,12,Emergency Meds
+44,35,B-Positive Blood Units,24,Blood Bank
+45,38,AB-Negative Blood Units,11,Blood Bank
+46,38,Type B BLS Ambulance,5,Transport
+47,38,Neonatal Incubator,2,ICU Equipment
+48,39,AB-Negative Blood Units,5,Blood Bank
+49,39,Defibrillator Kit,4,Emergency Meds
+50,39,Emergency Trauma Pack,54,Emergency Meds
+51,39,Type A ALS Ambulance,2,Transport
+52,44,Emergency Trauma Pack,31,Emergency Meds
+53,44,O-Negative Blood Units,8,Blood Bank
+54,44,B-Positive Blood Units,35,Blood Bank
+55,47,Oxygen Cylinder 50L,20,Emergency Meds
+56,47,A-Positive Blood Units,25,Blood Bank
+57,49,Neonatal Incubator,8,ICU Equipment
+58,49,Dialysis Machine,5,ICU Equipment
+59,49,Emergency Trauma Pack,20,Emergency Meds
+60,49,B-Positive Blood Units,25,Blood Bank
