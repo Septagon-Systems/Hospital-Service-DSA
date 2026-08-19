@@ -187,6 +187,25 @@ public class HospitalDispatchCentreTest {
     }
 
     @Test
+    void testUndoServeReleasesAssignedResource() {
+        centre.admitRequest(urgent(1));
+        DispatchAssignment a1 = centre.serveNextRequest();
+        assertNotNull(a1.getResource());
+        assertEquals(1, a1.getResource().getId()); // Ambulance #1 ($100)
+        assertFalse(a1.getResource().isAvailable()); // Marked assigned
+
+        centre.undoLastAction(); // Rollback serve
+
+        assertTrue(a1.getResource().isAvailable()); // Restored to pool
+
+        // Serving again should grab Ambulance #1 at $100 instead of Ambulance #2 at $200
+        DispatchAssignment a2 = centre.serveNextRequest();
+        assertNotNull(a2.getResource());
+        assertEquals(1, a2.getResource().getId());
+        assertEquals(100.0, a2.getResource().getCostPerUse());
+    }
+
+    @Test
     void testUndoAdmitUrgentRemovesFromQueue() {
         centre.admitRequest(urgent(1));
         centre.admitRequest(urgent(2));

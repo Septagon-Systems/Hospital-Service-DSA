@@ -123,7 +123,7 @@ public final class HospitalDispatchCentre {
             normalServed++;
         }
 
-        actionStack.push(new ActionRecord("SERVE", req));
+        actionStack.push(new ActionRecord("SERVE", req, assigned));
 
         return new DispatchAssignment(req, assigned);
     }
@@ -149,6 +149,9 @@ public final class HospitalDispatchCentre {
 
         if ("SERVE".equals(last.getActionType())) {
             servedCount--;
+            if (last.getResource() != null) {
+                last.getResource().markReleased(); // Restore vehicle/bed to pool
+            }
             if (last.getRequest().getTriageLevel() <= 2) {
                 urgentServed--;
             } else if (last.getRequest().isPreempted()) {
@@ -184,14 +187,19 @@ public final class HospitalDispatchCentre {
     }
 
     // ------------------------------------------------------------------ //
-    //  Accessors (useful for tests)                                       //
+    //  Accessors (useful for CLI, GUI and tests)                          //
     // ------------------------------------------------------------------ //
 
-    public int getServedCount()     { return servedCount; }
-    public int getUrgentServed()    { return urgentServed; }
-    public int getNormalServed()    { return normalServed; }
-    public int getPreemptionServed(){ return preemptionServed; }
-    public int pendingActions()     { return actionStack.size(); }
+    public int getServedCount()             { return servedCount; }
+    public int getUrgentServed()            { return urgentServed; }
+    public int getNormalServed()            { return normalServed; }
+    public int getPreemptionServed()        { return preemptionServed; }
+    public int pendingActions()             { return actionStack.size(); }
+    public int getPendingUrgentCount()      { return urgentQueue.size(); }
+    public int getPendingPreemptionCount()  { return preemptionDeque.size(); }
+    public int getPendingNormalCount()      { return normalQueue.size(); }
+    public int getTotalPendingCount()       { return urgentQueue.size() + preemptionDeque.size() + normalQueue.size(); }
+    public ResourcePool getResourcePool()   { return resourcePool; }
 
     // ------------------------------------------------------------------ //
     //  Private helpers                                                    //

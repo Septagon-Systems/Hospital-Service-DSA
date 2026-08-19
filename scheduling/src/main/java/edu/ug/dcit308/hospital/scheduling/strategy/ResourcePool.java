@@ -42,4 +42,23 @@ public final class ResourcePool {
     }
 
     public int size() { return count; }
+
+    /** Returns the number of currently available (unassigned) resources. */
+    public int getAvailableCount() {
+        int available = 0;
+        for (int i = 0; i < count; i++) {
+            if (resources[i].isAvailable()) {
+                available++;
+            }
+        }
+        return available;
+    }
+
+    /** Returns the resource at the given pool index. */
+    public Resource getResource(int index) {
+        if (index < 0 || index >= count) {
+            throw new IndexOutOfBoundsException("Resource index out of range: " + index);
+        }
+        return resources[index];
+    }
 }
