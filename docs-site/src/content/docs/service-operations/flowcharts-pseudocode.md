@@ -24,56 +24,100 @@ The operations map directly to our custom data structure library (`datastructure
 
 ---
 
-## Operation 1: Emergency Request Triage & Fleet Dispatch
-**Target Module**: `algorithms` & `datastructures` · **Data Structure**: `MinHeapPriorityQueue<ServiceRequest>`
+## Operation 1: Multi-Level Triage Admission & Fleet Dispatch
+**Target Module**: `scheduling` & `datastructures` · **Core Structures**: `MinHeapPriorityQueue<ServiceRequest>`, `ArrayDeque<ServiceRequest>`, `CircularQueue<ServiceRequest>`, `ArrayStack<AuditEvent>`
 
 ### 1.1 Input / Output Specification
 - **Input**:
-  - `requests`: Stream or list of incoming `ServiceRequest` objects (each with `patientTriageLevel`: 1=Critical, 2=Urgent, 3=Normal, and `timestampCreated`).
-  - `ambulancesAvailable`: Integer count $k \ge 0$ of stationed emergency vehicles.
+  - `admitRequest(request)`: Incoming `ServiceRequest` (with `patientTriageLevel`: 1=Critical, 2=Urgent, 3=Normal, and `isPreempted` flag).
+  - `serveNextRequest()`: Triggered to dispatch the highest-priority waiting job across all operational queues to available `ResourcePool` assets.
 - **Output**:
-  - `dispatched`: Ordered `DynamicArrayList<ServiceRequest>` of requests dispatched in strict priority order.
+  - `DispatchAssignment`: Assigned request paired with the cheapest compatible resource (or unfulfilled if fleet exhausted).
 
 ### 1.2 Preconditions & Postconditions
 - **Preconditions**:
-  - Each `ServiceRequest` implements `Comparable<ServiceRequest>` where comparison is ordered by `patientTriageLevel` ascending (Level 1 before Level 3), then by `timestampCreated` ascending as a FIFO tiebreaker.
-  - `ambulancesAvailable >= 0`.
+  - `urgentQueue` (Min-Heap) orders elements with priority formula: `(triageLevel * 1000) - arrivalOrder`.
+  - `normalQueue` is a fixed-capacity FIFO `CircularQueue` for routine Triage 3 requests.
+  - `preemptionDeque` is a double-ended `ArrayDeque` for high-priority redirected transfers.
 - **Postconditions**:
-  - Exactly $\min(k, \text{totalRequests})$ highest-urgency jobs are assigned and returned.
-  - Remaining undispatched requests retain min-heap ordering for subsequent dispatch intervals.
-  - Heap invariant ($\text{parent} \le \text{children}$) is preserved across all operations.
+  - `urgentQueue` is **strictly checked first** before moving to `preemptionDeque` or `normalQueue`.
+  - Every successful admission or service dispatch records an `ActionRecord` onto the `ArrayStack` for $O(1)$ LIFO undo capability.
 
 ### 1.3 Pseudocode
 ```text
-FUNCTION triageAndDispatch(requests: List<ServiceRequest>, ambulancesAvailable: int) -> List<ServiceRequest>
-    queue ← new MinHeapPriorityQueue<ServiceRequest>()
+FUNCTION admitRequest(request: ServiceRequest) -> boolean
+    IF request.isPreempted():
+        success ← preemptionDeque.addFirst(request)
+        actionType ← "ADMIT_PREEMPT"
+    ELSE IF request.getPatientTriageLevel() <= 2:     // Triage 1 (Critical) & 2 (Urgent)
+        success ← urgentQueue.enqueue(request)
+        actionType ← "ADMIT_URGENT"
+    ELSE:                                           // Triage 3 (Routine)
+        success ← normalQueue.enqueue(request)
+        actionType ← "ADMIT_NORMAL"
 
-    FOR each req IN requests:
-        queue.enqueue(req)                          // O(log n) heap insertion
+    IF success:
+        actionStack.push(new ActionRecord(actionType, request))
+    ELSE:
+        overflowCount ← overflowCount + 1
 
-    dispatched ← new DynamicArrayList<ServiceRequest>()
-    assignedCount ← 0
+    RETURN success
+END FUNCTION
 
-    WHILE NOT queue.isEmpty() AND assignedCount < ambulancesAvailable:
-        topRequest ← queue.dequeue()               // O(log n) extract min triage score
-        topRequest.setStatus("DISPATCHED")
-        dispatched.add(topRequest)
-        assignedCount ← assignedCount + 1
+FUNCTION serveNextRequest(resourcePool: ResourcePool) -> DispatchAssignment
+    req ← null
 
-    RETURN dispatched
+    // Multi-tier queue check: Urgent priority queue checked FIRST
+    IF NOT urgentQueue.isEmpty():
+        req ← urgentQueue.dequeue()                 // O(log n) pop highest triage score
+    ELSE IF NOT preemptionDeque.isEmpty():
+        req ← preemptionDeque.removeFirst()         // O(1) pop preempted transfer
+    ELSE IF NOT normalQueue.isEmpty():
+        req ← normalQueue.dequeue()                 // O(1) pop routine FIFO request
+
+    IF req == null:
+        RETURN null                                 // All queues empty
+
+    // Greedily assign cheapest available compatible resource
+    bestResource ← resourcePool.findCheapestCompatible(req)
+    IF bestResource != null:
+        bestResource.markAssigned()
+        req.setStatus("DISPATCHED")
+
+    assignment ← new DispatchAssignment(req, bestResource)
+    actionStack.push(new ActionRecord("SERVE", assignment))
+    RETURN assignment
 END FUNCTION
 ```
 
 ### 1.4 Mermaid Flowchart
 ```mermaid
 flowchart TD
-    A[Start: Incoming Service Requests] --> B[Enqueue requests into MinHeapPriorityQueue]
-    B --> C{Queue empty OR\nAmbulances exhausted?}
-    C -- No --> D[Dequeue min triage level request - P1 over P3]
-    D --> E[Update status to DISPATCHED]
-    E --> F[Add to Dispatched List & decrement fleet count]
-    F --> C
-    C -- Yes --> G[Return Dispatched Batch & Retain Pending Queue]
+    subgraph Admission Flow: admitRequest
+        A[Incoming ServiceRequest] --> B{"isPreempted == true?"}
+        B -- Yes --> C["preemptionDeque.addFirst(request)"]
+        B -- No --> D{"Triage Level <= 2?"}
+        D -- Yes: Critical / Urgent --> E["urgentQueue.enqueue(request) - MinHeap"]
+        D -- No: Routine P3 --> F["normalQueue.enqueue(request) - CircularQueue FIFO"]
+        C --> G["actionStack.push(ADMIT)"]
+        E --> G
+        F --> G
+    end
+
+    subgraph Service & Greedy Match Flow: serveNextRequest
+        H[Trigger: serveNextRequest] --> I{"urgentQueue.isEmpty()?"}
+        I -- No: Critical Pending --> J["req = urgentQueue.dequeue() - O(log n)"]
+        I -- Yes --> K{"preemptionDeque.isEmpty()?"}
+        K -- No: Preempted Pending --> L["req = preemptionDeque.removeFirst() - O(1)"]
+        K -- Yes --> M{"normalQueue.isEmpty()?"}
+        M -- No: Routine Pending --> N["req = normalQueue.dequeue() - O(1) FIFO"]
+        M -- Yes: All Empty --> O[Return null: No Requests Pending]
+        
+        J --> P[Greedy Resource Match: Find Cheapest Compatible]
+        L --> P
+        N --> P
+        P --> Q["actionStack.push(SERVE) & Return DispatchAssignment"]
+    end
 ```
 
 ---
@@ -142,8 +186,8 @@ flowchart TD
     H -- Yes --> D
     H -- No --> I[Mark u as visited]
     I --> J[Iterate road edges from u to neighbors v]
-    J --> K{dist u + weight < dist v?}
-    K -- Yes --> L[dist v = dist u + weight; prev v = u; enqueue v]
+    J --> K{"dist(u) + weight < dist(v)?"}
+    K -- Yes --> L["dist(v) = dist(u) + weight; prev(v) = u; enqueue v"]
     K -- No --> J
     L --> D
     D -- Yes --> G
@@ -208,9 +252,9 @@ flowchart TD
     B --> C[Initialize DP table dp of size n+1 by W+1 to 0]
     C --> D[Iterate item i from 1 to n]
     D --> E[Iterate capacity w from 0 to W]
-    E --> F{item weight wi <= w?}
-    F -- No --> G[dp of i,w = dp of i-1,w]
-    F -- Yes --> H[dp of i,w = max of exclude vs dp of i-1,w-wi + vi]
+    E --> F{"Item weight wi <= w?"}
+    F -- No --> G["dp[i][w] = dp[i-1][w]"]
+    F -- Yes --> H["dp[i][w] = max(exclude, dp[i-1][w-wi] + vi)"]
     G --> I{End of row/matrix?}
     H --> I
     I -- No --> E
@@ -307,11 +351,11 @@ END FUNCTION
 flowchart TD
     A[Start: Road Network Graph] --> B[Sort all 128 edges ascending by distanceKm]
     B --> C[Initialize DisjointSet with 50 nodes]
-    C --> D{More candidate edges AND\nMST edges < 49?}
+    C --> D{"More candidate edges AND MST edges < 49?"}
     D -- Yes --> E[Extract next candidate corridor u to v]
-    E --> F{find u == find v?}
+    E --> F{"find(u) == find(v)?"}
     F -- Yes, would form cycle --> D
-    F -- No, acyclic --> G[ds.union u,v; add corridor to MST]
+    F -- No, acyclic --> G["ds.union(u, v); add corridor to MST"]
     G --> D
     D -- No --> H[Return 49 MST Corridors & Total Network Cost]
 ```
@@ -356,11 +400,11 @@ END FUNCTION
 ### 6.4 Mermaid Flowchart
 ```mermaid
 flowchart TD
-    A[Start: Undo Request Triggered] --> B{undoStack.isEmpty?}
+    A[Start: Undo Request Triggered] --> B{"undoStack.isEmpty()?"}
     B -- Yes --> C[Throw EmptyStackException / Alert User]
-    B -- No --> D[Pop top AuditEvent from ArrayStack - O 1 LIFO]
+    B -- No --> D["Pop top AuditEvent from ArrayStack - O(1) LIFO"]
     D --> E[Retrieve ServiceRequest by ID]
-    E --> F[Revert status: DISPATCHED to PENDING]
+    E --> F["Revert status: DISPATCHED to PENDING"]
     F --> G[Restore hospital ambulance fleet count]
     G --> H[Log rollback event to Database audit_events table]
     H --> I[Return Reverted State to UI / Console]
@@ -417,11 +461,11 @@ END FUNCTION
 ```mermaid
 flowchart TD
     A[Start: Read data/seed/*.csv] --> B[Parse Hospitals, Roads, Requests, Resources]
-    B --> C[Validate Road Physics Invariant: D_road >= D_haversine]
-    C --> D{Physics Violations > 0?}
+    B --> C["Validate Road Physics Invariant: D_road >= D_haversine"]
+    C --> D{"Physics Violations > 0?"}
     D -- Yes --> E[Reject CSV / Log Physics Error]
     D -- No --> F[Run BFS Graph Component Connectivity Check]
-    F --> G{All 50 Nodes Reachable?}
+    F --> G{"All 50 Nodes Reachable?"}
     G -- No --> H[Reject CSV / Log Disconnected Node Error]
     G -- Yes --> I[Validate Foreign Keys & Urgency Ranges]
     I --> J[Execute Batch SQLite Database Insertions]
@@ -434,10 +478,10 @@ flowchart TD
 
 | # | System Operation | Primary Algorithm | Core Data Structure | Time Complexity | Module |
 |:---:|:---|:---|:---|:---:|:---:|
-| **1** | **Triage & Dispatch** | Greedy Urgency Prioritization | `MinHeapPriorityQueue` | $O(n \log n)$ total, $O(\log n)$ per job | `algorithms` |
-| **2** | **Shortest Route** | Dijkstra's Shortest Path | `HospitalNetworkGraph` + `MinHeap` | $O((|V| + |E|) \log |V|)$ | `algorithms` |
-| **3** | **Payload Optimization** | 0/1 Knapsack Dynamic Programming | `DynamicArrayList` (DP Table) | $O(n \times W)$ pseudo-polynomial | `algorithms` |
-| **4** | **Facility Search** | Balanced Search & Hash Probing | `RedBlackTree` / `CustomHashTable` | $O(\log n)$ / expected $O(1)$ | `datastructures` |
-| **5** | **Regional Connectivity** | Kruskal / Prim MST | `DisjointSet` / `MinHeapPriorityQueue` | $O(|E| \log |E|)$ / $O(|E| \log |V|)$ | `algorithms` |
-| **6** | **Dispatch Undo Log** | LIFO State Rollback | `ArrayStack` (Audit Stack) | $O(1)$ push / pop | `datastructures` |
-| **7** | **Seed Data Ingestion** | BFS Reachability & Physics Verification | `HospitalNetworkGraph` + `Database` | $O(|V| + |E|)$ | `db` |
+| **1** | **Triage & Fleet Dispatch** | Multi-Tier Priority & Greedy Matching | `MinHeap` + `ArrayDeque` + `CircularQueue` | $O(\log n)$ / $O(1)$ per request | `scheduling` |
+| **2** | **Shortest Route Navigation** | Dijkstra's Shortest Path | `HospitalNetworkGraph` + `MinHeap` | $O((V + E) \log V)$ | `algorithms` |
+| **3** | **Payload Cargo Optimization** | 0/1 Knapsack Dynamic Programming | `DynamicArrayList` (DP Memo Matrix) | $O(n \times W)$ | `algorithms` |
+| **4** | **Facility Search & Indexing** | Balanced Tree Search & Hash Probing | `RedBlackTree` / `CustomHashTable` | $O(\log n)$ / expected $O(1)$ | `datastructures` |
+| **5** | **Regional Connectivity MST** | Kruskal / Prim Spanning Tree | `DisjointSet` / `MinHeapPriorityQueue` | $O(E \log E)$ / $O(E \log V)$ | `algorithms` |
+| **6** | **Dispatch Undo & Audit Trail** | LIFO State & Fleet Rollback | `ArrayStack` (Audit Stack) | $O(1)$ push / pop | `datastructures` |
+| **7** | **Seed Data Ingestion Pipeline** | BFS Reachability & Physics Verification | `HospitalNetworkGraph` + SQLite DB | $O(V + E)$ | `db` |
