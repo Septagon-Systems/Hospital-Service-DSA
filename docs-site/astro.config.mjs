@@ -110,6 +110,7 @@ export default defineConfig({
             {
               label: 'Graph Routing & MST',
               items: [
+                { label: 'BFS & DFS Graph Traversal', slug: 'algorithms/graph/bfs-dfs' },
                 { label: 'Dijkstra Shortest Path', slug: 'algorithms/graph/dijkstra' },
                 { label: 'Kruskal & Prim MST', slug: 'algorithms/graph/kruskal-prim' },
               ],
