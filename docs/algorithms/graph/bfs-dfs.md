@@ -13,6 +13,16 @@ The test graph contains five vertices (0–4) with the following connections:
 - 2 → 4
 
 Traversal begins from vertex 0.
+## Graph Diagram
+
+The graph used for the BFS and DFS traversal tests is:
+
+```text
+        0
+       / \
+      1   2
+      |   |
+      3   4
 
 ## BFS Trace Table
 
