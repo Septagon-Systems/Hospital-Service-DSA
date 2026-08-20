@@ -3,7 +3,7 @@ title: "Trace Table 4: Dijkstra's Shortest Path Algorithm"
 ---
 
 ## Algorithm Overview
-Dijkstra's single-source shortest path algorithm computes the minimum travel distances and routes across the hospital road network using [`MinHeapPriorityQueue`](file:///home/ahorts/Documents/Projects/308/Hospital-Service-DSA/datastructures/src/main/java/edu/ug/dcit308/hospital/ds/queue/MinHeapPriorityQueue.java) as the frontier structure.
+Dijkstra's single-source shortest path algorithm computes the minimum travel distances and routes across the hospital road network using `MinHeapPriorityQueue` as the frontier structure.
 
 ## Sample Graph Configuration
 
