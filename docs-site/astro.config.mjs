@@ -47,6 +47,7 @@ export default defineConfig({
         {
           label: 'Project Overview',
           items: [
+            { label: 'Dataset & Local Context', slug: 'overview/data-acquisition' },
             { label: 'Weekly Development Log', slug: 'overview/dev-log' },
             { label: 'Academic References', slug: 'overview/references' },
           ],
@@ -70,6 +71,7 @@ export default defineConfig({
               items: [
                 { label: 'Binary Search Tree (BST)', slug: 'data-structures/trees/binary-search-tree' },
                 { label: 'Red-Black Tree', slug: 'data-structures/trees/red-black-tree' },
+                { label: 'B-Tree Multi-Way Search Tree', slug: 'data-structures/trees/b-tree' },
                 { label: 'Min-Heap Priority Queue', slug: 'data-structures/trees/min-heap-dispatch' },
               ],
             },
@@ -109,6 +111,7 @@ export default defineConfig({
             {
               label: 'Graph Routing & MST',
               items: [
+                { label: 'BFS & DFS Graph Traversal', slug: 'algorithms/graph/bfs-dfs' },
                 { label: 'Dijkstra Shortest Path', slug: 'algorithms/graph/dijkstra' },
                 { label: 'Kruskal & Prim MST', slug: 'algorithms/graph/kruskal-prim' },
               ],
