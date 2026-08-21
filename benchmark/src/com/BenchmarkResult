@@ -1,0 +1,24 @@
+package com.hospital.benchmark;
+
+public class BenchmarkResult {
+    private String algorithmName;
+    private int inputSize;
+    private int runNumber;
+    private long executionTimeNs;
+    private long memoryUsedKb;
+
+    public BenchmarkResult(String algorithmName, int inputSize, int runNumber, long executionTimeNs, long memoryUsedKb) {
+        this.algorithmName = algorithmName;
+        this.inputSize = inputSize;
+        this.runNumber = runNumber;
+        this.executionTimeNs = executionTimeNs;
+        this.memoryUsedKb = memoryUsedKb;
+    }
+
+    // Getters
+    public String getAlgorithmName() { return algorithmName; }
+    public int getInputSize() { return inputSize; }
+    public int getRunNumber() { return runNumber; }
+    public long getExecutionTimeNs() { return executionTimeNs; }
+    public long getMemoryUsedKb() { return memoryUsedKb; }
+}
