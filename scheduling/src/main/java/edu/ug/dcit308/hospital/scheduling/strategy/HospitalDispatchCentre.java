@@ -200,6 +200,11 @@ public final class HospitalDispatchCentre {
     public int getPendingNormalCount()      { return normalQueue.size(); }
     public int getTotalPendingCount()       { return urgentQueue.size() + preemptionDeque.size() + normalQueue.size(); }
     public ResourcePool getResourcePool()   { return resourcePool; }
+    public MinHeapPriorityQueue<ServiceRequest> getUrgentQueue()     { return urgentQueue; }
+    public ArrayDeque<ServiceRequest>           getPreemptionDeque() { return preemptionDeque; }
+    public CircularQueue<ServiceRequest>        getNormalQueue()     { return normalQueue; }
+    public ArrayStack<ActionRecord>             getActionStack()     { return actionStack; }
+    public void                                 clearActionStack()   { actionStack.clear(); }
 
     // ------------------------------------------------------------------ //
     //  Private helpers                                                    //
