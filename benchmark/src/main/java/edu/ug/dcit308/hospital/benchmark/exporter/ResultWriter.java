@@ -5,21 +5,33 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import edu.ug.dcit308.hospital.benchmark.core.BenchmarkResult;
 
 /**
- * Exporter utility that writes {@link BenchmarkResult} lists to CSV files.
+ * Exporter utility that writes {@link BenchmarkResult} lists to CSV files in append mode.
  */
 public final class ResultWriter {
 
-    public static final String CSV_HEADER = "algorithm_name,input_size,run_number,execution_time_ns,memory_used_kb";
+    public static final String DEFAULT_CSV_PATH = Paths.get("data", "results", "algorithm_runs.csv").toString();
+    public static final String CSV_HEADER = "run_id,run_timestamp,algorithm_name,input_size,run_number,execution_time_ns,memory_used_kb";
 
     private ResultWriter() {}
 
     /**
-     * Exports the given benchmark results to the specified CSV file path.
+     * Exports the given benchmark results to the default CSV location (data/results/algorithm_runs.csv) in append mode.
+     *
+     * @param results list of benchmark results to export
+     * @throws IOException if writing fails
+     */
+    public static void exportToCsv(List<BenchmarkResult> results) throws IOException {
+        exportToCsv(results, DEFAULT_CSV_PATH);
+    }
+
+    /**
+     * Exports the given benchmark results to the specified CSV file path in append mode.
      *
      * @param results list of benchmark results to export
      * @param filePath target file destination
@@ -39,9 +51,13 @@ public final class ResultWriter {
             parentDir.mkdirs();
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile))) {
-            writer.write(CSV_HEADER);
-            writer.newLine();
+        boolean isNewFile = !targetFile.exists() || targetFile.length() == 0;
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, true))) {
+            if (isNewFile) {
+                writer.write(CSV_HEADER);
+                writer.newLine();
+            }
 
             for (BenchmarkResult result : results) {
                 writer.write(result.toCsvRow());
@@ -52,6 +68,10 @@ public final class ResultWriter {
 
     /**
      * Convenience overload accepting a {@link Path}.
+     *
+     * @param results list of benchmark results to export
+     * @param path target file destination path
+     * @throws IOException if writing fails
      */
     public static void exportToCsv(List<BenchmarkResult> results, Path path) throws IOException {
         if (path == null) {
