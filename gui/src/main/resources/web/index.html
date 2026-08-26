@@ -312,12 +312,13 @@
             <h3>Empirical Asymptotic Performance Lab</h3>
             <div class="benchmark-controls">
               <select id="benchmark-algo-select" class="custom-select">
+                <option value="SearchComparison">Search Comparison: Linear vs Binary (4 Graphs)</option>
                 <option value="QuickSort">QuickSort (O(N log N))</option>
                 <option value="MergeSort">MergeSort (O(N log N))</option>
                 <option value="InsertionSort">InsertionSort (O(N²))</option>
                 <option value="SelectionSort">SelectionSort (O(N²))</option>
-                <option value="BinarySearch">BinarySearch (O(log N))</option>
                 <option value="LinearSearch">LinearSearch (O(N))</option>
+                <option value="BinarySearch">BinarySearch (O(log N))</option>
                 <option value="CustomHashTable-Lookup">CustomHashTable Lookup (O(1))</option>
                 <option value="CustomHashTable-PutGet">CustomHashTable Bulk Put/Get (O(N))</option>
                 <option value="RedBlackTree-InsertSearch">RedBlackTree (O(log N))</option>
@@ -329,8 +330,34 @@
             </div>
           </div>
 
-          <div class="chart-container">
+          <div id="benchmark-loading-banner" class="benchmark-loading-banner" style="display: none;">
+            <span class="spinner"></span>
+            <span id="benchmark-loading-text">Executing empirical benchmark across input scales (N)...</span>
+          </div>
+
+          <!-- Single Chart View for Sorting, Trees, HashTables, Graph -->
+          <div id="single-chart-container" class="chart-container">
             <canvas id="benchmarkChart"></canvas>
+          </div>
+
+          <!-- 4-Quadrant Comparison View for Search Algorithms -->
+          <div id="search-quadrants-container" class="search-quadrants-grid hidden">
+            <div class="quadrant-card">
+              <h4>1. Best Case (First Element · Index 0) <span class="unit-badge">Microseconds (µs)</span></h4>
+              <div class="quadrant-chart-wrapper"><canvas id="chartQ1"></canvas></div>
+            </div>
+            <div class="quadrant-card">
+              <h4>2. First Quarter (Index N/4) <span class="unit-badge">Microseconds (µs)</span></h4>
+              <div class="quadrant-chart-wrapper"><canvas id="chartQ2"></canvas></div>
+            </div>
+            <div class="quadrant-card">
+              <h4>3. Average Case (Middle Element · Index N/2) <span class="unit-badge">Microseconds (µs)</span></h4>
+              <div class="quadrant-chart-wrapper"><canvas id="chartQ3"></canvas></div>
+            </div>
+            <div class="quadrant-card">
+              <h4>4. Worst Case (Last Element · Index N-1) <span class="unit-badge">Microseconds (µs)</span></h4>
+              <div class="quadrant-chart-wrapper"><canvas id="chartQ4"></canvas></div>
+            </div>
           </div>
 
           <div id="benchmark-results-table-card" class="result-card hidden">

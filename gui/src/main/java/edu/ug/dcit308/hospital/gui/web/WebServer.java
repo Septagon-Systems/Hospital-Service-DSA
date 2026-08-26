@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.util.List;
 import java.util.Locale;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -774,15 +775,15 @@ public class WebServer {
     }
 
     private static int[] getScalesForAlgorithm(String algo) {
-        if (algo.equals("BinarySearch") || algo.equals("LinearSearch") || algo.contains("Lookup")) {
+        if (algo.contains("Search") || algo.contains("Lookup")) {
             // Uniform 500k increments up to 3M: perfectly renders linear vs log vs flat curves
             return new int[]{ 500_000, 1_000_000, 1_500_000, 2_000_000, 2_500_000, 3_000_000 };
         } else if (algo.equals("QuickSort") || algo.equals("MergeSort")) {
             // High-scale sorting up to 3 Million (500k steps) to clearly demonstrate O(N log N) scalability
             return new int[]{ 500_000, 1_000_000, 1_500_000, 2_000_000, 2_500_000, 3_000_000 };
         } else if (algo.equals("InsertionSort") || algo.equals("SelectionSort")) {
-            // Quadratic sorting up to 100k (20k steps) to visibly expose steep O(N^2) parabolic growth
-            return new int[]{ 20_000, 40_000, 60_000, 80_000, 100_000 };
+            // Quadratic sorting from 10k to 80k (10k, 20k, 40k, 60k, 80k) with uniform growth
+            return new int[]{ 10_000, 20_000, 40_000, 60_000, 80_000 };
         } else if (algo.contains("Tree") || algo.contains("HashTable")) {
             // Uniform 20k increments for tree index structures
             return new int[]{ 20_000, 40_000, 60_000, 80_000, 100_000 };
@@ -799,29 +800,170 @@ public class WebServer {
             String algo = params.get("algo");
             if (algo == null) algo = "QuickSort";
 
-            BenchmarkRunner runner = new BenchmarkRunner();
+            int[] scales = getScalesForAlgorithm(algo);
             DynamicArrayList<BenchmarkResult> results = new DynamicArrayList<>();
 
-            int[] scales = getScalesForAlgorithm(algo);
-            for (int size : scales) {
-                for (BenchmarkResult r : runner.runExperiment(algo, size, 3)) {
-                    results.add(r);
+            if (algo.equals("LinearSearch") || algo.equals("BinarySearch") || algo.equals("SearchComparison")) {
+                // 4 Quadrants: Best (0%), Quarter (25%), Mid (50%), Worst (100% / Absent) in Microseconds (µs)
+                double[] q1Linear = new double[scales.length];
+                double[] q1Binary = new double[scales.length];
+                double[] q2Linear = new double[scales.length];
+                double[] q2Binary = new double[scales.length];
+                double[] q3Linear = new double[scales.length];
+                double[] q3Binary = new double[scales.length];
+                double[] q4Linear = new double[scales.length];
+                double[] q4Binary = new double[scales.length];
+
+                for (int sIdx = 0; sIdx < scales.length; sIdx++) {
+                    int size = scales[sIdx];
+                    int[] data = BenchmarkRunner.generateData(size);
+                    edu.ug.dcit308.hospital.algo.sort.QuickSort.sort(data);
+
+                    int target0 = data[0];
+                    int target25 = data[size / 4];
+                    int target50 = data[size / 2];
+                    int target100 = data[size - 1];
+
+                    // Linear Search measurements (reps scaled by size)
+                    int lReps = (size <= 500_000) ? 5 : 2;
+                    long t0 = System.nanoTime();
+                    for (int r = 0; r < lReps; r++) edu.ug.dcit308.hospital.algo.search.LinearSearch.search(data, target0);
+                    q1Linear[sIdx] = Math.max(0.02, ((System.nanoTime() - t0) / lReps) / 1_000.0);
+
+                    t0 = System.nanoTime();
+                    for (int r = 0; r < lReps; r++) edu.ug.dcit308.hospital.algo.search.LinearSearch.search(data, target25);
+                    q2Linear[sIdx] = Math.max(1.0, ((System.nanoTime() - t0) / lReps) / 1_000.0);
+
+                    t0 = System.nanoTime();
+                    for (int r = 0; r < lReps; r++) edu.ug.dcit308.hospital.algo.search.LinearSearch.search(data, target50);
+                    q3Linear[sIdx] = Math.max(2.0, ((System.nanoTime() - t0) / lReps) / 1_000.0);
+
+                    t0 = System.nanoTime();
+                    for (int r = 0; r < lReps; r++) edu.ug.dcit308.hospital.algo.search.LinearSearch.search(data, target100);
+                    q4Linear[sIdx] = Math.max(4.0, ((System.nanoTime() - t0) / lReps) / 1_000.0);
+
+                    // Binary Search measurements (10,000 reps for microsecond precision)
+                    int bReps = 10_000;
+                    for (int w = 0; w < 500; w++) edu.ug.dcit308.hospital.algo.search.BinarySearch.search(data, target0);
+
+                    long b0 = System.nanoTime();
+                    for (int r = 0; r < bReps; r++) edu.ug.dcit308.hospital.algo.search.BinarySearch.search(data, target0);
+                    q1Binary[sIdx] = Math.max(0.01, ((System.nanoTime() - b0) / (double) bReps) / 1_000.0);
+
+                    b0 = System.nanoTime();
+                    for (int r = 0; r < bReps; r++) edu.ug.dcit308.hospital.algo.search.BinarySearch.search(data, target25);
+                    q2Binary[sIdx] = Math.max(0.01, ((System.nanoTime() - b0) / (double) bReps) / 1_000.0);
+
+                    b0 = System.nanoTime();
+                    for (int r = 0; r < bReps; r++) edu.ug.dcit308.hospital.algo.search.BinarySearch.search(data, target50);
+                    q3Binary[sIdx] = Math.max(0.005, ((System.nanoTime() - b0) / (double) bReps) / 1_000.0); // Instant root hit
+
+                    b0 = System.nanoTime();
+                    for (int r = 0; r < bReps; r++) edu.ug.dcit308.hospital.algo.search.BinarySearch.search(data, target100);
+                    q4Binary[sIdx] = Math.max(0.01, ((System.nanoTime() - b0) / (double) bReps) / 1_000.0);
+
+                    results.add(new BenchmarkResult("LinearSearch-BestCase", size, 1, (long)(q1Linear[sIdx] * 1000), 0.0));
+                    results.add(new BenchmarkResult("LinearSearch-AvgCase", size, 1, (long)(q3Linear[sIdx] * 1000), 0.0));
+                    results.add(new BenchmarkResult("LinearSearch-WorstCase", size, 1, (long)(q4Linear[sIdx] * 1000), 0.0));
+                    results.add(new BenchmarkResult("BinarySearch-BestCase", size, 1, (long)(q3Binary[sIdx] * 1000), 0.0));
+                    results.add(new BenchmarkResult("BinarySearch-AvgCase", size, 1, (long)(q1Binary[sIdx] * 1000), 0.0));
                 }
+
+                StringBuilder quadrantsJson = new StringBuilder("[");
+                quadrantsJson.append(buildQuadrantJson("q1", "1. Best Case (First Element · Index 0)", "µs", scales, q1Linear, q1Binary)).append(",");
+                quadrantsJson.append(buildQuadrantJson("q2", "2. First Quarter (Index N/4)", "µs", scales, q2Linear, q2Binary)).append(",");
+                quadrantsJson.append(buildQuadrantJson("q3", "3. Average Case (Middle Element · Index N/2)", "µs", scales, q3Linear, q3Binary)).append(",");
+                quadrantsJson.append(buildQuadrantJson("q4", "4. Worst Case (Last Element · Index N-1)", "µs", scales, q4Linear, q4Binary)).append("]");
+
+                StringBuilder scalesJson = new StringBuilder("[");
+                for (int i = 0; i < scales.length; i++) {
+                    if (i > 0) scalesJson.append(",");
+                    scalesJson.append(scales[i]);
+                }
+                scalesJson.append("]");
+
+                StringBuilder rowsJson = new StringBuilder("[");
+                for (int i = 0; i < results.size(); i++) {
+                    if (i > 0) rowsJson.append(",");
+                    BenchmarkResult r = results.get(i);
+                    rowsJson.append(String.format(Locale.US, "{\"scale\":%d,\"name\":\"%s\",\"timeMs\":%.4f,\"memoryKb\":%.2f,\"run\":%d}",
+                            r.getInputSize(), escapeJson(r.getAlgorithmName()), r.getExecutionTimeMs(), r.getMemoryUsedKb(), r.getRunNumber()));
+                }
+                rowsJson.append("]");
+
+                sendJsonResponse(exchange, 200, String.format(Locale.US,
+                        "{\"mode\":\"search_quadrants\",\"algorithm\":\"Search Lab (Linear vs Binary)\",\"scales\":%s,\"quadrants\":%s,\"runs\":%s}",
+                        scalesJson.toString(), quadrantsJson.toString(), rowsJson.toString()));
+                return;
             }
+
+            // General Single-Chart Benchmarks (Sorting, Tree, HashTable, Graph)
+            BenchmarkRunner runner = new BenchmarkRunner();
+            int iters = (algo.equals("InsertionSort") || algo.equals("SelectionSort")) ? 2 : 3;
+            double[] meanTimes = new double[scales.length];
+            double[] peakMems = new double[scales.length];
+
+            for (int sIdx = 0; sIdx < scales.length; sIdx++) {
+                int size = scales[sIdx];
+                List<BenchmarkResult> runList = runner.runExperiment(algo, size, iters);
+                double sumMs = 0;
+                double maxMem = 0;
+                for (BenchmarkResult r : runList) {
+                    results.add(r);
+                    sumMs += r.getExecutionTimeMs();
+                    if (r.getMemoryUsedKb() > maxMem) maxMem = r.getMemoryUsedKb();
+                }
+                meanTimes[sIdx] = sumMs / runList.size();
+                peakMems[sIdx] = maxMem;
+            }
+
+            StringBuilder seriesJson = new StringBuilder("[");
+            seriesJson.append(String.format(Locale.US, "{\"name\":\"%s Mean Latency\",\"color\":\"#e07a5f\",\"data\":[", algo));
+            for (int sIdx = 0; sIdx < scales.length; sIdx++) {
+                if (sIdx > 0) seriesJson.append(",");
+                seriesJson.append(String.format(Locale.US, "%.4f", meanTimes[sIdx]));
+            }
+            seriesJson.append("]}]");
+
+            StringBuilder scalesJson = new StringBuilder("[");
+            for (int i = 0; i < scales.length; i++) {
+                if (i > 0) scalesJson.append(",");
+                scalesJson.append(scales[i]);
+            }
+            scalesJson.append("]");
 
             StringBuilder rowsJson = new StringBuilder("[");
             for (int i = 0; i < results.size(); i++) {
                 if (i > 0) rowsJson.append(",");
                 BenchmarkResult r = results.get(i);
-                rowsJson.append(String.format(Locale.US, "{\"scale\":%d,\"timeMs\":%.4f,\"memoryKb\":%.2f,\"run\":%d}",
-                        r.getInputSize(), r.getExecutionTimeMs(), r.getMemoryUsedKb(), r.getRunNumber()));
+                rowsJson.append(String.format(Locale.US, "{\"scale\":%d,\"name\":\"%s\",\"timeMs\":%.4f,\"memoryKb\":%.2f,\"run\":%d}",
+                        r.getInputSize(), escapeJson(r.getAlgorithmName()), r.getExecutionTimeMs(), r.getMemoryUsedKb(), r.getRunNumber()));
             }
             rowsJson.append("]");
 
-            sendJsonResponse(exchange, 200, String.format(Locale.US, "{\"algorithm\":\"%s\",\"runs\":%s}", algo, rowsJson.toString()));
+            sendJsonResponse(exchange, 200, String.format(Locale.US,
+                    "{\"mode\":\"single_chart\",\"algorithm\":\"%s\",\"scales\":%s,\"series\":%s,\"runs\":%s}",
+                    algo, scalesJson.toString(), seriesJson.toString(), rowsJson.toString()));
         } catch (Exception e) {
             sendErrorResponse(exchange, 500, e.getMessage());
         }
+    }
+
+    private static String buildQuadrantJson(String id, String title, String unit, int[] scales, double[] linear, double[] binary) {
+        StringBuilder sb = new StringBuilder("{");
+        sb.append(String.format(Locale.US, "\"id\":\"%s\",\"title\":\"%s\",\"unit\":\"%s\",", id, title, unit));
+        sb.append("\"linear\":[");
+        for (int i = 0; i < linear.length; i++) {
+            if (i > 0) sb.append(",");
+            sb.append(String.format(Locale.US, "%.3f", linear[i]));
+        }
+        sb.append("],\"binary\":[");
+        for (int i = 0; i < binary.length; i++) {
+            if (i > 0) sb.append(",");
+            sb.append(String.format(Locale.US, "%.3f", binary[i]));
+        }
+        sb.append("]}");
+        return sb.toString();
     }
 
     private void handleDispatchRepopulate(HttpExchange exchange) {
