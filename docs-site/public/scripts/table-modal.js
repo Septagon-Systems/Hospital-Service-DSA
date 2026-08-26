@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollFloatingHeader();
   initMobileLogoSwitch();
   initSidebarScrollWatcher();
+  initMermaidDiagrams();
 });
 
 // Re-run on client-side page transitions (Astro view transitions)
@@ -14,6 +15,7 @@ document.addEventListener('astro:page-load', () => {
   initScrollFloatingHeader();
   initMobileLogoSwitch();
   initSidebarScrollWatcher();
+  initMermaidDiagrams();
 });
 
 // ---------------------------------------------------- //
@@ -371,3 +373,78 @@ function openTableModal(originalTable) {
   };
   document.addEventListener('keydown', escHandler);
 }
+
+// ---------------------------------------------------- //
+// DYNAMIC CLIENT-SIDE MERMAID SVG DIAGRAM RENDERER     //
+// ---------------------------------------------------- //
+async function initMermaidDiagrams() {
+  const mermaidBlocks = document.querySelectorAll('pre[data-language="mermaid"]');
+  if (mermaidBlocks.length === 0) return;
+
+  // Function to get mermaid instance
+  const getMermaid = async () => {
+    if (window.mermaid) return window.mermaid;
+    try {
+      const module = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+      return module.default;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const mermaid = await getMermaid();
+  if (!mermaid) return;
+
+  const isDark = document.documentElement.dataset.theme === 'dark' || document.documentElement.classList.contains('theme-dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  try {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: isDark ? 'dark' : 'default',
+      securityLevel: 'loose',
+      fontFamily: 'inherit',
+    });
+  } catch (e) {
+    // Already initialized
+  }
+
+  for (let i = 0; i < mermaidBlocks.length; i++) {
+    const pre = mermaidBlocks[i];
+    if (pre.__mermaidRendered) continue;
+    pre.__mermaidRendered = true;
+
+    // Expressive Code splits code into div.ec-line spans; extract them accurately
+    const lineElements = pre.querySelectorAll('.ec-line');
+    let code = '';
+    if (lineElements.length > 0) {
+      code = Array.from(lineElements).map(el => el.textContent).join('\n');
+    } else {
+      code = pre.textContent || '';
+    }
+
+    if (!code.trim()) continue;
+
+    const container = document.createElement('div');
+    container.className = 'mermaid-diagram-container';
+    container.style.display = 'flex';
+    container.style.justifyContent = 'center';
+    container.style.alignItems = 'center';
+    container.style.padding = '1.5rem 1rem';
+    container.style.margin = '1.5rem 0';
+    container.style.background = isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)';
+    container.style.borderRadius = '0.5rem';
+    container.style.border = '1px solid var(--sl-color-hairline)';
+    container.style.overflowX = 'auto';
+
+    try {
+      const id = `mermaid-svg-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 5)}`;
+      const { svg } = await mermaid.render(id, code.trim());
+      container.innerHTML = svg;
+      const figure = pre.closest('figure') || pre;
+      figure.parentNode.replaceChild(container, figure);
+    } catch (err) {
+      console.warn('Mermaid rendering error for diagram:', err);
+    }
+  }
+}
+
