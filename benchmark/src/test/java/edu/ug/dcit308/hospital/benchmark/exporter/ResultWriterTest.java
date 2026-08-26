@@ -1,6 +1,5 @@
 package edu.ug.dcit308.hospital.benchmark.exporter;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,8 +22,8 @@ class ResultWriterTest {
         Path csvPath = tempDir.resolve("results.csv");
 
         List<BenchmarkResult> results = new ArrayList<>();
-        results.add(new BenchmarkResult("QuickSort", 100, 1, 50000L, 10.5));
-        results.add(new BenchmarkResult("QuickSort", 100, 2, 48000L, 10.2));
+        results.add(new BenchmarkResult("run-1", "2026-08-26T10:00:00Z", "QuickSort", 100, 1, 50000L, 10.5));
+        results.add(new BenchmarkResult("run-2", "2026-08-26T10:00:01Z", "QuickSort", 100, 2, 48000L, 10.2));
 
         ResultWriter.exportToCsv(results, csvPath);
 
@@ -33,8 +32,8 @@ class ResultWriterTest {
 
         assertEquals(3, lines.size());
         assertEquals(ResultWriter.CSV_HEADER, lines.get(0));
-        assertTrue(lines.get(1).startsWith("QuickSort,100,1,50000,"));
-        assertTrue(lines.get(2).startsWith("QuickSort,100,2,48000,"));
+        assertEquals("run-1,2026-08-26T10:00:00Z,QuickSort,100,1,50000,10.50", lines.get(1));
+        assertEquals("run-2,2026-08-26T10:00:01Z,QuickSort,100,2,48000,10.20", lines.get(2));
     }
 
     @Test
