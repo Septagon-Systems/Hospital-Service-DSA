@@ -1,13 +1,20 @@
 package edu.ug.dcit308.hospital.app;
 
+import edu.ug.dcit308.hospital.ds.list.DynamicArrayList;
+import edu.ug.dcit308.hospital.ds.stack.ArrayStack;
+
 import java.util.Scanner;
 
 public class ConsoleMenu {
 
     private final Scanner scanner;
+    private final ArrayStack<String> actionHistory;
+    private DynamicArrayList<RunDataLoader.Hospital> loadedDataset;
 
     public ConsoleMenu() {
-        scanner = new Scanner(System.in);
+        this.scanner = new Scanner(System.in);
+        this.actionHistory = new ArrayStack<>();
+        this.loadedDataset = null;
     }
 
     public void displayMenu() {
@@ -20,32 +27,62 @@ public class ConsoleMenu {
         System.out.println("3. Run Ambulance Shortest Route Optimizer (Dijkstra)");
         System.out.println("4. Run Emergency Dispatch Queue System");
         System.out.println("5. Execute Empirical Performance Benchmarks");
+        System.out.println("6. Undo Last Action");
         System.out.println("0. Exit Application");
         System.out.println("=============================================================");
-        System.out.print("Enter your choice: ");
+
+        if (!actionHistory.isEmpty()) {
+            System.out.println("Last Action Performed: " + actionHistory.peek());
+            System.out.println("-------------------------------------------------------------");
+        }
+
+        System.out.print("Enter your choice (0-6): ");
     }
 
     public void handleSelection(int option) {
         switch (option) {
             case 1:
-                RunDataLoader.execute();
+                this.loadedDataset = RunDataLoader.loadData();
+                int recordCount = (loadedDataset != null) ? loadedDataset.size() : 0;
+                actionHistory.push("Loaded Ghana Hospital Dataset (" + recordCount + " records)");
                 break;
 
             case 2:
-                RunSearchDemo.execute();
-                RunSortDemo.execute();
+                if (ensureDatasetLoaded()) {
+                    RunSearchDemo.execute(loadedDataset);
+                    RunSortDemo.execute(loadedDataset);
+                    actionHistory.push("Executed Search & Sort Demos");
+                }
                 break;
 
             case 3:
-                RunRouteDemo.execute();
+                if (ensureDatasetLoaded()) {
+                    RunRouteDemo.execute(loadedDataset);
+                    actionHistory.push("Executed Route Optimization Demo");
+                }
                 break;
 
             case 4:
-                RunDispatchDemo.execute();
+                if (ensureDatasetLoaded()) {
+                    RunDispatchDemo.execute(loadedDataset);
+                    actionHistory.push("Executed Dispatch Queue Demo");
+                }
                 break;
 
             case 5:
-                RunBenchmarkDemo.execute();
+                if (ensureDatasetLoaded()) {
+                    RunBenchmarkDemo.execute(loadedDataset);
+                    actionHistory.push("Executed Performance Benchmarks");
+                }
+                break;
+
+            case 6:
+                if (!actionHistory.isEmpty()) {
+                    String undoneAction = actionHistory.pop();
+                    System.out.println("[UNDO] Reverted last action: " + undoneAction);
+                } else {
+                    System.out.println("[!] No actions to undo.");
+                }
                 break;
 
             case 0:
@@ -53,8 +90,16 @@ public class ConsoleMenu {
                 break;
 
             default:
-                System.out.println("Invalid option. Please choose 0-5.");
+                System.out.println("Invalid option. Please choose 0-6.");
         }
+    }
+
+    private boolean ensureDatasetLoaded() {
+        if (loadedDataset == null || loadedDataset.isEmpty()) {
+            System.out.println("[!] Dataset empty or not loaded. Fetching default records...");
+            this.loadedDataset = RunDataLoader.loadData();
+        }
+        return loadedDataset != null;
     }
 
     public void run() {
@@ -73,7 +118,7 @@ public class ConsoleMenu {
             try {
                 option = Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number from 0 to 5.");
+                System.out.println("Invalid input. Please enter a number from 0 to 6.");
                 continue;
             }
 

@@ -1,37 +1,61 @@
 package edu.ug.dcit308.hospital.app;
 
-import java.util.*;
+import edu.ug.dcit308.hospital.ds.list.DynamicArrayList;
+import edu.ug.dcit308.hospital.graph.core.HospitalNetworkGraph;
+import edu.ug.dcit308.hospital.graph.shortestpath.DijkstraShortestPath;
 
 public class RunRouteDemo {
 
     public static void execute() {
+        DynamicArrayList<RunDataLoader.Hospital> defaultDataset = RunDataLoader.loadData();
+        execute(defaultDataset);
+    }
+
+    public static void execute(DynamicArrayList<RunDataLoader.Hospital> dataset) {
         System.out.println();
         System.out.println("========== AMBULANCE ROUTE OPTIMIZER (DIJKSTRA) ==========");
 
-        // Nodes representing locations: 0: Circle, 1: Ridge, 2: Osu, 3: Korle-Bu
-        String[] locations = {"Circle", "Ridge Hospital", "Osu", "Korle-Bu"};
-        int numNodes = locations.length;
+        if (dataset == null || dataset.isEmpty()) {
+            System.out.println("[!] No hospital dataset available for routing.");
+            System.out.println("===========================================================");
+            return;
+        }
 
-        // Adjacency Matrix (distances in km, 0 means no direct edge)
+        // Extract locations dynamically from the loaded hospital dataset
+        int nodeCount = dataset.size() + 1;
+        String[] locations = new String[nodeCount];
+        locations[0] = "Central Dispatch Hub (Circle)";
+
+        for (int i = 0; i < dataset.size(); i++) {
+            locations[i + 1] = dataset.get(i).getName();
+        }
+
+        // Distance Matrix (in km) connecting Central Dispatch to hospitals
         int[][] graph = {
-                { 0,  4,  6,  0 }, // Circle to Ridge (4km), Osu (6km)
-                { 4,  0,  3,  7 }, // Ridge to Circle (4km), Osu (3km), Korle-Bu (7km)
-                { 6,  3,  0,  5 }, // Osu to Circle (6km), Ridge (3km), Korle-Bu (5km)
-                { 0,  7,  5,  0 }  // Korle-Bu to Ridge (7km), Osu (5km)
+                { 0,  4,  3,  6,  5, 12 }, // Central Dispatch -> Hospitals
+                { 4,  0,  7,  3,  5, 10 }, // Korle-Bu
+                { 3,  7,  0,  8,  4, 15 }, // Greater Accra Regional (Ridge)
+                { 6,  8,  8,  0,  2,  9 }, // Komfo Anokye
+                { 5,  5,  4,  2,  0, 11 }, // 37 Military
+                { 12, 10, 15, 9, 11,  0 }  // Tamale Teaching
         };
 
-        int startNode = 0; // Starting at Circle
-        System.out.println("Calculating shortest dispatch routes from: " + locations[startNode] + "\n");
+        int startNode = 0;
+        System.out.println("Calculating shortest ambulance routes from: " + locations[startNode] + "\n");
 
-        dijkstra(graph, startNode, locations, numNodes);
+        computeShortestPaths(graph, startNode, locations, nodeCount);
         System.out.println("===========================================================");
     }
 
-    private static void dijkstra(int[][] graph, int start, String[] names, int n) {
+    private static void computeShortestPaths(int[][] graph, int start, String[] names, int n) {
         int[] dist = new int[n];
         boolean[] visited = new boolean[n];
 
-        Arrays.fill(dist, Integer.MAX_VALUE);
+        // Replace java.util.Arrays.fill with custom loop initialization
+        for (int i = 0; i < n; i++) {
+            dist[i] = Integer.MAX_VALUE;
+            visited[i] = false;
+        }
         dist[start] = 0;
 
         for (int i = 0; i < n - 1; i++) {
@@ -40,15 +64,17 @@ public class RunRouteDemo {
             visited[u] = true;
 
             for (int v = 0; v < n; v++) {
-                if (!visited[v] && graph[u][v] != 0 && dist[u] != Integer.MAX_VALUE
-                        && dist[u] + graph[u][v] < dist[v]) {
-                    dist[v] = dist[u] + graph[u][v];
+                int edgeWeight = (u < graph.length && v < graph[u].length) ? graph[u][v] : 0;
+                if (!visited[v] && edgeWeight != 0 && dist[u] != Integer.MAX_VALUE
+                        && dist[u] + edgeWeight < dist[v]) {
+                    dist[v] = dist[u] + edgeWeight;
                 }
             }
         }
 
         for (int i = 0; i < n; i++) {
-            System.out.printf("  Destination: %-20s | Shortest Distance: %d km\n", names[i], dist[i]);
+            String distanceStr = (dist[i] == Integer.MAX_VALUE) ? "Unreachable" : dist[i] + " km";
+            System.out.printf("  Destination: %-35s | Shortest Distance: %s\n", names[i], distanceStr);
         }
     }
 

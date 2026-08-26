@@ -8,8 +8,6 @@ import edu.ug.dcit308.hospital.app.util.StudentParameterCalculator;
 public class Main {
 
     public static void main(String[] args) {
-
-        System.out.println("=============================================================");
         System.out.println("   GHANA SMART HOSPITAL OPERATIONS OPTIMIZER (DCIT 204/308)  ");
         System.out.println("=============================================================");
 
