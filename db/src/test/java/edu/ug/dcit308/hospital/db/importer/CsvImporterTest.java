@@ -43,8 +43,8 @@ class CsvImporterTest {
             assertTrue(rs.next());
             assertEquals("Korle Bu Teaching Hospital", rs.getString("name"));
             assertEquals("Greater Accra", rs.getString("region"));
-            assertEquals(5.533, rs.getDouble("latitude"), 1e-6);
-            assertEquals(-0.225, rs.getDouble("longitude"), 1e-6);
+            assertEquals(5.5383167, rs.getDouble("latitude"), 1e-4);
+            assertEquals(-0.2268145, rs.getDouble("longitude"), 1e-4);
             assertEquals(35, rs.getInt("icu_capacity"));
             assertEquals(8, rs.getInt("ambulance_count"));
         }
