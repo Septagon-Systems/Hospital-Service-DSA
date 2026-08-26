@@ -1,485 +1,370 @@
-# Flowcharts & Formal Pseudocode — 7 Core System Operations
+# Flowcharts & Formal Pseudocode — 5 Major System Operations
 
-**Assigned Pod**: Pod 6 / Redeemer Jerrey Kow Williams (ID: `22394472`)  
-**Reference Requirement**: DCIT 204/308 Joint Project Brief (Module M1, M2, M5, M7, M8 & Section 7)  
-**Related Issue**: GitHub Issue #40 — Create Flowcharts & Formal Pseudocode  
+Issue #40 · Project Brief Module M1 & Section 7
 
----
-
-## 1. Overview & Operational Architecture
-
-This document specifies formal pseudocode, input/output contracts, preconditions/postconditions, and interactive Mermaid flowcharts for the **seven core operations** of the **Ghana Smart Hospital Operations Optimizer**. 
-
-The operations map directly to our custom data structure library (`datastructures` module), algorithmic engines (`algorithms` module), and SQLite persistence layer (`db` module):
-
-1. **Emergency Request Triage & Fleet Dispatch** (`MinHeapPriorityQueue`, Greedy Strategy)
-2. **Shortest Hospital Route Navigation** (`HospitalNetworkGraph`, Dijkstra's Algorithm)
-3. **Emergency Supply Payload Optimization** (`0/1 Knapsack Dynamic Programming`, `CapacityOptimizer`)
-4. **Hospital Facility Search & Multi-Tier Indexing** (`RedBlackTree`, `CustomHashTable`, `BTree`)
-5. **Regional Healthcare Infrastructure Connectivity** (`KruskalMST`, `PrimMST`, `DisjointSet`)
-6. **Stack-Based Dispatch Undo & System Audit Log** (`ArrayStack`, `AuditEvent`)
-7. **Dataset Ingestion & Physical Invariant Validation Pipeline** (`GraphValidation`, `CsvImporter`)
+This document specifies formal pseudocode, input/output contracts,
+preconditions/postconditions, and a Mermaid flowchart for five major
+operations of the Ghana Smart Hospital Operations Optimizer. Pseudocode is
+written to match the real method signatures already implemented in the
+codebase where those classes exist (`HospitalNetworkGraph`,
+`MinHeapPriorityQueue`, `RedBlackTree`, `CustomHashTable`, `KruskalMST`,
+`PrimMST`, `DisjointSet`, `CapacityOptimizer`). Where an operation itself is
+not yet implemented as its own class (e.g. Dijkstra, Triage Dispatch), the
+pseudocode specifies the contract it should be built against.
 
 ---
 
-## Operation 1: Multi-Level Triage Admission & Fleet Dispatch
-**Target Module**: `scheduling` & `datastructures` · **Core Structures**: `MinHeapPriorityQueue<ServiceRequest>`, `ArrayDeque<ServiceRequest>`, `CircularQueue<ServiceRequest>`, `ArrayStack<AuditEvent>`
+## 1. Emergency Request Triage & Dispatch
+**Data structures:** `MinHeapPriorityQueue<T>` (Pod 4) · Greedy dispatch strategy (Pod 6)
 
-### 1.1 Input / Output Specification
-- **Input**:
-  - `admitRequest(request)`: Incoming `ServiceRequest` (with `patientTriageLevel`: 1=Critical, 2=Urgent, 3=Normal, and `isPreempted` flag).
-  - `serveNextRequest()`: Triggered to dispatch the highest-priority waiting job across all operational queues to available `ResourcePool` assets.
-- **Output**:
-  - `DispatchAssignment`: Assigned request paired with the cheapest compatible resource (or unfulfilled if fleet exhausted).
+### Input / Output
+- **Input:** a stream of `EmergencyRequest` objects, each with a severity
+  score (lower = more urgent) and arrival timestamp; an `ambulancesAvailable`
+  count.
+- **Output:** an ordered `DynamicArrayList<EmergencyRequest>` of dispatched
+  requests, in the order they should be sent out.
 
-### 1.2 Preconditions & Postconditions
-- **Preconditions**:
-  - `urgentQueue` (Min-Heap) orders elements with priority formula: `(triageLevel * 1000) - arrivalOrder`.
-  - `normalQueue` is a fixed-capacity FIFO `CircularQueue` for routine Triage 3 requests.
-  - `preemptionDeque` is a double-ended `ArrayDeque` for high-priority redirected transfers.
-- **Postconditions**:
-  - `urgentQueue` is **strictly checked first** before moving to `preemptionDeque` or `normalQueue`.
-  - Every successful admission or service dispatch records an `ActionRecord` onto the `ArrayStack` for $O(1)$ LIFO undo capability.
+### Preconditions
+- Each `EmergencyRequest` implements `Comparable` ordered by severity, then
+  by arrival time as a tiebreaker.
+- `ambulancesAvailable >= 0`.
 
-### 1.3 Pseudocode
-```text
-FUNCTION admitRequest(request: ServiceRequest) -> boolean
-    IF request.isPreempted():
-        success ← preemptionDeque.addFirst(request)
-        actionType ← "ADMIT_PREEMPT"
-    ELSE IF request.getPatientTriageLevel() <= 2:     // Triage 1 (Critical) & 2 (Urgent)
-        success ← urgentQueue.enqueue(request)
-        actionType ← "ADMIT_URGENT"
-    ELSE:                                           // Triage 3 (Routine)
-        success ← normalQueue.enqueue(request)
-        actionType ← "ADMIT_NORMAL"
+### Postconditions
+- The `ambulancesAvailable` most urgent (lowest severity value) requests are
+  returned first, in strict priority order.
+- Requests left in the queue remain queued for the next dispatch cycle.
+- The priority queue's heap invariant (`parent <= children`) holds after
+  every `enqueue`/`dequeue`.
 
-    IF success:
-        actionStack.push(new ActionRecord(actionType, request))
-    ELSE:
-        overflowCount ← overflowCount + 1
+### Pseudocode
+```
+FUNCTION triageDispatch(requests: List<EmergencyRequest>, ambulancesAvailable: int) -> List<EmergencyRequest>
+    queue ← new MinHeapPriorityQueue<EmergencyRequest>()
 
-    RETURN success
-END FUNCTION
+    FOR each r IN requests:
+        queue.enqueue(r)                      // O(log n) heapify-up
 
-FUNCTION serveNextRequest(resourcePool: ResourcePool) -> DispatchAssignment
-    req ← null
+    dispatched ← new DynamicArrayList<EmergencyRequest>()
+    count ← 0
 
-    // Multi-tier queue check: Urgent priority queue checked FIRST
-    IF NOT urgentQueue.isEmpty():
-        req ← urgentQueue.dequeue()                 // O(log n) pop highest triage score
-    ELSE IF NOT preemptionDeque.isEmpty():
-        req ← preemptionDeque.removeFirst()         // O(1) pop preempted transfer
-    ELSE IF NOT normalQueue.isEmpty():
-        req ← normalQueue.dequeue()                 // O(1) pop routine FIFO request
+    WHILE NOT queue.isEmpty() AND count < ambulancesAvailable:
+        next ← queue.dequeue()                // O(log n) heapify-down, returns min
+        dispatched.add(next)
+        count ← count + 1
 
-    IF req == null:
-        RETURN null                                 // All queues empty
-
-    // Greedily assign cheapest available compatible resource
-    bestResource ← resourcePool.findCheapestCompatible(req)
-    IF bestResource != null:
-        bestResource.markAssigned()
-        req.setStatus("DISPATCHED")
-
-    assignment ← new DispatchAssignment(req, bestResource)
-    actionStack.push(new ActionRecord("SERVE", assignment))
-    RETURN assignment
+    RETURN dispatched
 END FUNCTION
 ```
 
-### 1.4 Mermaid Flowchart
+### Flowchart
 ```mermaid
 flowchart TD
-    subgraph Admission Flow: admitRequest
-        A[Incoming ServiceRequest] --> B{"isPreempted == true?"}
-        B -- Yes --> C["preemptionDeque.addFirst(request)"]
-        B -- No --> D{"Triage Level <= 2?"}
-        D -- Yes: Critical / Urgent --> E["urgentQueue.enqueue(request) - MinHeap"]
-        D -- No: Routine P3 --> F["normalQueue.enqueue(request) - CircularQueue FIFO"]
-        C --> G["actionStack.push(ADMIT)"]
-        E --> G
-        F --> G
-    end
-
-    subgraph Service & Greedy Match Flow: serveNextRequest
-        H[Trigger: serveNextRequest] --> I{"urgentQueue.isEmpty()?"}
-        I -- No: Critical Pending --> J["req = urgentQueue.dequeue() - O(log n)"]
-        I -- Yes --> K{"preemptionDeque.isEmpty()?"}
-        K -- No: Preempted Pending --> L["req = preemptionDeque.removeFirst() - O(1)"]
-        K -- Yes --> M{"normalQueue.isEmpty()?"}
-        M -- No: Routine Pending --> N["req = normalQueue.dequeue() - O(1) FIFO"]
-        M -- Yes: All Empty --> O[Return null: No Requests Pending]
-        
-        J --> P[Greedy Resource Match: Find Cheapest Compatible]
-        L --> P
-        N --> P
-        P --> Q["actionStack.push(SERVE) & Return DispatchAssignment"]
-    end
+    A[Start: incoming requests] --> B[Enqueue each request into MinHeapPriorityQueue]
+    B --> C{"Queue empty OR<br/>ambulances exhausted?"}
+    C -- No --> D[Dequeue min-severity request]
+    D --> E[Add to dispatched list]
+    E --> F[Decrement available ambulances]
+    F --> C
+    C -- Yes --> G[Return dispatched list]
 ```
 
 ---
 
-## Operation 2: Shortest Hospital Route Navigation (Dijkstra)
-**Target Module**: `algorithms` · **Data Structures**: `HospitalNetworkGraph`, `MinHeapPriorityQueue<VertexDistPair>`
+## 2. Shortest Hospital Route Navigation (Dijkstra)
+**Data structures:** `HospitalNetworkGraph`, `MinHeapPriorityQueue<T>` (Pod 6)
 
-### 2.1 Input / Output Specification
-- **Input**:
-  - `graph`: `HospitalNetworkGraph` with 50 vertices and 128 highway corridors.
-  - `sourceHospitalId`: Origin hospital ID ($1 \le s \le 50$).
-  - `targetHospitalId`: Destination hospital ID ($1 \le t \le 50$).
-- **Output**:
-  - `ShortestPathResult`: Contains total driving distance ($km$), travel duration ($mins$), and the reconstructed sequence of intermediate hospital nodes.
+### Input / Output
+- **Input:** a `HospitalNetworkGraph` (weighted, non-negative edge weights),
+  a `sourceVertex` ID.
+- **Output:** `dist[]` — shortest distance from source to every vertex, and
+  `prev[]` — predecessor array for path reconstruction.
 
-### 2.2 Preconditions & Postconditions
-- **Preconditions**:
-  - All road edge weights are non-negative: $\forall (u, v) \in E, \text{weight}(u, v) \ge 0$.
-  - `sourceHospitalId` and `targetHospitalId` exist in the graph.
-- **Postconditions**:
-  - Distance array `dist[v]` represents the minimal cumulative distance from `sourceHospitalId` to all reachable nodes $v$.
-  - Predecessor array `prev[v]` allows backwards path reconstruction from destination to origin in $O(|V|)$ time.
+### Preconditions
+- All edge weights returned by `graph.getWeight(u, v)` are `>= 0` (Dijkstra
+  is invalid on graphs with negative weights).
+- `sourceVertex` is a valid vertex index, `0 <= sourceVertex < graph.vertexCount()`.
 
-### 2.3 Pseudocode
-```text
-FUNCTION findShortestRoute(graph: HospitalNetworkGraph, sourceId: int, targetId: int) -> PathResult
+### Postconditions
+- `dist[sourceVertex] == 0`.
+- For every reachable vertex `v`, `dist[v]` equals the true shortest-path
+  weight from `sourceVertex`.
+- Unreachable vertices retain `dist[v] == ∞` and `prev[v] == null`.
+- The path from `sourceVertex` to any `v` can be rebuilt by walking `prev[]`
+  backward from `v`.
+
+### Pseudocode
+```
+FUNCTION dijkstra(graph: HospitalNetworkGraph, sourceVertex: int) -> (dist[], prev[])
     n ← graph.vertexCount()
-    dist ← array of size n, initialized to ∞
-    prev ← array of size n, initialized to -1
-    visited ← boolean array of size n, initialized to false
+    dist ← array of size n, filled with ∞
+    prev ← array of size n, filled with null
+    dist[sourceVertex] ← 0
 
-    dist[sourceId] ← 0.0
     pq ← new MinHeapPriorityQueue<VertexDistPair>()
-    pq.enqueue(new VertexDistPair(sourceId, 0.0))
+    pq.enqueue((sourceVertex, 0))
+    visited ← boolean array of size n, all false
 
     WHILE NOT pq.isEmpty():
-        current ← pq.dequeue()
-        u ← current.vertexId
+        (u, d) ← pq.dequeue()
         IF visited[u]: CONTINUE
         visited[u] ← true
-        IF u == targetId: BREAK                      // Early exit upon reaching target
 
-        FOR each edge IN graph.getOutgoingEdges(u):
-            v ← edge.destinationId
-            newDist ← dist[u] + edge.distanceKm
-            IF NOT visited[v] AND newDist < dist[v]:
-                dist[v] ← newDist
+        FOR each edge IN graph.getNeighbors(u):
+            v ← edge.destination
+            weight ← edge.weight
+            IF NOT visited[v] AND dist[u] + weight < dist[v]:
+                dist[v] ← dist[u] + weight
                 prev[v] ← u
-                pq.enqueue(new VertexDistPair(v, newDist))
+                pq.enqueue((v, dist[v]))
 
-    path ← reconstructPath(prev, sourceId, targetId)
-    RETURN new PathResult(dist[targetId], path)
+    RETURN (dist, prev)
 END FUNCTION
 ```
 
-### 2.4 Mermaid Flowchart
+### Flowchart
 ```mermaid
 flowchart TD
-    A[Start: sourceHospitalId, targetHospitalId] --> B[Init dist=∞, dist source = 0]
-    B --> C[Enqueue source into MinHeap Priority Queue]
+    A[Start: graph, source vertex] --> B[Init dist=∞ for all, dist=0 for source]
+    B --> C[Enqueue source into MinHeapPriorityQueue]
     C --> D{Queue empty?}
-    D -- No --> E[Dequeue vertex u with minimum dist]
-    E --> F{u == targetHospitalId?}
-    F -- Yes --> G[Early Exit: Target Reached]
-    F -- No --> H{u already visited?}
-    H -- Yes --> D
-    H -- No --> I[Mark u as visited]
-    I --> J[Iterate road edges from u to neighbors v]
-    J --> K{"dist(u) + weight < dist(v)?"}
-    K -- Yes --> L["dist(v) = dist(u) + weight; prev(v) = u; enqueue v"]
-    K -- No --> J
-    L --> D
-    D -- Yes --> G
-    G --> M[Backtrack prev array to reconstruct shortest route]
-    M --> N[Return Shortest Path & Travel Time]
+    D -- No --> E[Dequeue vertex u with min dist]
+    E --> F{u already visited?}
+    F -- Yes --> D
+    F -- No --> G[Mark u visited]
+    G --> H[For each neighbor v of u]
+    H --> I{"dist(u) + weight < dist(v)?"}
+    I -- Yes --> J["Update dist(v), prev(v)=u, enqueue v"]
+    I -- No --> H
+    J --> D
+    D -- Yes --> K[Return dist array and prev array]
 ```
 
 ---
 
-## Operation 3: Emergency Supply Payload Optimization (0/1 Knapsack DP)
-**Target Module**: `algorithms` · **Class**: `CapacityOptimizer` · **Data Structure**: `DynamicArrayList<Integer>`
+## 3. Capacity & Budget Request Selection (0/1 Knapsack DP)
+**Data structures:** `DynamicArrayList<T>` (Pod 1) · `CapacityOptimizer` (Pod 6, Issue #22)
 
-### 3.1 Input / Output Specification
-- **Input**:
-  - `requests`: Array of pending equipment/supply requests with `weightKg` and priority `value`.
-  - `maxPayloadCapacity`: Derived vehicle cargo capacity threshold ($W = 134.0\text{ kg}$).
-- **Output**:
-  - `OptimizationResult`: Maximum combined priority score, actual total loaded weight ($kg$), and list of selected request IDs.
+### Input / Output
+- **Input:** `weights[]` (double, supply item weights in kg), `values[]`
+  (double, priority/value score per item), `capacity` (double, max payload
+  in kg).
+- **Output:** `OptimizationResult` containing `totalValue`, `totalWeight`,
+  and the `DynamicArrayList<Integer>` of selected item indices.
 
-### 3.2 Preconditions & Postconditions
-- **Preconditions**:
-  - `weights.length == values.length == n` with $\forall i, \text{weight}[i] > 0$.
-  - `maxPayloadCapacity > 0`.
-- **Postconditions**:
-  - $\sum_{i \in \text{selected}} \text{weight}[i] \le \text{maxPayloadCapacity}$.
-  - The sum $\sum_{i \in \text{selected}} \text{value}[i]$ is globally optimal subject to the 0/1 item constraint.
+### Preconditions
+- `weights.length == values.length == n`.
+- All `weights[i] >= 0` and `capacity >= 0`.
 
-### 3.3 Pseudocode
-```text
-FUNCTION optimizeSupplyPayload(requests: List<ServiceRequest>, maxCapacity: double) -> OptimizationResult
-    n ← requests.size()
-    SCALE ← 10                                       // Fixed-point scaling for 0.1kg precision
-    W ← round(maxCapacity * SCALE)
-    
-    dp ← 2D array [0..n][0..W], initialized to 0
+### Postconditions
+- `totalWeight <= capacity`.
+- `totalValue` is the maximum achievable value subject to the capacity
+  constraint, over all subsets of `{0, ..., n-1}` (each item used at most
+  once — the 0/1 property).
+- `selectedIndices` contains each chosen item's original index exactly once,
+  in ascending order.
+
+### Pseudocode
+```
+FUNCTION optimizeCapacity(weights: double[], values: double[], capacity: double) -> OptimizationResult
+    n ← weights.length
+    W ← round(capacity * SCALE)                 // integer-scale for DP indexing
+    scaledWeights[i] ← round(weights[i] * SCALE) FOR i IN 0..n-1
+
+    dp ← 2D array [0..n][0..W], all initialised to 0
 
     FOR i FROM 1 TO n:
-        wi ← round(requests[i-1].getWeightKg() * SCALE)
-        vi ← requests[i-1].getPriorityScore()
+        wi ← scaledWeights[i-1]
+        vi ← values[i-1]
         FOR w FROM 0 TO W:
-            dp[i][w] ← dp[i-1][w]                   // Exclude item i-1
+            dp[i][w] ← dp[i-1][w]                // exclude item i-1
             IF wi <= w:
                 included ← dp[i-1][w - wi] + vi
                 IF included > dp[i][w]:
-                    dp[i][w] ← included              // Include item i-1
+                    dp[i][w] ← included           // include item i-1
 
-    selectedList ← new DynamicArrayList<ServiceRequest>()
-    currW ← W
+    selectedIndices ← new DynamicArrayList<Integer>()
+    w ← W
+    totalWeight ← 0
     FOR i FROM n DOWN TO 1:
-        IF dp[i][currW] != dp[i-1][currW]:
-            selectedList.add(requests[i-1])
-            currW ← currW - round(requests[i-1].getWeightKg() * SCALE)
+        IF dp[i][w] != dp[i-1][w]:
+            selectedIndices.add(0, i-1)
+            w ← w - scaledWeights[i-1]
+            totalWeight ← totalWeight + weights[i-1]
 
-    RETURN new OptimizationResult(dp[n][W], selectedList)
+    RETURN OptimizationResult(dp[n][W], totalWeight, selectedIndices, dp)
 END FUNCTION
 ```
 
-### 3.4 Mermaid Flowchart
+### Flowchart
 ```mermaid
 flowchart TD
-    A[Start: Request Items & Weight Capacity W] --> B[Scale capacity and weights to discrete scale]
-    B --> C[Initialize DP table dp of size n+1 by W+1 to 0]
-    C --> D[Iterate item i from 1 to n]
-    D --> E[Iterate capacity w from 0 to W]
-    E --> F{"Item weight wi <= w?"}
-    F -- No --> G["dp[i][w] = dp[i-1][w]"]
-    F -- Yes --> H["dp[i][w] = max(exclude, dp[i-1][w-wi] + vi)"]
-    G --> I{End of row/matrix?}
-    H --> I
-    I -- No --> E
-    I -- Yes --> J[Backtrack from dp of n,W to identify selected items]
-    J --> K[Return Optimal Value & Selected Cargo Manifest]
+    A[Start: weights, values, capacity] --> B[Scale weights and capacity to integers]
+    B --> C[Init dp table to 0]
+    C --> D[For each item i, for each capacity w]
+    D --> E{Item i fits in w?}
+    E -- No --> F[dp of i,w = dp of i-1,w]
+    E -- Yes --> G[Take max of excluding vs including item i]
+    F --> H{More cells?}
+    G --> H
+    H -- Yes --> D
+    H -- No --> I[Backtrack from dp of n,W to recover selected items]
+    I --> J[Return total value, total weight, selected indices]
 ```
 
 ---
 
-## Operation 4: Hospital Facility Search & Multi-Tier Indexing
-**Target Module**: `datastructures` · **Data Structures**: `RedBlackTree<K,V>`, `CustomHashTable<K,V>`, `BTree<K,V>`
+## 4. Hospital Facility Search & Indexing
+**Data structures:** `RedBlackTree<K,V>`, `CustomHashTable<K,V>` (Pod 5)
 
-### 4.1 Input / Output Specification
-- **Input**: Search query (either numeric `hospitalId` or text `hospitalName`).
-- **Output**: The matched `Hospital` facility record or `null` if non-existent.
+### Input / Output
+- **Input:** `facilityId` (search key), or a new `(facilityId, FacilityRecord)`
+  pair to index.
+- **Output:** the matching `FacilityRecord`, or `null` if not found (search);
+  confirmation of insertion (index).
 
-### 4.2 Preconditions & Postconditions
-- **Preconditions**:
-  - `RedBlackTree` keys implement `Comparable<K>` for total ordering.
-  - `CustomHashTable` key objects implement non-null `hashCode()` and `equals()`.
-- **Postconditions**:
-  - Exact key lookup in `CustomHashTable` returns in expected $O(1)$ time.
-  - Ordered range queries and key search in `RedBlackTree` return in guaranteed $O(\log n)$ time.
+### Preconditions
+- `facilityId` keys are unique and comparable (required by
+  `RedBlackTree<K extends Comparable<K>, V>`'s ordering).
+- The hash table's key type has a well-distributed `hashCode()` to avoid
+  degenerate bucket clustering.
 
-### 4.3 Pseudocode
-```text
-FUNCTION findHospital(key: int, mode: SearchMode) -> Hospital
-    IF mode == EXACT_HASH_LOOKUP:
-        RETURN hospitalHashTable.get(key)             // Expected O(1) bucket probe
-    ELSE IF mode == BALANCED_TREE_LOOKUP:
-        RETURN hospitalRedBlackTree.search(key)      // Guaranteed O(log n)
-    ELSE IF mode == RANGE_SCAN:
-        RETURN hospitalBTree.rangeQuery(key.min, key.max)
-    END IF
+### Postconditions
+- **RedBlackTree:** after `insert`, the tree remains a valid red-black tree
+  (root is black, no red node has a red child, every root-to-leaf path has
+  the same black-height) — giving `O(log n)` worst-case search.
+- **HashTable:** after `put`, `get(key)` returns the just-inserted value in
+  expected `O(1)`.
+- `contains(key)` / `containsKey(key)` are consistent with what `insert`/`put`
+  has stored.
+
+### Pseudocode
+```
+// Balanced tree index (guarantees O(log n) even for adversarial insert order)
+FUNCTION searchFacilityByTree(tree: RedBlackTree<K,V>, facilityId: K) -> V
+    RETURN tree.search(facilityId)               // O(log n), root-to-leaf walk
+END FUNCTION
+
+FUNCTION indexFacilityInTree(tree: RedBlackTree<K,V>, facilityId: K, record: V)
+    tree.insert(facilityId, record)              // O(log n), triggers rotations/recoloring
+END FUNCTION
+
+// Hash index (expected O(1) average-case lookup)
+FUNCTION searchFacilityByHash(table: CustomHashTable<K,V>, facilityId: K) -> V
+    RETURN table.get(facilityId)                 // hash -> bucket -> linear probe/chain
+END FUNCTION
+
+FUNCTION indexFacilityInHash(table: CustomHashTable<K,V>, facilityId: K, record: V)
+    table.put(facilityId, record)
 END FUNCTION
 ```
 
-### 4.4 Mermaid Flowchart
+### Flowchart
 ```mermaid
 flowchart TD
-    A[Start: Query Hospital Key] --> B{Query Type?}
-    B -- Exact Key Lookup --> C[CustomHashTable.get - Expected O 1]
-    B -- Ordered / Exact Search --> D[RedBlackTree.search - Guaranteed O log n]
-    B -- Multi-Key Range Scan --> E[BTree.rangeQuery - Block IO Optimized]
-    C --> F{Record Found?}
-    D --> F
-    E --> F
-    F -- Yes --> G[Return Hospital Facility Record]
-    F -- No --> H[Return null / NotFoundException]
+    A[Start: facilityId] --> B{"Need ordered traversal<br/>e.g. range queries?"}
+    B -- Yes --> C["Use RedBlackTree.search - O(log n)"]
+    B -- "No, exact lookup only" --> D["Use CustomHashTable.get - expected O(1)"]
+    C --> E{Found?}
+    D --> E
+    E -- Yes --> F[Return FacilityRecord]
+    E -- No --> G["Return null (not found)"]
 ```
 
 ---
 
-## Operation 5: Regional Healthcare Infrastructure Connectivity (MST)
-**Target Module**: `algorithms` · **Classes**: `KruskalMST`, `PrimMST`, `DisjointSet`
+## 5. Regional Infrastructure Connectivity (Minimum Spanning Tree)
+**Data structures:** `HospitalNetworkGraph`, `DisjointSet`, `KruskalMST`, `PrimMST` (Pod 6)
 
-### 5.1 Input / Output Specification
-- **Input**: Connected `HospitalNetworkGraph` (50 hospital nodes, 128 road edges).
-- **Output**: Minimum Spanning Tree edge list of size $|V|-1 = 49$ edges and total network road length ($km$).
+### Input / Output
+- **Input:** a `HospitalNetworkGraph` representing candidate regional links
+  between facilities, each edge weighted by construction/connectivity cost.
+- **Output:** `WeightedEdge[]` / `MSTEdge[]` — the set of edges forming a
+  minimum spanning tree, plus `totalWeight()` — the MST's total cost.
 
-### 5.2 Preconditions & Postconditions
-- **Preconditions**:
-  - Graph is connected (confirmed via BFS component check).
-- **Postconditions**:
-  - Result contains exactly 49 acyclic edges spanning all 50 hospitals.
-  - Total road corridor cost is mathematically minimal.
+### Preconditions
+- The graph is connected (or the algorithm is understood to return a
+  minimum spanning **forest** if not).
+- Edge weights are well-defined real numbers (can be zero or positive;
+  MST is defined for any real weights, negative included).
 
-### 5.3 Pseudocode
-```text
-FUNCTION computeRegionalMST_Kruskal(graph: HospitalNetworkGraph) -> MSTResult
-    edges ← graph.getAllEdges()
-    QuickSort.sort(edges)                             // Sort O(E log E) by distanceKm
+### Postconditions
+- The returned edge set has exactly `vertexCount - 1` edges (for a connected
+  graph) and contains no cycle.
+- No other spanning tree of the graph has a strictly lower total weight.
+- **Kruskal:** `DisjointSet.union` is only called on edges that don't
+  already connect two vertices in the same component (`find(u) != find(v)`),
+  guaranteeing the no-cycle property.
+- **Prim:** every vertex is visited exactly once, and the tree grows from a
+  single connected frontier.
 
+### Pseudocode
+```
+// Kruskal's algorithm — sort edges, greedily add if no cycle
+FUNCTION kruskalMST(graph: HospitalNetworkGraph) -> WeightedEdge[]
+    edges ← all edges in graph, sorted ascending by weight
     ds ← new DisjointSet(graph.vertexCount())
-    mstEdges ← new DynamicArrayList<Route>()
-    totalKm ← 0.0
+    mst ← empty list
 
-    FOR each edge (u, v, dist) IN edges:
-        rootU ← ds.find(u)
-        rootV ← ds.find(v)
-        IF rootU != rootV:                           // No cycle formed
-            ds.union(rootU, rootV)
-            mstEdges.add(edge)
-            totalKm ← totalKm + dist
-            IF mstEdges.size() == graph.vertexCount() - 1:
-                BREAK
+    FOR each edge (u, v, w) IN edges:
+        IF ds.find(u) != ds.find(v):             // would NOT form a cycle
+            ds.union(u, v)
+            mst.add(edge)
 
-    RETURN new MSTResult(mstEdges, totalKm)
+    RETURN mst
+END FUNCTION
+
+// Prim's algorithm — grow tree from a start vertex via a min-priority frontier
+FUNCTION primMST(graph: HospitalNetworkGraph, startVertex: int) -> MSTEdge[]
+    visited ← boolean array, all false
+    mst ← empty list
+    pq ← new MinHeapPriorityQueue<WeightedEdge>()
+
+    visited[startVertex] ← true
+    enqueue all edges from startVertex into pq
+
+    WHILE NOT pq.isEmpty() AND mst.size() < graph.vertexCount() - 1:
+        edge ← pq.dequeue()                      // min-weight edge on frontier
+        IF visited[edge.destination]: CONTINUE
+        visited[edge.destination] ← true
+        mst.add(edge)
+        enqueue all edges from edge.destination where the other end is unvisited
+
+    RETURN mst
 END FUNCTION
 ```
 
-### 5.4 Mermaid Flowchart
+### Flowchart
 ```mermaid
 flowchart TD
-    A[Start: Road Network Graph] --> B[Sort all 128 edges ascending by distanceKm]
-    B --> C[Initialize DisjointSet with 50 nodes]
-    C --> D{"More candidate edges AND MST edges < 49?"}
-    D -- Yes --> E[Extract next candidate corridor u to v]
-    E --> F{"find(u) == find(v)?"}
-    F -- Yes, would form cycle --> D
-    F -- No, acyclic --> G["ds.union(u, v); add corridor to MST"]
-    G --> D
-    D -- No --> H[Return 49 MST Corridors & Total Network Cost]
+    subgraph Kruskal
+        A1[Sort all edges ascending by weight] --> B1[Init DisjointSet]
+        B1 --> C1{More edges?}
+        C1 -- Yes --> D1{"find(u) != find(v)?"}
+        D1 -- "Yes, no cycle" --> E1["Union(u,v) and add edge to MST"]
+        D1 -- "No, would cycle" --> C1
+        E1 --> C1
+        C1 -- No --> F1[Return MST edges]
+    end
+    subgraph Prim
+        A2[Start at startVertex, mark visited] --> B2[Enqueue its edges into MinHeap]
+        B2 --> C2{"Frontier not empty AND<br/>MST incomplete?"}
+        C2 -- Yes --> D2[Dequeue min-weight edge]
+        D2 --> E2{Destination visited?}
+        E2 -- Yes --> C2
+        E2 -- No --> F2["Mark visited, add edge to MST,<br/>enqueue its new edges"]
+        F2 --> C2
+        C2 -- No --> G2[Return MST edges]
+    end
 ```
 
 ---
 
-## Operation 6: Stack-Based Dispatch Undo & System Audit Trail
-**Target Module**: `datastructures` · **Class**: `ArrayStack<AuditEvent>` (Brief Section 4 & Module M5)
+## Summary Table
 
-### 6.1 Input / Output Specification
-- **Input**: User/Examiner triggering an `undoLastAction()` or system event emission (`AuditEvent`).
-- **Output**: Rollback of the last dispatch state and restoration of the previous request status.
-
-### 6.2 Preconditions & Postconditions
-- **Preconditions**:
-  - `undoStack` is non-empty (`!undoStack.isEmpty()`).
-- **Postconditions**:
-  - The most recent dispatch event is popped in $O(1)$ time.
-  - The assigned vehicle fleet is decremented/incremented back to original state.
-  - The target request status reverts from `DISPATCHED` to `PENDING`.
-
-### 6.3 Pseudocode
-```text
-FUNCTION undoLastDispatch(undoStack: ArrayStack<AuditEvent>) -> AuditEvent
-    IF undoStack.isEmpty():
-        THROW new EmptyStackException("No actions available to undo")
-
-    lastEvent ← undoStack.pop()                       // O(1) LIFO pop
-    targetRequest ← serviceRequestRepo.findById(lastEvent.getRequestId())
-    
-    // Revert state
-    targetRequest.setStatus(lastEvent.getPreviousStatus())
-    serviceRequestRepo.save(targetRequest)
-    
-    // Reclaim fleet resource
-    hospitalRepo.incrementAmbulanceCount(lastEvent.getAssignedHospitalId())
-
-    RETURN lastEvent
-END FUNCTION
-```
-
-### 6.4 Mermaid Flowchart
-```mermaid
-flowchart TD
-    A[Start: Undo Request Triggered] --> B{"undoStack.isEmpty()?"}
-    B -- Yes --> C[Throw EmptyStackException / Alert User]
-    B -- No --> D["Pop top AuditEvent from ArrayStack - O(1) LIFO"]
-    D --> E[Retrieve ServiceRequest by ID]
-    E --> F["Revert status: DISPATCHED to PENDING"]
-    F --> G[Restore hospital ambulance fleet count]
-    G --> H[Log rollback event to Database audit_events table]
-    H --> I[Return Reverted State to UI / Console]
-```
-
----
-
-## Operation 7: Dataset Ingestion & Physics Invariant Validation Pipeline
-**Target Module**: `db` · **Classes**: `CsvImporter`, `GraphValidator` (Brief Module M2 & Section 2.i)
-
-### 7.1 Input / Output Specification
-- **Input**: Raw seed CSV files (`hospitals.csv`, `roads.csv`, `service_requests.csv`, `medical_resources.csv`).
-- **Output**: Populated SQLite database and validation report verifying graph connectivity and road physics.
-
-### 7.2 Preconditions & Postconditions
-- **Preconditions**:
-  - CSV files exist in `data/seed/` with valid UTF-8 headers.
-- **Postconditions**:
-  - $\forall (u, v) \in \text{roads}, \text{distanceKm}(u, v) \ge \text{haversine}(u, v)$ (Zero physics violations).
-  - Graph has exactly 1 connected component (50/50 facilities reachable via BFS).
-  - All foreign keys are referentially valid.
-
-### 7.3 Pseudocode
-```text
-FUNCTION validateAndIngestSeedData() -> ValidationSummary
-    hospitals ← CsvParser.readHospitals("data/seed/hospitals.csv")
-    roads ← CsvParser.readRoads("data/seed/roads.csv")
-
-    // 1. Road Physics Invariant Check
-    FOR each road IN roads:
-        h1 ← hospitals.get(road.fromHospitalId)
-        h2 ← hospitals.get(road.toHospitalId)
-        havDist ← calculateHaversine(h1.lat, h1.lng, h2.lat, h2.lng)
-        IF road.distanceKm < havDist:
-            THROW new PhysicsViolationException("Road distance violates spherical bound")
-
-    // 2. Graph Component Reachability Check
-    graph ← buildGraph(hospitals, roads)
-    reachedNodes ← BFS.traverse(graph, startNode=1)
-    IF reachedNodes.size() < hospitals.size():
-        THROW new DisconnectedGraphException("Graph contains isolated facilities")
-
-    // 3. Batch SQLite Persistence
-    dbTransaction.begin()
-    hospitalRepo.saveAll(hospitals)
-    routeRepo.saveAll(roads)
-    dbTransaction.commit()
-
-    RETURN new ValidationSummary(hospitals.size(), roads.size(), status="PASSED")
-END FUNCTION
-```
-
-### 7.4 Mermaid Flowchart
-```mermaid
-flowchart TD
-    A[Start: Read data/seed/*.csv] --> B[Parse Hospitals, Roads, Requests, Resources]
-    B --> C["Validate Road Physics Invariant: D_road >= D_haversine"]
-    C --> D{"Physics Violations > 0?"}
-    D -- Yes --> E[Reject CSV / Log Physics Error]
-    D -- No --> F[Run BFS Graph Component Connectivity Check]
-    F --> G{"All 50 Nodes Reachable?"}
-    G -- No --> H[Reject CSV / Log Disconnected Node Error]
-    G -- Yes --> I[Validate Foreign Keys & Urgency Ranges]
-    I --> J[Execute Batch SQLite Database Insertions]
-    J --> K[Log Database Run & Ready for Algorithmic Operations]
-```
-
----
-
-## 8. Master Summary Table
-
-| # | System Operation | Primary Algorithm | Core Data Structure | Time Complexity | Module |
-|:---:|:---|:---|:---|:---:|:---:|
-| **1** | **Triage & Fleet Dispatch** | Multi-Tier Priority & Greedy Matching | `MinHeap` + `ArrayDeque` + `CircularQueue` | $O(\log n)$ / $O(1)$ per request | `scheduling` |
-| **2** | **Shortest Route Navigation** | Dijkstra's Shortest Path | `HospitalNetworkGraph` + `MinHeap` | $O((V + E) \log V)$ | `algorithms` |
-| **3** | **Payload Cargo Optimization** | 0/1 Knapsack Dynamic Programming | `DynamicArrayList` (DP Memo Matrix) | $O(n \times W)$ | `algorithms` |
-| **4** | **Facility Search & Indexing** | Balanced Tree Search & Hash Probing | `RedBlackTree` / `CustomHashTable` | $O(\log n)$ / expected $O(1)$ | `datastructures` |
-| **5** | **Regional Connectivity MST** | Kruskal / Prim Spanning Tree | `DisjointSet` / `MinHeapPriorityQueue` | $O(E \log E)$ / $O(E \log V)$ | `algorithms` |
-| **6** | **Dispatch Undo & Audit Trail** | LIFO State & Fleet Rollback | `ArrayStack` (Audit Stack) | $O(1)$ push / pop | `datastructures` |
-| **7** | **Seed Data Ingestion Pipeline** | BFS Reachability & Physics Verification | `HospitalNetworkGraph` + SQLite DB | $O(V + E)$ | `db` |
+| # | Operation | Algorithm | Key Structure | Complexity |
+|---|---|---|---|---|
+| 1 | Triage & Dispatch | Greedy (min-first) | `MinHeapPriorityQueue` | `O(n log n)` to enqueue all, `O(log n)` per dispatch |
+| 2 | Shortest Route | Dijkstra | `HospitalNetworkGraph` + `MinHeapPriorityQueue` | `O((V + E) log V)` |
+| 3 | Capacity Selection | 0/1 Knapsack DP | `DynamicArrayList` | `O(n × W)` |
+| 4 | Facility Search | Balanced BST / Hashing | `RedBlackTree` / `CustomHashTable` | `O(log n)` / expected `O(1)` |
+| 5 | Regional Connectivity | Kruskal / Prim MST | `DisjointSet` / `MinHeapPriorityQueue` | `O(E log E)` / `O(E log V)` |
