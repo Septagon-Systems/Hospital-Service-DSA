@@ -87,10 +87,54 @@ Per Brief Section 15.iv, each team must maintain a development log showing weekl
 
 ---
 
+## Week 5: Database Architecture, Empirical Benchmarks, Multi-Queue Dispatch & GUI Dashboard
+- **Date Range**: 17 August 2026 – 26 August 2026
+- **Key Milestones Accomplished**:
+  - **Custom Map & Set Wrappers (`#41`, `#42`)**:
+    - Implemented `CustomMap<K, V>` and `CustomSet<E>` backed by custom hash table logic with zero `java.util` collection dependencies.
+  - **SQLite Database Architecture & JDBC Repositories (`#51`)**:
+    - Finalized SQLite schema supporting 6 domain tables (`hospitals`, `routes`, `medical_resources`, `service_requests`, `algorithm_runs`, `audit_events`).
+    - Implemented `CsvImporter` to seed canonical Ghana hospital datasets into SQLite.
+    - Implemented robust JDBC repositories (`HospitalRepository`, `RouteRepository`, `MedicalResourceRepository`, `ServiceRequestRepository`, `AlgorithmRunRepository`, `AuditEventRepository`) with automated transaction management.
+  - **B-Tree Disk-Block Index Structure (`#39`)**:
+    - Implemented multi-way search tree `BTree<K, V>` ($t=2$ and $t=3$) splitting full child nodes and maintaining $O(\log_t n)$ search and insert guarantees.
+  - **0/1 Knapsack Dynamic Programming Optimizer (`#28`)**:
+    - Implemented `CapacityOptimizer` using bottom-up 2D tabulation $DP[i][w]$ to select highest-value medical payloads within payload weight constraints.
+  - **Graph Traversals & Path Finding**:
+    - Implemented `GraphTraversal` (BFS and DFS) on `HospitalNetworkGraph`.
+    - Integrated `DijkstraShortestPath` with predecessor reconstruction for real-time inter-facility corridor routing.
+  - **Three-Tier Multi-Queue Hospital Dispatch Centre (`#24`)**:
+    - Implemented `HospitalDispatchCentre` orchestrating emergency transfers across:
+      1. `ArrayDeque` (Priority 1 Critical Preemptions)
+      2. `MinHeapPriorityQueue` (Priority 2 Urgent transfers)
+      3. `CircularQueue` (Priority 3 Routine requests)
+    - Integrated `ArrayStack<ActionRecord>` for full dispatch rollback and undo functionality.
+  - **Empirical Benchmarking Suite (`benchmark/`, `#62`)**:
+    - Built benchmark runner (`BenchmarkRunner`) measuring execution time (`System.nanoTime()`), memory delta (`Runtime.getRuntime()`), and CSV result persistence (`ResultWriter`).
+    - Evaluated algorithms across uniform scales up to $N = 3{,}000{,}000$ records to expose Big-O divergences ($O(1)$, $O(\log N)$, $O(N)$, $O(N \log N)$, and $O(N^2)$).
+    - Evaluated search lookups across 5 representative positions ($0\%$, $25\%$, $50\%$, $75\%$, $100\%$) matching theoretical $\Theta(N/2)$ average-case expectations with isolated baseline sorting.
+  - **Interactive Web GUI Dashboard & Student Parameter Lab (`gui/`)**:
+    - Embedded lightweight Java HTTP server (`WebServer.java` on port `18080`) with RESTful JSON API endpoints.
+    - Built Ghana GIS Hospital Network Map with Leaflet (GPS hospital coordinates, Dijkstra shortest route calculation, and Kruskal MST overlay).
+    - Built live Multi-Queue Dispatch Command Center with single-request serve, batch serve (5 requests), and visual state inspector for Urgent PQ, Normal Queue, and Undo Stack.
+    - Implemented shift-based catalog ingestion from database records to prevent queue starvation and enforce student-derived queue capacity limits.
+    - Implemented `StudentParameterCalculator` deriving `priorityWeight`, `hashTableSize`, `randomSeed`, `routePenalty`, `urgentCapacity`, `normalCapacity`, and `preemptionCapacity` from student index numbers.
+  - **Unit Test Verification**:
+    - Expanded test suite to **389 passing unit tests** across 39 classes in 7 pods (972.5% of the 40+ test requirement with 0 failures).
+- **Challenges & Decisions**:
+  - Addressed normal request starvation by introducing bounded shift batches from the database catalog rather than admitting all 350 requests at once.
+  - Resolved graph curvature distortions in benchmark charts by using uniform linear increment scaling.
+  - Enforced zero `java.util` collection invariant across all core data structures, algorithms, and scheduling logic.
+
+---
+
 ## Current Status & Next Steps
 - **Branch**: `dev`
-- **Module Build Status**: `BUILD SUCCESSFUL` across all modules (179 passing unit tests + 27 static documentation pages compiled).
-- **Next Objectives**:
-  - Merge `feature/custom-map-set-wrappers` (`CustomMap` #41, `CustomSet` #42) into `dev`.
-  - Complete `QuickSort` and `B-Tree` (#39) implementations and benchmarks.
-  - Finalize database index page simulation and CLI application interface (`app`).
+- **Unit Tests**: 389 / 389 passing (0 failures, 100% passing across all 7 pods).
+- **Deliverables Ready for Technical Report & Defense**:
+  - Full source code and clean modular architecture across all 8 Gradle subprojects.
+  - SQLite database schema and canonical Ghana hospital dataset.
+  - Interactive Web GUI dashboard for examiner demonstration (Map, Multi-Queue Dispatch, Search, Knapsack, Benchmarks, Student Lab).
+  - Comprehensive empirical performance CSV data and Big-O verification graphs.
+  - 6 trace tables, 3 mathematical proof sketches, 2 algorithm counterexamples, and full pseudocode documentation.
+
