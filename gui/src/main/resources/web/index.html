@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghana Smart Hospital Operations Optimizer | DCIT 204 & DCIT 308</title>
+  
+  <!-- Septagon Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet & Chart.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Top Navigation Header -->
+    <header class="navbar">
+      <div class="navbar-brand">
+        <img src="/assets/logo-compact-dark.png" alt="Septagon Logo" class="brand-logo">
+        <div class="brand-text">
+          <span class="brand-title">GHANA HEALTH SERVICE</span>
+          <span class="brand-subtitle">Smart Operations Optimizer · DCIT 204 / DCIT 308</span>
+        </div>
+      </div>
+
+      <div class="system-status-pills">
+        <div class="status-pill status-live" title="Database: SQLite Online (data/hospital_system.db)">
+          <span class="pulse-indicator"></span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+          <span>DB</span>
+        </div>
+        <div class="status-pill status-info" title="50 Healthcare Facilities Mapped across Ghana">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path><path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"></path><path d="M10 9h4"></path><path d="M12 7v4"></path></svg>
+          <span id="pill-facilities">50</span>
+        </div>
+        <div class="status-pill status-accent" title="128 Inter-Facility Highway Corridors">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a4.5 4.5 0 0 0 0-9H6"></path><path d="M18 10l3-3-3-3"></path></svg>
+          <span id="pill-corridors">128</span>
+        </div>
+        <div class="status-pill status-neutral" title="350 Canonical Service & Triage Requests">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+          <span id="pill-requests">350</span>
+        </div>
+
+        <button class="theme-toggle-btn" id="btn-theme-toggle" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
+          <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="sub-nav">
+      <button class="nav-tab active" data-tab="tab-map">Highway Routing & Dijkstra</button>
+      <button class="nav-tab" data-tab="tab-dispatch">Triage Dispatch & Stack Undo</button>
+      <button class="nav-tab" data-tab="tab-search">Multi-Structure Search Lab</button>
+      <button class="nav-tab" data-tab="tab-knapsack">Supply Payload Optimizer</button>
+      <button class="nav-tab" data-tab="tab-benchmarks">Empirical Performance Curves</button>
+      <button class="nav-tab" data-tab="tab-student">Student Parameter Calculator</button>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="content-body">
+
+      <!-- TAB 1: GIS Map & Dijkstra -->
+      <section id="tab-map" class="tab-panel active">
+        <div class="grid-map-layout">
+          <div class="glass-card map-panel">
+            <div class="panel-header">
+              <h3>National Healthcare Road Network</h3>
+              <div class="panel-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-toggle-tiles">Map Style: Street / Dark</button>
+                <button class="btn btn-secondary btn-sm" id="btn-toggle-mst">Toggle Kruskal MST Backbone</button>
+                <button class="btn btn-outline btn-sm" id="btn-reset-map">Reset View</button>
+              </div>
+            </div>
+            <div id="map-container" class="map-viewport"></div>
+          </div>
+
+          <div class="glass-card control-panel">
+            <div class="panel-header">
+              <h3>Ambulance Route Navigator</h3>
+            </div>
+            
+            <div class="form-field">
+              <label for="select-origin">Origin Facility</label>
+              <select id="select-origin" class="custom-select"></select>
+            </div>
+
+            <div class="form-field">
+              <label for="select-dest">Destination Facility</label>
+              <select id="select-dest" class="custom-select"></select>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="btn-calculate-route">Calculate Shortest Route</button>
+
+            <div id="route-result-box" class="result-card hidden">
+              <h4>Optimal Highway Corridor</h4>
+              <div class="metric-row">
+                <span class="metric-label">Driving Distance:</span>
+                <span class="metric-value accent-text" id="route-distance">-</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Estimated Transit Time:</span>
+                <span class="metric-value" id="route-time">-</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Dijkstra Computation:</span>
+                <span class="metric-value code-text" id="route-latency">-</span>
+              </div>
+
+              <div class="waypoint-sequence" id="route-waypoints"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: Dispatch Simulator -->
+      <section id="tab-dispatch" class="tab-panel">
+        <div class="grid-dispatch-layout">
+          
+          <div class="glass-card">
+            <div class="panel-header">
+              <h3>Dispatch Command Center</h3>
+            </div>
+
+            <div class="stat-metrics-grid">
+              <div class="metric-box metric-urgent">
+                <span class="metric-caption">Urgent (P1/P2)</span>
+                <span class="metric-number" id="stat-urgent">0</span>
+              </div>
+              <div class="metric-box metric-preempt">
+                <span class="metric-caption">Preemptions</span>
+                <span class="metric-number" id="stat-preempt">0</span>
+              </div>
+              <div class="metric-box metric-normal">
+                <span class="metric-caption">Normal (P3)</span>
+                <span class="metric-number" id="stat-normal">0</span>
+              </div>
+              <div class="metric-box metric-served">
+                <span class="metric-caption">Total Served</span>
+                <span class="metric-number" id="stat-served">0</span>
+              </div>
+            </div>
+
+            <div class="action-stack-buttons">
+              <button class="btn btn-primary btn-block" id="btn-serve-single">Serve Next Priority Request</button>
+              <button class="btn btn-secondary btn-block" id="btn-serve-batch">Batch Serve 5 Requests</button>
+              <button class="btn btn-secondary btn-block" id="btn-repopulate-shift">Load Next Shift Batch from Database</button>
+              <button class="btn btn-danger btn-block" id="btn-undo">Undo Last Action (ArrayStack Rollback)</button>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h4>Admit Emergency Patient Transfer</h4>
+            <div class="form-field">
+              <label for="admit-priority">Triage Priority Level</label>
+              <select id="admit-priority" class="custom-select">
+                <option value="1">Priority 1 · Critical Preemption</option>
+                <option value="2" selected>Priority 2 · Urgent Min-Heap</option>
+                <option value="3">Priority 3 · Normal Circular Queue</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="admit-resource">Required Medical Resource</label>
+              <select id="admit-resource" class="custom-select">
+                <option value="0">Ambulance Vehicle</option>
+                <option value="1">Blood Transfusion Pack</option>
+                <option value="2">ICU Bed / Ventilator</option>
+              </select>
+            </div>
+            <button class="btn btn-outline btn-block" id="btn-admit">Admit Request into Queue</button>
+          </div>
+
+          <div class="glass-card">
+            <div class="panel-header">
+              <h3>Live Queue & Stack Activity Stream</h3>
+              <span class="badge" id="undo-depth-badge">Undo Stack Depth: 0</span>
+            </div>
+            <div class="activity-stream" id="dispatch-feed">
+              <div class="empty-state">No operations executed yet in this session.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="glass-card full-width-card mt-4">
+          <div class="panel-header">
+            <h3>Live Data Structure State Inspector</h3>
+            <button class="btn btn-outline btn-sm" id="btn-refresh-queues">Refresh State</button>
+          </div>
+          <div class="grid-ds-inspector">
+            <div class="ds-column">
+              <div class="ds-column-header">
+                <span class="ds-name">Urgent MinHeap PQ</span>
+                <span class="ds-badge">Priority 1 & 2</span>
+              </div>
+              <div class="ds-list" id="list-urgent-pq">
+                <div class="empty-state-sm">Queue empty</div>
+              </div>
+            </div>
+
+            <div class="ds-column">
+              <div class="ds-column-header">
+                <span class="ds-name">Normal CircularQueue</span>
+                <span class="ds-badge">FIFO Priority 3</span>
+              </div>
+              <div class="ds-list" id="list-normal-queue">
+                <div class="empty-state-sm">Queue empty</div>
+              </div>
+            </div>
+
+            <div class="ds-column">
+              <div class="ds-column-header">
+                <span class="ds-name">Undo ArrayStack</span>
+                <span class="ds-badge">LIFO History</span>
+              </div>
+              <div class="ds-list" id="list-undo-stack">
+                <div class="empty-state-sm">Stack empty</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: Multi-Index Search -->
+      <section id="tab-search" class="tab-panel">
+        <div class="glass-card">
+          <div class="panel-header">
+            <h3>Comparative Search & Multi-Structure Indexing</h3>
+          </div>
+
+          <div class="search-bar-inline">
+            <select id="search-hospital-select" class="custom-select flex-1"></select>
+            <button class="btn btn-primary" id="btn-run-search">Execute Benchmark Search</button>
+          </div>
+
+          <div id="search-result-container" class="search-details hidden">
+            <div class="facility-card" id="facility-profile"></div>
+
+            <h4>Empirical Lookup Latency Across 6 Structures</h4>
+            <div class="timing-cards-grid">
+              <div class="timing-card">
+                <span class="struct-name">CustomHashTable</span>
+                <span class="complexity-badge">O(1) amortized</span>
+                <span class="timing-value" id="time-hash">- ns</span>
+              </div>
+              <div class="timing-card">
+                <span class="struct-name">RedBlackTree</span>
+                <span class="complexity-badge">O(log N) balanced</span>
+                <span class="timing-value" id="time-rb">- ns</span>
+              </div>
+              <div class="timing-card">
+                <span class="struct-name">BinarySearchTree</span>
+                <span class="complexity-badge">O(h) hierarchical</span>
+                <span class="timing-value" id="time-bst">- ns</span>
+              </div>
+              <div class="timing-card">
+                <span class="struct-name">B-Tree (t=2)</span>
+                <span class="complexity-badge">O(log_t N) multi-way</span>
+                <span class="timing-value" id="time-btree">- ns</span>
+              </div>
+              <div class="timing-card">
+                <span class="struct-name">BinarySearch</span>
+                <span class="complexity-badge">O(log N) array</span>
+                <span class="timing-value" id="time-binary">- ns</span>
+              </div>
+              <div class="timing-card">
+                <span class="struct-name">LinearSearch</span>
+                <span class="complexity-badge">O(N) sequential</span>
+                <span class="timing-value" id="time-linear">- ns</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: Knapsack DP -->
+      <section id="tab-knapsack" class="tab-panel">
+        <div class="glass-card">
+          <div class="panel-header">
+            <h3>Medical Supply Payload Optimizer (0/1 Knapsack DP)</h3>
+          </div>
+
+          <div class="slider-control-group">
+            <div class="slider-header">
+              <label for="capacity-slider">Vehicle Max Payload Capacity</label>
+              <span class="slider-val-badge" id="capacity-val">35.0 kg</span>
+            </div>
+            <input type="range" id="capacity-slider" min="10" max="100" step="5" value="35" class="custom-range">
+            <button class="btn btn-primary" id="btn-run-knapsack">Compute Optimal Cargo Manifest</button>
+          </div>
+
+          <div id="knapsack-result-box" class="result-card hidden">
+            <div class="metric-row">
+              <span class="metric-label">Total Clinical Value:</span>
+              <span class="metric-value accent-text" id="knapsack-value">- pts</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Total Payload Weight:</span>
+              <span class="metric-value" id="knapsack-weight">- kg</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">DP Algorithm Latency:</span>
+              <span class="metric-value code-text" id="knapsack-time">-</span>
+            </div>
+
+            <h4>Selected Cargo Units</h4>
+            <div class="cargo-manifest-grid" id="cargo-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: Empirical Benchmarks -->
+      <section id="tab-benchmarks" class="tab-panel">
+        <div class="glass-card">
+          <div class="panel-header">
+            <h3>Empirical Asymptotic Performance Lab</h3>
+            <div class="benchmark-controls">
+              <select id="benchmark-algo-select" class="custom-select">
+                <option value="QuickSort">QuickSort (O(N log N))</option>
+                <option value="MergeSort">MergeSort (O(N log N))</option>
+                <option value="InsertionSort">InsertionSort (O(N²))</option>
+                <option value="SelectionSort">SelectionSort (O(N²))</option>
+                <option value="BinarySearch">BinarySearch (O(log N))</option>
+                <option value="LinearSearch">LinearSearch (O(N))</option>
+                <option value="CustomHashTable-Lookup">CustomHashTable Lookup (O(1))</option>
+                <option value="CustomHashTable-PutGet">CustomHashTable Bulk Put/Get (O(N))</option>
+                <option value="RedBlackTree-InsertSearch">RedBlackTree (O(log N))</option>
+                <option value="BTree-InsertSearch">B-Tree (t=2) (O(log_t N))</option>
+                <option value="DijkstraShortestPath">Dijkstra Shortest Path</option>
+                <option value="KruskalMST">Kruskal MST</option>
+              </select>
+              <button class="btn btn-primary" id="btn-run-benchmark">Execute Benchmark Suite</button>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <canvas id="benchmarkChart"></canvas>
+          </div>
+
+          <div id="benchmark-results-table-card" class="result-card hidden">
+            <h4>Empirical Execution Metrics Across Input Scales (N)</h4>
+            <div class="table-responsive">
+              <table class="benchmark-table" id="benchmark-table">
+                <thead>
+                  <tr>
+                    <th>Input Scale (N)</th>
+                    <th>Run 1 (ms)</th>
+                    <th>Run 2 (ms)</th>
+                    <th>Run 3 (ms)</th>
+                    <th>Mean Time (ms)</th>
+                    <th>Peak Memory (KB)</th>
+                    <th>Theoretical Big-O</th>
+                  </tr>
+                </thead>
+                <tbody id="benchmark-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="methodology-card mt-4">
+            <h4>Benchmark Methodology & Measurement Protocol</h4>
+            <p><strong>Timing Precision:</strong> Measured using high-resolution hardware timers (<code>System.nanoTime()</code>) with 3 independent iterations per input scale to calculate mean latency and variance.</p>
+            <p><strong>Memory Delta:</strong> Computed via JVM heap allocation deltas (<code>Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()</code>) before and after garbage collection cycles.</p>
+            <p><strong>Scale Sizing:</strong> Sized across standard scales $N \in [100, 500, 1000, 5000, 10000, 20000]$ to empirically expose asymptotic divergences ($O(N^2)$ quadratic divergence vs $O(N \log N)$ linearithmic scalability vs $O(\log N)$ logarithmic flatness).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: Student Parameter Lab -->
+      <section id="tab-student" class="tab-panel">
+        <div class="glass-card">
+          <div class="panel-header">
+            <h3>Student Index Number Parameter Formula Derivation</h3>
+          </div>
+
+          <div class="search-bar-inline">
+            <input type="text" id="input-student-id" placeholder="Enter Student Index Number (e.g. 10987654)" class="custom-input flex-1" value="10987654">
+            <button class="btn btn-primary" id="btn-calc-student">Derive Operational Parameters</button>
+          </div>
+
+          <div id="student-result-box" class="result-card hidden">
+            <div class="metric-row">
+              <span class="metric-label">Student Index:</span>
+              <span class="metric-value code-text" id="sp-id">-</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Priority Weight (Urgency Factor):</span>
+              <span class="metric-value accent-text" id="sp-priority">-</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Hash Table Prime Capacity:</span>
+              <span class="metric-value" id="sp-hash">-</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Random Seed Key:</span>
+              <span class="metric-value code-text" id="sp-seed">-</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Highway Route Penalty Factor:</span>
+              <span class="metric-value" id="sp-penalty">-</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Urgent Queue Capacity Limit:</span>
+              <span class="metric-value accent-text" id="sp-urgent">-</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Normal CircularQueue Capacity:</span>
+              <span class="metric-value" id="sp-normal">-</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Preemption Deque Shift Limit:</span>
+              <span class="metric-value accent-text" id="sp-preempt">-</span>
+            </div>
+
+            <button class="btn btn-secondary btn-block" style="margin-top: 18px;" id="btn-apply-student">Apply Capacity Limits to Live Dispatch Centre</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

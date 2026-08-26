@@ -1,0 +1,160 @@
+/* Search Lab, Knapsack Cargo Manifest, & Chart.js Container */
+
+.search-bar-inline {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.flex-1 { flex: 1; }
+
+.facility-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.timing-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.timing-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.struct-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.complexity-badge {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.timing-value {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-green);
+  font-family: var(--font-mono);
+}
+
+.slider-control-group {
+  margin-bottom: 20px;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.slider-val-badge {
+  color: var(--accent-primary);
+  font-family: var(--font-mono);
+}
+
+.custom-range {
+  width: 100%;
+  accent-color: var(--accent-primary);
+  margin-bottom: 16px;
+}
+
+.cargo-manifest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.cargo-item {
+  background: var(--bg-card);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 13px;
+}
+
+.chart-container {
+  height: 420px;
+  margin-top: 20px;
+}
+
+.benchmark-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  margin-top: 14px;
+}
+
+.benchmark-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.benchmark-table th {
+  background: var(--bg-card);
+  padding: 10px 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.benchmark-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+}
+
+.benchmark-table tr:hover td {
+  background: var(--bg-card-hover);
+}
+
+.methodology-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 18px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.methodology-card h4 {
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.methodology-card p {
+  margin-bottom: 6px;
+}
+
+.methodology-card code {
+  font-family: var(--font-mono);
+  background: var(--bg-card);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent-primary);
+}
