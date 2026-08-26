@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: hospital-service-dsa
+    runtime: docker
+    plan: free
+    region: frankfurt
+    envVars:
+      - key: PORT
+        value: 8080

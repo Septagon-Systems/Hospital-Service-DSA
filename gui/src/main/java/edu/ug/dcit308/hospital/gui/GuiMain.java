@@ -32,11 +32,19 @@ public class GuiMain {
         }
 
         // 2. Launch Web GUI Server
+        int port = DEFAULT_PORT;
+        String portEnv = System.getenv("PORT");
+        if (portEnv != null && !portEnv.trim().isEmpty()) {
+            try {
+                port = Integer.parseInt(portEnv.trim());
+            } catch (NumberFormatException ignored) {}
+        }
+
         try {
-            WebServer webServer = new WebServer(DEFAULT_PORT);
+            WebServer webServer = new WebServer(port);
             webServer.start();
 
-            String url = "http://localhost:" + DEFAULT_PORT;
+            String url = "http://localhost:" + port;
             System.out.println("\n🚀 Launching Interactive GUI Dashboard at: " + url);
             System.out.println("   (Press Ctrl+C in terminal to stop server)\n");
 
