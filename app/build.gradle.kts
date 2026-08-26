@@ -18,4 +18,5 @@ dependencies {
     implementation(project(":scheduling"))
     implementation(project(":db"))
     implementation(project(":benchmark"))
+    runtimeOnly(rootProject.libs.slf4j.nop)
 }
