@@ -127,7 +127,14 @@ export default defineConfig({
             },
           ],
         },
+        {
+          label: 'Empirical Performance Lab',
+          items: [
+            { label: 'Empirical Benchmarking & Analysis', slug: 'performance/empirical-benchmarking' },
+          ],
+        },
       ],
     }),
   ],
 });
+
