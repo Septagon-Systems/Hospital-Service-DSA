@@ -5,8 +5,6 @@
 
 import { initMapModule, refreshMapSize } from './modules/mapModule.js';
 import { initDispatchModule } from './modules/dispatchModule.js';
-import { initSearchModule } from './modules/searchModule.js';
-import { initCargoModule } from './modules/cargoModule.js';
 import { initBenchmarkModule } from './modules/benchmarkModule.js';
 import { initStudentModule } from './modules/studentModule.js';
 
@@ -15,8 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabRouter();
   initMapModule();
   initDispatchModule();
-  initSearchModule();
-  initCargoModule();
   initBenchmarkModule();
   initStudentModule();
 });
@@ -52,9 +48,8 @@ function initTabRouter() {
         targetPane.classList.add('active');
       }
 
-      if (paneId === 'tab-map') {
+      if (paneId === 'tab-operations') {
         refreshMapSize();
-      } else if (paneId === 'tab-dispatch') {
         window.dispatchEvent(new CustomEvent('dispatch-refresh'));
       }
     });

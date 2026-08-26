@@ -155,37 +155,38 @@ async function buildFullRouteGeometry(waypoints) {
   return fullGeometry.length > 0 ? fullGeometry : waypoints.map(w => [w.lat, w.lng]);
 }
 
-async function onCalculateRoute() {
-  const source = document.getElementById('select-origin').value;
-  const dest = document.getElementById('select-dest').value;
-
+export async function drawDijkstraRoute(source, dest) {
   try {
     const data = await api.runDijkstra(source, dest);
 
     if (!data.reachable) {
       alert('Destination facility is unreachable along the mapped highway network.');
-      return;
+      return null;
     }
 
     const resultBox = document.getElementById('route-result-box');
-    resultBox.classList.remove('hidden');
-    document.getElementById('route-distance').innerText = `${data.totalDistanceKm.toFixed(2)} km`;
-    document.getElementById('route-time').innerText = `${data.travelTimeMins.toFixed(1)} mins (${(data.travelTimeMins / 60).toFixed(2)} hrs)`;
-    document.getElementById('route-latency').innerText = `${(data.executionTimeNs / 1000000).toFixed(4)} ms (${data.executionTimeNs} ns)`;
+    if (resultBox) resultBox.classList.remove('hidden');
+    const distEl = document.getElementById('route-distance');
+    if (distEl) distEl.innerText = `${data.totalDistanceKm.toFixed(2)} km`;
+    const timeEl = document.getElementById('route-time');
+    if (timeEl) timeEl.innerText = `${data.travelTimeMins.toFixed(1)} mins (${(data.travelTimeMins / 60).toFixed(2)} hrs)`;
+    const latEl = document.getElementById('route-latency');
+    if (latEl) latEl.innerText = `${(data.executionTimeNs / 1000000).toFixed(4)} ms (${data.executionTimeNs} ns)`;
 
     const waypointsContainer = document.getElementById('route-waypoints');
-    waypointsContainer.innerHTML = '';
-
-    data.waypoints.forEach((wp, idx) => {
-      const row = document.createElement('div');
-      row.className = 'waypoint-row';
-      const label = idx === 0 ? 'START' : (idx === data.waypoints.length - 1 ? 'DEST' : `WAYPOINT ${idx}`);
-      row.innerHTML = `
-        <span><b>${label}:</b> [${wp.id}] ${wp.name}</span>
-        <span style="color: var(--accent-primary); font-family: monospace;">${wp.legKm > 0 ? '+' + wp.legKm.toFixed(1) + ' km' : '0.0 km'}</span>
-      `;
-      waypointsContainer.appendChild(row);
-    });
+    if (waypointsContainer) {
+      waypointsContainer.innerHTML = '';
+      data.waypoints.forEach((wp, idx) => {
+        const row = document.createElement('div');
+        row.className = 'waypoint-row';
+        const label = idx === 0 ? 'START' : (idx === data.waypoints.length - 1 ? 'DEST' : `WAYPOINT ${idx}`);
+        row.innerHTML = `
+          <span><b>${label}:</b> [${wp.id}] ${wp.name}</span>
+          <span style="color: var(--accent-primary); font-family: monospace;">${wp.legKm > 0 ? '+' + wp.legKm.toFixed(1) + ' km' : '0.0 km'}</span>
+        `;
+        waypointsContainer.appendChild(row);
+      });
+    }
 
     const routePolylineCoords = await buildFullRouteGeometry(data.waypoints);
 
@@ -199,9 +200,17 @@ async function onCalculateRoute() {
     }).addTo(map);
 
     map.fitBounds(activeDijkstraLine.getBounds(), { padding: [40, 40] });
+    return data;
   } catch (err) {
     console.error('Error calculating shortest route:', err);
+    return null;
   }
+}
+
+async function onCalculateRoute() {
+  const source = document.getElementById('select-origin').value;
+  const dest = document.getElementById('select-dest').value;
+  await drawDijkstraRoute(source, dest);
 }
 
 async function onToggleMst() {

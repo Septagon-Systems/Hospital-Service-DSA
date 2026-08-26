@@ -512,12 +512,14 @@ public class WebServer {
 
             String json = String.format(Locale.US,
                     "{\"success\":true,\"requestId\":%d,\"triageLevel\":%d,\"triageName\":\"%s\"," +
-                    "\"serviceType\":\"%s\",\"weightKg\":%.1f,\"fromName\":\"%s\",\"toName\":\"%s\"," +
+                    "\"serviceType\":\"%s\",\"weightKg\":%.1f,\"originId\":%d,\"targetId\":%d,\"fromName\":\"%s\",\"toName\":\"%s\"," +
                     "\"resource\":{\"id\":%d,\"type\":%d,\"typeName\":\"%s\",\"costGhc\":%.2f}}",
                     req.getId(), req.getTriageLevel(),
                     escapeJson(getTriageName(req.getTriageLevel(), req.isPreempted())),
                     escapeJson(getResourceTypeName(req.getResourceType())),
                     req.getWeightKg(),
+                    req.getOriginHospitalId(),
+                    req.getTargetHospitalId(),
                     (hFrom != null ? escapeJson(hFrom.getName()) : "#" + req.getOriginHospitalId()),
                     (hTo != null ? escapeJson(hTo.getName()) : "#" + req.getTargetHospitalId()),
                     (res != null ? res.getId() : 0),

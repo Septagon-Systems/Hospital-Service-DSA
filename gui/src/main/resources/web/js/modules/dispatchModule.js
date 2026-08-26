@@ -1,13 +1,84 @@
 import { api } from '../api.js';
+import { drawDijkstraRoute } from './mapModule.js';
 
 export function initDispatchModule() {
   loadStatus();
   loadQueuesState();
   bindEvents();
+  initTelemetryListeners();
+  
+  // Initial telemetry load
+  setTimeout(updateActiveTelemetry, 300);
+
   window.addEventListener('dispatch-refresh', () => {
     loadStatus();
     loadQueuesState();
+    updateActiveTelemetry();
   });
+}
+
+function initTelemetryListeners() {
+  const originSelect = document.getElementById('select-origin');
+  const destSelect = document.getElementById('select-dest');
+  const slider = document.getElementById('capacity-slider');
+  const sliderVal = document.getElementById('capacity-val');
+
+  originSelect?.addEventListener('change', updateActiveTelemetry);
+  destSelect?.addEventListener('change', updateActiveTelemetry);
+  
+  slider?.addEventListener('input', (e) => {
+    if (sliderVal) sliderVal.innerText = `${parseFloat(e.target.value).toFixed(1)} kg`;
+    updateActiveTelemetry();
+  });
+}
+
+async function updateActiveTelemetry() {
+  const originSelect = document.getElementById('select-origin');
+  const destSelect = document.getElementById('select-dest');
+  const slider = document.getElementById('capacity-slider');
+
+  const originId = originSelect ? originSelect.value : '1';
+  const destId = destSelect ? destSelect.value : '16';
+  const capacity = slider ? parseFloat(slider.value) : 35.0;
+
+  // 1. Live Dijkstra Route on Leaflet Map
+  drawDijkstraRoute(originId, destId);
+
+  // 2. Multi-Structure Index Lookup Telemetry
+  try {
+    const searchData = await api.searchFacility(originId);
+    const latencyEl = document.getElementById('route-latency');
+    if (latencyEl && searchData.timings) {
+      latencyEl.innerText = `HashTable: ${searchData.timings.CustomHashTable} · BST: ${searchData.timings.BinarySearchTree} · RBTree: ${searchData.timings.RedBlackTree}`;
+    }
+  } catch (e) {}
+
+  // 3. Knapsack DP Cargo Packaging
+  try {
+    const cargoData = await api.runKnapsack(capacity);
+    const badge = document.getElementById('knapsack-value-badge');
+    if (badge) badge.innerText = `Total Clinical Value: ${cargoData.totalValue.toFixed(1)} pts (${cargoData.totalWeight.toFixed(1)} kg)`;
+    
+    const timeEl = document.getElementById('knapsack-time');
+    if (timeEl) timeEl.innerText = `${(cargoData.executionTimeNs / 1000).toFixed(2)} µs (${cargoData.executionTimeNs} ns)`;
+
+    const grid = document.getElementById('cargo-grid');
+    if (grid) {
+      grid.innerHTML = '';
+      cargoData.selectedItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'cargo-item';
+        card.innerHTML = `
+          <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">${item.name}</div>
+          <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11.5px;">
+            <span>Weight: <b>${item.weight.toFixed(1)} kg</b></span>
+            <span>Utility: <b style="color: var(--accent-green);">${item.value.toFixed(0)} pts</b></span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+  } catch (e) {}
 }
 
 async function loadStatus() {
@@ -40,11 +111,31 @@ function updateMetrics(data) {
 
 function bindEvents() {
   document.getElementById('btn-serve-single')?.addEventListener('click', onServeSingle);
-  document.getElementById('btn-serve-batch')?.addEventListener('click', onServeBatch);
   document.getElementById('btn-repopulate-shift')?.addEventListener('click', onRepopulateShift);
   document.getElementById('btn-undo')?.addEventListener('click', onUndo);
-  document.getElementById('btn-admit')?.addEventListener('click', onAdmit);
-  document.getElementById('btn-refresh-queues')?.addEventListener('click', loadQueuesState);
+  document.getElementById('btn-admit-mission')?.addEventListener('click', onAdmitMission);
+}
+
+async function onAdmitMission() {
+  const originSelect = document.getElementById('select-origin');
+  const destSelect = document.getElementById('select-dest');
+  const prioritySelect = document.getElementById('admit-priority');
+  const resourceSelect = document.getElementById('admit-resource');
+
+  const origin = originSelect ? parseInt(originSelect.value) : 1;
+  const dest = destSelect ? parseInt(destSelect.value) : 16;
+  const priority = prioritySelect ? parseInt(prioritySelect.value) : 2;
+  const resType = resourceSelect ? parseInt(resourceSelect.value) : 0;
+
+  try {
+    const data = await api.admitDispatch(priority, resType, origin, dest);
+    appendFeedCard(`<strong>MISSION ADMITTED: Ingested Patient Transfer Request #${data.requestId} into ${data.queueType}</strong>`, 'admit');
+    loadStatus();
+    loadQueuesState();
+    updateActiveTelemetry();
+  } catch (err) {
+    console.error('Error admitting mission:', err);
+  }
 }
 
 async function onRepopulateShift() {
@@ -64,6 +155,11 @@ async function onServeSingle() {
     if (!data.success) {
       alert(data.message);
       return;
+    }
+
+    // Live update map routing to highlight the active dispatched route
+    if (data.originId && data.targetId) {
+      drawDijkstraRoute(data.originId, data.targetId);
     }
 
     appendFeedCard(`
@@ -90,36 +186,6 @@ async function onServeSingle() {
   }
 }
 
-async function onServeBatch() {
-  try {
-    const data = await api.batchServeDispatch(5);
-    if (data.requests && data.requests.length > 0) {
-      data.requests.forEach((req, idx) => {
-        appendFeedCard(`
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <strong style="color: var(--accent-primary); font-size: 13.5px;">${req.serviceType}</strong>
-            <span style="font-weight: 700; color: var(--text-muted);">Batch [${idx + 1}/5] · Req #${req.requestId}</span>
-          </div>
-          <div style="margin-bottom: 4px;">
-            <span style="background: var(--bg-input); padding: 2px 6px; border-radius: 4px; font-size: 11.5px; border: 1px solid var(--border-subtle);">${req.triageName}</span>
-            <span style="font-size: 11.5px; color: var(--text-secondary); margin-left: 6px;">Payload: ${req.weightKg.toFixed(1)} kg</span>
-          </div>
-          <div style="color: var(--accent-green); font-weight: 600; margin-bottom: 2px;">
-            ✓ [${req.sourceQueue}] ➔ ${req.resource.typeName} #${req.resource.id} (GH¢ ${req.resource.costGhc.toFixed(2)})
-          </div>
-          <div style="color: var(--text-muted); font-size: 11.5px;">
-            Transfer Corridor: ${req.fromName} ➔ ${req.toName}
-          </div>
-        `, 'batch');
-      });
-    }
-    loadStatus();
-    loadQueuesState();
-  } catch (err) {
-    console.error('Error batch serving:', err);
-  }
-}
-
 async function onUndo() {
   try {
     const data = await api.undoDispatch();
@@ -140,22 +206,9 @@ async function onUndo() {
   }
 }
 
-async function onAdmit() {
-  const priority = document.getElementById('admit-priority').value;
-  const resType = document.getElementById('admit-resource').value;
-
-  try {
-    const data = await api.admitDispatch(priority, resType, 1, 16);
-    appendFeedCard(`<strong>ADMISSION: Ingested Request #${data.requestId} into ${data.queueType}</strong>`, 'admit');
-    loadStatus();
-    loadQueuesState();
-  } catch (err) {
-    console.error('Error admitting request:', err);
-  }
-}
-
 function appendFeedCard(htmlContent, type = 'serve') {
   const feed = document.getElementById('dispatch-feed');
+  if (!feed) return;
   if (feed.querySelector('.empty-state')) {
     feed.innerHTML = '';
   }

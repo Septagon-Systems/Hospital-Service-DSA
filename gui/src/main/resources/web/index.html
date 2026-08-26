@@ -45,23 +45,23 @@
 
     <!-- Main Navigation Bar -->
     <nav class="sub-nav">
-      <button class="nav-tab active" data-tab="tab-map">Highway Routing & Dijkstra</button>
-      <button class="nav-tab" data-tab="tab-dispatch">Triage Dispatch & Stack Undo</button>
-      <button class="nav-tab" data-tab="tab-search">Multi-Structure Search Lab</button>
-      <button class="nav-tab" data-tab="tab-knapsack">Supply Payload Optimizer</button>
-      <button class="nav-tab" data-tab="tab-benchmarks">Empirical Performance Curves</button>
+      <button class="nav-tab active" data-tab="tab-operations">Clinical Operations Command Center</button>
+      <button class="nav-tab" data-tab="tab-benchmarks">Empirical Performance Lab</button>
       <button class="nav-tab" data-tab="tab-student">Student Parameter Calculator</button>
     </nav>
 
     <!-- Main Workspace -->
     <main class="content-body">
 
-      <!-- TAB 1: GIS Map & Dijkstra -->
-      <section id="tab-map" class="tab-panel active">
+      <!-- UNIFIED TAB: Clinical Operations Command Center -->
+      <section id="tab-operations" class="tab-panel active">
+        <!-- Top Row: GIS Leaflet Map (Left) + Mission Command & Dispatch Controls (Right) -->
         <div class="grid-map-layout">
+          
+          <!-- LEFT: GIS Leaflet Map of Ghana -->
           <div class="glass-card map-panel">
             <div class="panel-header">
-              <h3>National Healthcare Road Network</h3>
+              <h3>National Healthcare Road Network & Live Fleet GIS</h3>
               <div class="panel-actions">
                 <button class="btn btn-secondary btn-sm" id="btn-toggle-tiles">Map Style: Street / Dark</button>
                 <button class="btn btn-secondary btn-sm" id="btn-toggle-mst">Toggle Kruskal MST Backbone</button>
@@ -71,117 +71,129 @@
             <div id="map-container" class="map-viewport"></div>
           </div>
 
+          <!-- RIGHT: Mission Command & Triage Admission Console -->
           <div class="glass-card control-panel">
             <div class="panel-header">
-              <h3>Ambulance Route Navigator</h3>
+              <h3>Incident Response & Triage Command</h3>
             </div>
             
-            <div class="form-field">
-              <label for="select-origin">Origin Facility</label>
-              <select id="select-origin" class="custom-select"></select>
-            </div>
-
-            <div class="form-field">
-              <label for="select-dest">Destination Facility</label>
-              <select id="select-dest" class="custom-select"></select>
-            </div>
-
-            <button class="btn btn-primary btn-block" id="btn-calculate-route">Calculate Shortest Route</button>
-
-            <div id="route-result-box" class="result-card hidden">
-              <h4>Optimal Highway Corridor</h4>
-              <div class="metric-row">
-                <span class="metric-label">Driving Distance:</span>
-                <span class="metric-value accent-text" id="route-distance">-</span>
-              </div>
-              <div class="metric-row">
-                <span class="metric-label">Estimated Transit Time:</span>
-                <span class="metric-value" id="route-time">-</span>
-              </div>
-              <div class="metric-row">
-                <span class="metric-label">Dijkstra Computation:</span>
-                <span class="metric-value code-text" id="route-latency">-</span>
-              </div>
-
-              <div class="waypoint-sequence" id="route-waypoints"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 2: Dispatch Simulator -->
-      <section id="tab-dispatch" class="tab-panel">
-        <div class="grid-dispatch-layout">
-          
-          <div class="glass-card">
-            <div class="panel-header">
-              <h3>Dispatch Command Center</h3>
-            </div>
-
-            <div class="stat-metrics-grid">
+            <div class="stat-metrics-grid" style="margin-bottom: 14px;">
               <div class="metric-box metric-urgent">
-                <span class="metric-caption">Urgent (P1/P2)</span>
+                <span class="metric-caption">Urgent<br>(P2)</span>
                 <span class="metric-number" id="stat-urgent">0</span>
               </div>
               <div class="metric-box metric-preempt">
-                <span class="metric-caption">Preemptions</span>
+                <span class="metric-caption">Preempt<br>(P1)</span>
                 <span class="metric-number" id="stat-preempt">0</span>
               </div>
               <div class="metric-box metric-normal">
-                <span class="metric-caption">Normal (P3)</span>
+                <span class="metric-caption">Routine<br>(P3)</span>
                 <span class="metric-number" id="stat-normal">0</span>
               </div>
               <div class="metric-box metric-served">
-                <span class="metric-caption">Total Served</span>
+                <span class="metric-caption">Served<br>Total</span>
                 <span class="metric-number" id="stat-served">0</span>
               </div>
             </div>
 
+            <div class="form-field">
+              <label for="select-origin">Origin Healthcare Facility</label>
+              <select id="select-origin" class="custom-select"></select>
+            </div>
+
+            <div class="form-field">
+              <label for="select-dest">Target Destination Facility</label>
+              <select id="select-dest" class="custom-select"></select>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="admit-priority">Triage Priority</label>
+                <select id="admit-priority" class="custom-select">
+                  <option value="1">P1 · Critical (Deque)</option>
+                  <option value="2" selected>P2 · Urgent (MinHeap)</option>
+                  <option value="3">P3 · Routine (CircularQ)</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="admit-resource">Required Resource</label>
+                <select id="admit-resource" class="custom-select">
+                  <option value="0">Ambulance Vehicle</option>
+                  <option value="1">Blood Plasma Pack</option>
+                  <option value="2">ICU Bed / Ventilator</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="slider-control-group" style="margin-bottom: 12px;">
+              <div class="slider-header">
+                <label for="capacity-slider">Vehicle Max Payload (Knapsack DP)</label>
+                <span class="slider-val-badge" id="capacity-val">35.0 kg</span>
+              </div>
+              <input type="range" id="capacity-slider" min="10" max="100" step="5" value="35" class="custom-range" style="margin-bottom: 6px;">
+            </div>
+
             <div class="action-stack-buttons">
-              <button class="btn btn-primary btn-block" id="btn-serve-single">Serve Next Priority Request</button>
-              <button class="btn btn-secondary btn-block" id="btn-serve-batch">Batch Serve 5 Requests</button>
-              <button class="btn btn-secondary btn-block" id="btn-repopulate-shift">Load Next Shift Batch from Database</button>
-              <button class="btn btn-danger btn-block" id="btn-undo">Undo Last Action (ArrayStack Rollback)</button>
-            </div>
-
-            <div class="section-divider"></div>
-
-            <h4>Admit Emergency Patient Transfer</h4>
-            <div class="form-field">
-              <label for="admit-priority">Triage Priority Level</label>
-              <select id="admit-priority" class="custom-select">
-                <option value="1">Priority 1 · Critical Preemption</option>
-                <option value="2" selected>Priority 2 · Urgent Min-Heap</option>
-                <option value="3">Priority 3 · Normal Circular Queue</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label for="admit-resource">Required Medical Resource</label>
-              <select id="admit-resource" class="custom-select">
-                <option value="0">Ambulance Vehicle</option>
-                <option value="1">Blood Transfusion Pack</option>
-                <option value="2">ICU Bed / Ventilator</option>
-              </select>
-            </div>
-            <button class="btn btn-outline btn-block" id="btn-admit">Admit Request into Queue</button>
-          </div>
-
-          <div class="glass-card">
-            <div class="panel-header">
-              <h3>Live Queue & Stack Activity Stream</h3>
-              <span class="badge" id="undo-depth-badge">Undo Stack Depth: 0</span>
-            </div>
-            <div class="activity-stream" id="dispatch-feed">
-              <div class="empty-state">No operations executed yet in this session.</div>
+              <button class="btn btn-primary btn-block" id="btn-admit-mission">Plan Transfer & Admit to Queue</button>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+                <button class="btn btn-secondary" id="btn-serve-single">Dispatch Next</button>
+                <button class="btn btn-danger" id="btn-undo">Undo (Stack)</button>
+              </div>
+              <button class="btn btn-outline btn-block btn-sm" id="btn-repopulate-shift" style="margin-top: 6px;">Load Shift Batch from Database</button>
             </div>
           </div>
-
         </div>
 
+        <!-- Middle Row: Active Mission Telemetry (Dijkstra Highway + Knapsack Cargo + Multi-Structure Lookup) -->
+        <div class="grid-telemetry-layout mt-4">
+          <!-- Active Mission Dijkstra Telemetry -->
+          <div class="glass-card">
+            <div class="panel-header">
+              <h3>Active Transfer Highway Route (Dijkstra)</h3>
+              <span class="badge" id="route-dijkstra-badge">Shortest Highway Path</span>
+            </div>
+            <div id="route-result-box" class="result-card">
+              <div class="metric-row">
+                <span class="metric-label">Driving Distance:</span>
+                <span class="metric-value accent-text" id="route-distance">242.2 km</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Estimated Transit Time:</span>
+                <span class="metric-value" id="route-time">198 mins</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Facility Indexing Latency:</span>
+                <span class="metric-value code-text" id="route-latency">HashTable: 44 ns · BST: 35 ns</span>
+              </div>
+              <div class="waypoint-sequence" id="route-waypoints">
+                <span class="waypoint-badge">Origin [1]</span> ➔ <span class="waypoint-badge">N6 Highway Corridor</span> ➔ <span class="waypoint-badge">Destination [16]</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Knapsack Optimized Cargo Manifest -->
+          <div class="glass-card">
+            <div class="panel-header">
+              <h3>Optimal Medical Payload Manifest (0/1 Knapsack DP)</h3>
+              <span class="badge" id="knapsack-value-badge">Total Clinical Value</span>
+            </div>
+            <div id="knapsack-result-box" class="result-card">
+              <div class="metric-row" style="margin-bottom: 8px;">
+                <span class="metric-label">DP Algorithm Latency:</span>
+                <span class="metric-value code-text" id="knapsack-time">-</span>
+              </div>
+              <div class="cargo-manifest-grid" id="cargo-grid">
+                <!-- Dynamically populated selected cargo packages -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Row: Live Multi-Tier Queue & Stack Activity Stream -->
         <div class="glass-card full-width-card mt-4">
           <div class="panel-header">
-            <h3>Live Data Structure State Inspector</h3>
-            <button class="btn btn-outline btn-sm" id="btn-refresh-queues">Refresh State</button>
+            <h3>Live Operations Pipeline & Data Structure State Inspector</h3>
+            <span class="badge" id="undo-depth-badge">Undo Stack Depth: 0</span>
           </div>
           <div class="grid-ds-inspector">
             <div class="ds-column">
@@ -214,93 +226,13 @@
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      <!-- TAB 3: Multi-Index Search -->
-      <section id="tab-search" class="tab-panel">
-        <div class="glass-card">
+          <div class="section-divider mt-4"></div>
           <div class="panel-header">
-            <h3>Comparative Search & Multi-Structure Indexing</h3>
+            <h4>Live Mission Activity Stream</h4>
           </div>
-
-          <div class="search-bar-inline">
-            <select id="search-hospital-select" class="custom-select flex-1"></select>
-            <button class="btn btn-primary" id="btn-run-search">Execute Benchmark Search</button>
-          </div>
-
-          <div id="search-result-container" class="search-details hidden">
-            <div class="facility-card" id="facility-profile"></div>
-
-            <h4>Empirical Lookup Latency Across 6 Structures</h4>
-            <div class="timing-cards-grid">
-              <div class="timing-card">
-                <span class="struct-name">CustomHashTable</span>
-                <span class="complexity-badge">O(1) amortized</span>
-                <span class="timing-value" id="time-hash">- ns</span>
-              </div>
-              <div class="timing-card">
-                <span class="struct-name">RedBlackTree</span>
-                <span class="complexity-badge">O(log N) balanced</span>
-                <span class="timing-value" id="time-rb">- ns</span>
-              </div>
-              <div class="timing-card">
-                <span class="struct-name">BinarySearchTree</span>
-                <span class="complexity-badge">O(h) hierarchical</span>
-                <span class="timing-value" id="time-bst">- ns</span>
-              </div>
-              <div class="timing-card">
-                <span class="struct-name">B-Tree (t=2)</span>
-                <span class="complexity-badge">O(log_t N) multi-way</span>
-                <span class="timing-value" id="time-btree">- ns</span>
-              </div>
-              <div class="timing-card">
-                <span class="struct-name">BinarySearch</span>
-                <span class="complexity-badge">O(log N) array</span>
-                <span class="timing-value" id="time-binary">- ns</span>
-              </div>
-              <div class="timing-card">
-                <span class="struct-name">LinearSearch</span>
-                <span class="complexity-badge">O(N) sequential</span>
-                <span class="timing-value" id="time-linear">- ns</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: Knapsack DP -->
-      <section id="tab-knapsack" class="tab-panel">
-        <div class="glass-card">
-          <div class="panel-header">
-            <h3>Medical Supply Payload Optimizer (0/1 Knapsack DP)</h3>
-          </div>
-
-          <div class="slider-control-group">
-            <div class="slider-header">
-              <label for="capacity-slider">Vehicle Max Payload Capacity</label>
-              <span class="slider-val-badge" id="capacity-val">35.0 kg</span>
-            </div>
-            <input type="range" id="capacity-slider" min="10" max="100" step="5" value="35" class="custom-range">
-            <button class="btn btn-primary" id="btn-run-knapsack">Compute Optimal Cargo Manifest</button>
-          </div>
-
-          <div id="knapsack-result-box" class="result-card hidden">
-            <div class="metric-row">
-              <span class="metric-label">Total Clinical Value:</span>
-              <span class="metric-value accent-text" id="knapsack-value">- pts</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Total Payload Weight:</span>
-              <span class="metric-value" id="knapsack-weight">- kg</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">DP Algorithm Latency:</span>
-              <span class="metric-value code-text" id="knapsack-time">-</span>
-            </div>
-
-            <h4>Selected Cargo Units</h4>
-            <div class="cargo-manifest-grid" id="cargo-grid"></div>
+          <div class="activity-stream" id="dispatch-feed">
+            <div class="empty-state">No operations executed yet in this session.</div>
           </div>
         </div>
       </section>
