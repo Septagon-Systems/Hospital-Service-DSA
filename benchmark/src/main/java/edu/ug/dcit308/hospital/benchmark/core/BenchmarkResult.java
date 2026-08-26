@@ -1,36 +1,37 @@
-package com.benchmark;
+package edu.ug.dcit308.hospital.benchmark.core;
+
+import java.util.Objects;
 
 /**
- * Immutable record of a single benchmark measurement (one algorithm, one
- * input size, one iteration), tagged with the id/timestamp of the run
- * session it belongs to so multiple runs can be told apart once appended
- * into the same results file over time.
- */
-public final class BenchmarkResult {
+ * Immutable measurement result for a single execution run of an algorithm.
+ */
+public class BenchmarkResult {
 
-    private final String runId;
-    private final String runTimestamp; // ISO-8601, shared by every result in the same run session
+    private final runId; 
+    private final runTimestamp;
     private final String algorithmName;
-    private final int inputSize;
-    private final int iteration;
-    private final long executionTimeNs;
-    private final double memoryUsedKb;
+    private final int inputSize;
+    private final int runNumber;
+    private final long executionTimeNs;
+    private final double memoryUsedKb;
 
-    public BenchmarkResult(String runId,
-                            String runTimestamp,
-                            String algorithmName,
-                            int inputSize,
-                            int iteration,
-                            long executionTimeNs,
-                            double memoryUsedKb) {
-        this.runId = runId;
+    public BenchmarkResult(
+            String runId,
+            String runTimestamp,
+            String algorithmName,
+            int inputSize,
+            int runNumber,
+            long executionTimeNs,
+            double memoryUsedKb) {
+
+        this.runId = runId;
         this.runTimestamp = runTimestamp;
-        this.algorithmName = algorithmName;
-        this.inputSize = inputSize;
-        this.iteration = iteration;
-        this.executionTimeNs = executionTimeNs;
-        this.memoryUsedKb = memoryUsedKb;
-    }
+        this.algorithmName = Objects.requireNonNull(algorithmName, "algorithmName must not be null");
+        this.inputSize = inputSize;
+        this.runNumber = runNumber;
+        this.executionTimeNs = executionTimeNs;
+        this.memoryUsedKb = memoryUsedKb;
+    }
 
     public String getRunId() {
         return runId;
@@ -40,30 +41,39 @@ public final class BenchmarkResult {
         return runTimestamp;
     }
 
-    public String getAlgorithmName() {
-        return algorithmName;
-    }
+    public String getAlgorithmName() {
+        return algorithmName;
+    }
 
-    public int getInputSize() {
-        return inputSize;
-    }
+    public int getInputSize() {
+        return inputSize;
+    }
 
-    public int getIteration() {
-        return iteration;
-    }
+    public int getRunNumber() {
+        return runNumber;
+    }
 
-    public long getExecutionTimeNs() {
-        return executionTimeNs;
-    }
+    public long getExecutionTimeNs() {
+        return executionTimeNs;
+    }
 
-    public double getMemoryUsedKb() {
-        return memoryUsedKb;
-    }
+    public double getMemoryUsedKb() {
+        return memoryUsedKb;
+    }
 
-    @Override
-    public String toString() {
-        return String.format(
-            "[%s] %s | size=%d | iter=%d | time=%d ns | mem=%.2f KB",
-            runId.substring(0, 8), algorithmName, inputSize, iteration, executionTimeNs, memoryUsedKb);
-    }
+    public double getExecutionTimeMs() {
+        return executionTimeNs / 1_000_000.0;
+    }
+
+    public String toCsvRow() {
+        return String.format("%s,%d,%d,%d,%.2f",
+                algorithmName, inputSize, runNumber, executionTimeNs, memoryUsedKb);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "BenchmarkResult[algorithm=%s, size=%d, run=%d, time=%.3f ms, mem=%.2f KB]",
+                algorithmName, inputSize, runNumber, getExecutionTimeMs(), memoryUsedKb);
+    }
 }
