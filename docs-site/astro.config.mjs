@@ -36,6 +36,10 @@ export default defineConfig({
         },
         {
           tag: 'script',
+          attrs: { src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js', defer: true },
+        },
+        {
+          tag: 'script',
           attrs: { src: '/scripts/table-modal.js', defer: true },
         },
       ],
@@ -50,6 +54,12 @@ export default defineConfig({
             { label: 'Dataset & Local Context', slug: 'overview/data-acquisition' },
             { label: 'Weekly Development Log', slug: 'overview/dev-log' },
             { label: 'Academic References', slug: 'overview/references' },
+          ],
+        },
+        {
+          label: 'Service Operations',
+          items: [
+            { label: 'Flowcharts & Formal Pseudocode', slug: 'service-operations/flowcharts-pseudocode' },
           ],
         },
         {
