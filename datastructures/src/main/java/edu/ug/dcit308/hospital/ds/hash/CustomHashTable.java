@@ -49,9 +49,20 @@ public class CustomHashTable<K, V> {
     // -------------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private Entry<K, V>[] buckets = new Entry[DEFAULT_CAPACITY];
-    private int capacity = DEFAULT_CAPACITY;
-    private int size     = 0;
+    private Entry<K, V>[] buckets;
+    private int capacity;
+    private int size = 0;
+
+    public CustomHashTable() {
+        this(DEFAULT_CAPACITY);
+    }
+
+    @SuppressWarnings("unchecked")
+    public CustomHashTable(int initialCapacity) {
+        this.capacity = Math.max(initialCapacity, DEFAULT_CAPACITY);
+        this.buckets = new Entry[this.capacity];
+        this.size = 0;
+    }
 
     // -------------------------------------------------------------------------
     // Public API

@@ -1,51 +1,51 @@
 id,name,facility_type,region,district,town,latitude,longitude,ownership_type,icu_capacity,ambulance_count
-1,Korle Bu Teaching Hospital,Teaching Hospital,Greater Accra,Accra Metropolitan,Accra,5.533,-0.225,Government,35,8
-2,37 Military Hospital,Military Hospital,Greater Accra,Ayawaso East,Accra,5.5869,-0.1847,Quasi-Govt,20,6
-3,Korle Bu Polyclinic,Polyclinic,Greater Accra,Accra Metropolitan,Accra,5.535,-0.226,Government,0,2
-4,Greater Accra Regional Hospital,Regional Hospital,Greater Accra,Klottey-Korle,Accra,5.56,-0.2,Government,25,6
-5,Police Hospital,General Hospital,Greater Accra,Ayawaso East,Accra,5.564,-0.182,Quasi-Govt,10,4
-6,University of Ghana Medical Centre,Teaching Hospital,Greater Accra,Ayawaso West,Legon,5.6325,-0.1855,Government,30,7
-7,La General Hospital,General Hospital,Greater Accra,La Dade-Kotopon,La,5.56,-0.145,Government,6,3
-8,Achimota Hospital,General Hospital,Greater Accra,Okaikwei North,Achimota,5.62,-0.225,Government,8,3
-9,Tema General Hospital,General Hospital,Greater Accra,Tema Metropolitan,Tema,5.6742,-0.0252,Government,12,5
-10,LEKMA Hospital,General Hospital,Greater Accra,Ledzokuku,Teshie,5.59,-0.13,Government,10,4
-11,Trust Hospital,Private Hospital,Greater Accra,Klottey-Korle,Osu,5.56,-0.185,Private,8,3
-12,Nyaho Medical Centre,Private Hospital,Greater Accra,Ayawaso Central,Airport Residential,5.59,-0.195,Private,10,4
-13,University of Ghana Hospital,University Hospital,Greater Accra,Ayawaso West,Legon,5.65,-0.19,Government,8,3
-14,Adabraka Polyclinic,Polyclinic,Greater Accra,Klottey-Korle,Adabraka,5.565,-0.195,Government,0,2
-15,Mamobi General Hospital,General Hospital,Greater Accra,Ayawaso North,Mamobi,5.575,-0.195,Government,4,2
-16,Komfo Anokye Teaching Hospital,Teaching Hospital,Ashanti,Kumasi Metropolitan,Kumasi,6.7,-1.625,Government,30,8
-17,Kumasi South Hospital,General Hospital,Ashanti,Asokwa,Kumasi,6.67,-1.62,Government,10,4
-18,KNUST Hospital,University Hospital,Ashanti,Oforikrom,Kumasi,6.675,-1.57,Government,8,3
-19,Manhyia District Hospital,District Hospital,Ashanti,Manhyia South,Kumasi,6.71,-1.625,Government,6,3
-20,Tafo Government Hospital,Government Hospital,Ashanti,Old Tafo,Tafo,6.735,-1.58,Government,5,2
-21,Agogo Presbyterian Hospital,Hospital,Ashanti,Asante Akim North,Agogo,6.8,-1.08,CHAG,6,3
-22,Ejisu Government Hospital,District Hospital,Ashanti,Ejisu,Ejisu,6.73,-1.47,Government,4,2
-23,Obuasi Government Hospital,District Hospital,Ashanti,Obuasi Municipal,Obuasi,6.2,-1.68,Government,8,3
-24,Tamale Teaching Hospital,Teaching Hospital,Northern,Tamale Metropolitan,Tamale,9.3913,-0.8242,Government,22,6
-25,Tamale Central Hospital,General Hospital,Northern,Tamale Metropolitan,Tamale,9.405,-0.84,Government,8,3
-26,Tamale West Hospital,General Hospital,Northern,Tamale Metropolitan,Tamale,9.42,-0.87,Government,6,2
-27,Yendi Municipal Hospital,Municipal Hospital,Northern,Yendi Municipal,Yendi,9.44,-0.01,Government,5,2
-28,Bimbilla Hospital,District Hospital,Northern,Nanumba North,Bimbilla,8.85,0.05,Government,4,2
-29,Savelugu Municipal Hospital,Municipal Hospital,Northern,Savelugu Municipal,Savelugu,9.62,-0.83,Government,4,2
-30,Wa Regional Hospital,Regional Hospital,Upper West,Wa Municipal,Wa,10.0872,-2.5213,Government,15,5
-31,Lawra District Hospital,District Hospital,Upper West,Lawra Municipal,Lawra,10.65,-2.89,Government,4,2
-32,Nandom Hospital,District Hospital,Upper West,Nandom Municipal,Nandom,10.87,-2.75,CHAG,4,2
-33,Jirapa District Hospital,District Hospital,Upper West,Jirapa Municipal,Jirapa,10.53,-2.72,CHAG,4,2
-34,Bolgatanga Regional Hospital,Regional Hospital,Upper East,Bolgatanga Municipal,Bolgatanga,10.8062,-0.8621,Government,14,4
-35,Bawku Presbyterian Hospital,Hospital,Upper East,Bawku Municipal,Bawku,11.06,-0.24,CHAG,8,3
-36,Navrongo War Memorial Hospital,Hospital,Upper East,Kassena Nankana East,Navrongo,10.89,-1.09,Government,6,2
-37,Kassena Nankana Hospital,District Hospital,Upper East,Kassena Nankana West,Paga,10.895,-1.095,Government,4,2
-38,Cape Coast Teaching Hospital,Teaching Hospital,Central,Cape Coast Metropolitan,Cape Coast,5.12,-1.28,Government,20,6
-39,Winneba Trauma and Specialist Hospital,Specialist Hospital,Central,Effutu Municipal,Winneba,5.35,-0.62,Government,12,4
-40,Cape Coast Metropolitan Hospital,General Hospital,Central,Cape Coast Metropolitan,Cape Coast,5.11,-1.25,Government,6,3
-41,Mfantsiman Municipal Hospital,Municipal Hospital,Central,Mfantsiman Municipal,Mankessim,5.27,-1.06,Government,4,2
-42,Abura Dunkwa Government Hospital,District Hospital,Central,Abura Asebu Kwamankese,Abura Dunkwa,5.13,-1.47,Government,4,2
-43,Tarkwa Municipal Hospital,Municipal Hospital,Western,Tarkwa Nsuaem,Tarkwa,5.3,-1.99,Government,6,3
-44,Effia Nkwanta Regional Hospital,Regional Hospital,Western,Sekondi Takoradi,Sekondi,4.92,-1.75,Government,16,5
-45,Western Regional Hospital,Regional Hospital,Western,Sekondi Takoradi,Takoradi,4.93,-1.71,Government,10,4
-46,Asankragwa Government Hospital,District Hospital,Western,Amenfi West,Asankragwa,6.05,-2.5,Government,4,2
-47,Sunyani Regional Hospital,Regional Hospital,Bono,Sunyani Municipal,Sunyani,7.34,-2.33,Government,15,4
-48,Berekum Holy Family Hospital,Hospital,Bono,Berekum Municipal,Berekum,7.45,-2.58,CHAG,6,3
-49,Techiman Holy Family Hospital,Hospital,Bono East,Techiman Municipal,Techiman,7.59,-1.94,CHAG,10,4
-50,Kintampo Municipal Hospital,Municipal Hospital,Bono East,Kintampo North,Kintampo,8.06,-1.73,Government,6,2
+1,Korle Bu Teaching Hospital,Teaching Hospital,Greater Accra,Accra Metropolitan,Accra,5.53831670,-0.22681450,Government,35,8
+2,37 Military Hospital,Military Hospital,Greater Accra,Ayawaso East,Accra,5.58689220,-0.18504740,Quasi-Govt,20,6
+3,Korle Bu Polyclinic,Polyclinic,Greater Accra,Accra Metropolitan,Accra,5.54124580,-0.22723140,Government,0,2
+4,Greater Accra Regional Hospital,Regional Hospital,Greater Accra,Klottey-Korle,Accra,5.56211120,-0.19893060,Government,25,6
+5,Police Hospital,General Hospital,Greater Accra,Ayawaso East,Accra,5.56781040,-0.18083040,Quasi-Govt,10,4
+6,University of Ghana Medical Centre,Teaching Hospital,Greater Accra,Ayawaso West,Legon,5.63248920,-0.18551240,Government,30,7
+7,La General Hospital,General Hospital,Greater Accra,La Dade-Kotopon,La,5.55550410,-0.16656370,Government,6,3
+8,Achimota Hospital,General Hospital,Greater Accra,Okaikwei North,Achimota,5.62962200,-0.21724430,Government,8,3
+9,Tema General Hospital,General Hospital,Greater Accra,Tema Metropolitan,Tema,5.67416830,-0.02501230,Government,12,5
+10,LEKMA Hospital,General Hospital,Greater Accra,Ledzokuku,Teshie,5.60309880,-0.11999470,Government,10,4
+11,Trust Hospital,Private Hospital,Greater Accra,Klottey-Korle,Osu,5.56074960,-0.18707940,Private,8,3
+12,Nyaho Medical Centre,Private Hospital,Greater Accra,Ayawaso Central,Airport Residential,5.55148960,-0.20393940,Private,10,4
+13,University of Ghana Hospital,University Hospital,Greater Accra,Ayawaso West,Legon,5.65184370,-0.17810980,Government,8,3
+14,Adabraka Polyclinic,Polyclinic,Greater Accra,Klottey-Korle,Adabraka,5.56183250,-0.20451860,Government,0,2
+15,Mamobi General Hospital,General Hospital,Greater Accra,Ayawaso North,Mamobi,5.59149270,-0.19908060,Government,4,2
+16,Komfo Anokye Teaching Hospital,Teaching Hospital,Ashanti,Kumasi Metropolitan,Kumasi,6.69688460,-1.62997870,Government,30,8
+17,Kumasi South Hospital,General Hospital,Ashanti,Asokwa,Kumasi,6.65080600,-1.58587420,Government,10,4
+18,KNUST Hospital,University Hospital,Ashanti,Oforikrom,Kumasi,6.68603680,-1.57383370,Government,8,3
+19,Manhyia District Hospital,District Hospital,Ashanti,Manhyia South,Kumasi,6.70288300,-1.61276710,Government,6,3
+20,Tafo Government Hospital,Government Hospital,Ashanti,Old Tafo,Tafo,6.72480240,-1.61317350,Government,5,2
+21,Agogo Presbyterian Hospital,Hospital,Ashanti,Asante Akim North,Agogo,6.79656980,-1.08550780,CHAG,6,3
+22,Ejisu Government Hospital,District Hospital,Ashanti,Ejisu,Ejisu,6.72951420,-1.47153280,Government,4,2
+23,Obuasi Government Hospital,District Hospital,Ashanti,Obuasi Municipal,Obuasi,6.20148920,-1.67849120,Government,8,3
+24,Tamale Teaching Hospital,Teaching Hospital,Northern,Tamale Metropolitan,Tamale,9.39139540,-0.82457860,Government,22,6
+25,Tamale Central Hospital,General Hospital,Northern,Tamale Metropolitan,Tamale,9.40593930,-0.83717280,Government,8,3
+26,Tamale West Hospital,General Hospital,Northern,Tamale Metropolitan,Tamale,9.40192480,-0.85086270,Government,6,2
+27,Yendi Municipal Hospital,Municipal Hospital,Northern,Yendi Municipal,Yendi,9.43952140,-0.00951480,Government,5,2
+28,Bimbilla Hospital,District Hospital,Northern,Nanumba North,Bimbilla,8.85798690,0.05519160,Government,4,2
+29,Savelugu Municipal Hospital,Municipal Hospital,Northern,Savelugu Municipal,Savelugu,9.61915580,-0.82923600,Government,4,2
+30,Wa Regional Hospital,Regional Hospital,Upper West,Wa Municipal,Wa,10.08723140,-2.52127490,Government,15,5
+31,Lawra District Hospital,District Hospital,Upper West,Lawra Municipal,Lawra,10.64279930,-2.88816770,Government,4,2
+32,Nandom Hospital,District Hospital,Upper West,Nandom Municipal,Nandom,10.83898830,-2.77298970,CHAG,4,2
+33,Jirapa District Hospital,District Hospital,Upper West,Jirapa Municipal,Jirapa,10.52951240,-2.71948120,CHAG,4,2
+34,Bolgatanga Regional Hospital,Regional Hospital,Upper East,Bolgatanga Municipal,Bolgatanga,10.80614140,-0.86205840,Government,14,4
+35,Bawku Presbyterian Hospital,Hospital,Upper East,Bawku Municipal,Bawku,11.06051000,-0.23280540,CHAG,8,3
+36,Navrongo War Memorial Hospital,Hospital,Upper East,Kassena Nankana East,Navrongo,10.88948120,-1.08951420,Government,6,2
+37,Kassena Nankana Hospital,District Hospital,Upper East,Kassena Nankana West,Paga,10.89481240,-1.09482140,Government,4,2
+38,Cape Coast Teaching Hospital,Teaching Hospital,Central,Cape Coast Metropolitan,Cape Coast,5.13442450,-1.26637990,Government,20,6
+39,Winneba Trauma and Specialist Hospital,Specialist Hospital,Central,Effutu Municipal,Winneba,5.35248910,-0.62151240,Government,12,4
+40,Cape Coast Metropolitan Hospital,General Hospital,Central,Cape Coast Metropolitan,Cape Coast,5.10951420,-1.24951240,Government,6,3
+41,Mfantsiman Municipal Hospital,Municipal Hospital,Central,Mfantsiman Municipal,Mankessim,5.26948120,-1.05948120,Government,4,2
+42,Abura Dunkwa Government Hospital,District Hospital,Central,Abura Asebu Kwamankese,Abura Dunkwa,5.12948120,-1.46951240,Government,4,2
+43,Tarkwa Municipal Hospital,Municipal Hospital,Western,Tarkwa Nsuaem,Tarkwa,5.32139680,-1.99067760,Government,6,3
+44,Effia Nkwanta Regional Hospital,Regional Hospital,Western,Sekondi Takoradi,Sekondi,4.92441100,-1.74290980,Government,16,5
+45,Western Regional Hospital,Regional Hospital,Western,Sekondi Takoradi,Takoradi,4.92951240,-1.71051240,Government,10,4
+46,Asankragwa Government Hospital,District Hospital,Western,Amenfi West,Asankragwa,6.04951240,-2.49951240,Government,4,2
+47,Sunyani Regional Hospital,Regional Hospital,Bono,Sunyani Municipal,Sunyani,7.34570030,-2.31426440,Government,15,4
+48,Berekum Holy Family Hospital,Hospital,Bono,Berekum Municipal,Berekum,7.44951240,-2.57948120,CHAG,6,3
+49,Techiman Holy Family Hospital,Hospital,Bono East,Techiman Municipal,Techiman,7.59203650,-1.93941030,CHAG,10,4
+50,Kintampo Municipal Hospital,Municipal Hospital,Bono East,Kintampo North,Kintampo,8.05801420,-1.73148120,Government,6,2

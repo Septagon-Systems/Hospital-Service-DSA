@@ -1,0 +1,34 @@
+/* GIS Map Viewport & Waypoint Styles */
+
+.grid-map-layout {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .grid-map-layout { grid-template-columns: 1fr; }
+}
+
+.map-viewport {
+  height: 580px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+}
+
+.waypoint-sequence {
+  margin-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.waypoint-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-subtle);
+}

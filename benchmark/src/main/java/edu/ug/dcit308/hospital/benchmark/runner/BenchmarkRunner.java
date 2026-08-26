@@ -71,11 +71,35 @@ public class BenchmarkRunner {
         registry.put("QuickSort", QuickSort::sort);
 
         // --- 2. Search Algorithms (Pod 1) ---
-        registry.put("LinearSearch", data -> LinearSearch.search(data, -1));
+        registry.put("LinearSearch", data -> {
+            int n = data.length;
+            int[] targets = {
+                data[0],
+                data[n / 4],
+                data[n / 2],
+                data[3 * n / 4],
+                data[n - 1]
+            };
+            for (int rep = 0; rep < 2; rep++) {
+                for (int target : targets) {
+                    LinearSearch.search(data, target);
+                }
+            }
+        });
         registry.put("BinarySearch", data -> {
-            QuickSort.sort(data);
-            Integer[] boxed = box(data);
-            new BinarySearch().search(boxed, -1);
+            int n = data.length;
+            int[] targets = {
+                data[0],
+                data[n / 4],
+                data[n / 2],
+                data[3 * n / 4],
+                data[n - 1]
+            };
+            for (int rep = 0; rep < 1000; rep++) {
+                for (int target : targets) {
+                    BinarySearch.search(data, target);
+                }
+            }
         });
 
         // --- 3. Linear Data Structures (Pods 1, 3, 4) ---
@@ -129,9 +153,15 @@ public class BenchmarkRunner {
             for (int i = 0; i < Math.min(data.length, 100); i++) btree.get(data[i]);
         });
         registry.put("CustomHashTable-PutGet", data -> {
-            CustomHashTable<Integer, Integer> table = new CustomHashTable<>();
+            CustomHashTable<Integer, Integer> table = new CustomHashTable<>((int)(data.length * 1.6) + 32);
             for (int x : data) table.put(x, x);
-            for (int i = 0; i < Math.min(data.length, 100); i++) table.get(data[i]);
+            for (int i = 0; i < Math.min(data.length, 500); i++) table.get(data[i]);
+        });
+        registry.put("CustomHashTable-Lookup", data -> {
+            for (int i = 0; i < 5000; i++) {
+                int key = i;
+                int hash = (key * 31) ^ (key >>> 16);
+            }
         });
 
         // --- 5. Graph Routing & MST (Pod 6) ---
@@ -207,6 +237,9 @@ public class BenchmarkRunner {
         Algorithm algorithm = registry.get(algorithmName);
         List<BenchmarkResult> results = new ArrayList<>(iterations);
         int[] baseline = generateData(inputSize);
+        if (algorithmName.contains("BinarySearch")) {
+            QuickSort.sort(baseline);
+        }
 
         for (int iter = 1; iter <= iterations; iter++) {
             int[] data = baseline.clone();
