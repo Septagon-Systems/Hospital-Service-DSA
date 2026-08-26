@@ -1,11 +1,12 @@
 package edu.ug.dcit308.hospital.benchmark.exporter;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import edu.ug.dcit308.hospital.benchmark.core.BenchmarkResult;
@@ -15,19 +16,19 @@ import edu.ug.dcit308.hospital.benchmark.core.BenchmarkResult;
  */
 public final class ResultWriter {
 
-    public static final String DEFAULT_CSV_PATH = Paths.get("data", "results", "algorithm_runs.csv").toString();
+    public static final String DEFAULT_FILE_PATH = Paths.get("data", "results", "algorithm_runs.csv").toString();
     public static final String CSV_HEADER = "run_id,run_timestamp,algorithm_name,input_size,run_number,execution_time_ns,memory_used_kb";
 
     private ResultWriter() {}
 
     /**
-     * Exports the given benchmark results to the default CSV location (data/results/algorithm_runs.csv) in append mode.
+     * Exports benchmark results to default location (data/results/algorithm_runs.csv) in append mode.
      *
      * @param results list of benchmark results to export
      * @throws IOException if writing fails
      */
     public static void exportToCsv(List<BenchmarkResult> results) throws IOException {
-        exportToCsv(results, DEFAULT_CSV_PATH);
+        exportToCsv(results, DEFAULT_FILE_PATH);
     }
 
     /**
@@ -45,25 +46,7 @@ public final class ResultWriter {
             throw new IllegalArgumentException("File path must not be null or blank");
         }
 
-        File targetFile = new File(filePath);
-        File parentDir = targetFile.getParentFile();
-        if (parentDir != null && !parentDir.exists()) {
-            parentDir.mkdirs();
-        }
-
-        boolean isNewFile = !targetFile.exists() || targetFile.length() == 0;
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, true))) {
-            if (isNewFile) {
-                writer.write(CSV_HEADER);
-                writer.newLine();
-            }
-
-            for (BenchmarkResult result : results) {
-                writer.write(result.toCsvRow());
-                writer.newLine();
-            }
-        }
+        exportToCsv(results, Paths.get(filePath));
     }
 
     /**
@@ -74,9 +57,36 @@ public final class ResultWriter {
      * @throws IOException if writing fails
      */
     public static void exportToCsv(List<BenchmarkResult> results, Path path) throws IOException {
+        if (results == null) {
+            throw new IllegalArgumentException("Results list must not be null");
+        }
         if (path == null) {
             throw new IllegalArgumentException("Path must not be null");
         }
-        exportToCsv(results, path.toString());
+
+        Path parentDir = path.getParent();
+        if (parentDir != null && !Files.exists(parentDir)) {
+            Files.createDirectories(parentDir);
+        }
+
+        boolean isNewFile = !Files.exists(path) || Files.size(path) == 0;
+
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                path,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.WRITE,
+                StandardOpenOption.APPEND)) {
+
+            if (isNewFile) {
+                writer.write(CSV_HEADER);
+                writer.newLine();
+            }
+
+            for (BenchmarkResult result : results) {
+                writer.write(result.toCsvRow());
+                writer.newLine();
+            }
+        }
     }
 }
