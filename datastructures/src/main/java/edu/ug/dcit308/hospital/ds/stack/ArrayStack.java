@@ -73,8 +73,15 @@ public class ArrayStack<T> {
 
     // Number of elements
     public int size() {
-
         return top + 1;
+    }
+
+    // Clear all elements
+    public void clear() {
+        for (int i = 0; i <= top; i++) {
+            elements[i] = null;
+        }
+        top = -1;
     }
 
 

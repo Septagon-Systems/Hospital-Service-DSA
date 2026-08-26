@@ -4,6 +4,26 @@ import java.util.Comparator;
 
 public class BinarySearch {
 
+    public static int search(int[] array, int key) {
+        if (array == null) {
+            throw new IllegalArgumentException("Array must not be null.");
+        }
+        int low = 0;
+        int high = array.length - 1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (array[mid] == key) {
+                return mid;
+            }
+            if (array[mid] < key) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return -1;
+    }
+
     public <T extends Comparable<T>> int search(T[] array, T key) {
         if (array == null) {
             throw new IllegalArgumentException("Array must not be null.");

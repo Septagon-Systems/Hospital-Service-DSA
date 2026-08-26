@@ -2,9 +2,6 @@ package edu.ug.dcit308.hospital.app;
 
 import edu.ug.dcit308.hospital.app.util.StudentParameterCalculator;
 
-/**
- * Main Entry point for Ghana Smart Hospital Operations Optimizer Application.
- */
 public class Main {
 
     public static void main(String[] args) {

@@ -1,0 +1,165 @@
+/* Dispatch Center, Multi-Queue Metrics, & Activity Stream */
+
+.grid-dispatch-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .grid-dispatch-layout { grid-template-columns: 1fr; }
+}
+
+.stat-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.metric-box {
+  background: var(--bg-input);
+  padding: 12px 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  min-height: 82px;
+  box-sizing: border-box;
+}
+
+.metric-caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  line-height: 1.25;
+  text-align: center;
+  height: 28px;
+}
+
+.metric-number {
+  font-size: 22px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.metric-urgent .metric-number { color: var(--accent-red); }
+.metric-preempt .metric-number { color: var(--accent-amber); }
+.metric-normal .metric-number { color: var(--accent-secondary); }
+.metric-served .metric-number { color: var(--accent-green); }
+
+.action-stack-buttons {
+  margin-bottom: 16px;
+}
+
+.activity-stream {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  height: 480px;
+  overflow-y: auto;
+  padding: 14px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+
+.stream-card {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent-secondary);
+}
+
+.stream-card.undo {
+  border-left-color: var(--accent-red);
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.stream-card.admit {
+  border-left-color: var(--accent-green);
+}
+
+.full-width-card {
+  margin-top: 24px;
+}
+
+.mt-4 { margin-top: 24px; }
+
+.grid-ds-inspector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .grid-ds-inspector { grid-template-columns: 1fr; }
+}
+
+.ds-column {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.ds-column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ds-name {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--text-primary);
+}
+
+.ds-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.ds-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.ds-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+}
+
+.ds-card-action {
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.empty-state-sm {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 20px 0;
+}

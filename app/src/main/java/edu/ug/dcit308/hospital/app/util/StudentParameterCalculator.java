@@ -11,13 +11,19 @@ public class StudentParameterCalculator {
         public final int hashTableSize;
         public final long randomSeed;
         public final double routePenalty;
+        public final int urgentCapacity;
+        public final int normalCapacity;
+        public final int preemptionCapacity;
 
-        public StudentParameters(String indexNumber, int priorityWeight, int hashTableSize, long randomSeed, double routePenalty) {
+        public StudentParameters(String indexNumber, int priorityWeight, int hashTableSize, long randomSeed, double routePenalty, int urgentCapacity, int normalCapacity, int preemptionCapacity) {
             this.indexNumber = indexNumber;
             this.priorityWeight = priorityWeight;
             this.hashTableSize = hashTableSize;
             this.randomSeed = randomSeed;
             this.routePenalty = routePenalty;
+            this.urgentCapacity = urgentCapacity;
+            this.normalCapacity = normalCapacity;
+            this.preemptionCapacity = preemptionCapacity;
         }
 
         @Override
@@ -28,7 +34,10 @@ public class StudentParameterCalculator {
                 - Hash Table Prime Size: %d
                 - Random Seed: %d
                 - Route Penalty Factor: %.2f
-                """, indexNumber, priorityWeight, hashTableSize, randomSeed, routePenalty);
+                - Urgent Heap Capacity Limit: %d
+                - Normal CircularQueue Capacity: %d
+                - Preemption Deque Shift Limit: %d
+                """, indexNumber, priorityWeight, hashTableSize, randomSeed, routePenalty, urgentCapacity, normalCapacity, preemptionCapacity);
         }
     }
 
@@ -52,7 +61,12 @@ public class StudentParameterCalculator {
         // Route penalty = (indexNum % 20) / 10.0
         double routePenalty = (indexNum % 20) / 10.0;
 
-        return new StudentParameters(indexNumberStr, priorityWeight, hashTableSize, randomSeed, routePenalty);
+        // Queue capacities derived from student index:
+        int urgentCapacity = (sumDigits % 4) + 4; // 4 to 7
+        int normalCapacity = (sumDigits % 5) + 5; // 5 to 9
+        int preemptionCapacity = (priorityWeight % 3) + 1; // 1 to 3
+
+        return new StudentParameters(indexNumberStr, priorityWeight, hashTableSize, randomSeed, routePenalty, urgentCapacity, normalCapacity, preemptionCapacity);
     }
 
     private static int nextPrime(int n) {
