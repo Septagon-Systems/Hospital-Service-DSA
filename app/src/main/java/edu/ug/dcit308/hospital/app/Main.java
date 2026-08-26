@@ -8,13 +8,13 @@ import edu.ug.dcit308.hospital.db.importer.CsvImporter;
 import edu.ug.dcit308.hospital.db.schema.SchemaInitializer;
 
 /**
- * Main Entry point for the Ghana Smart Hospital Operations Optimizer (DCIT 204/308).
+ * Main Entry point for the Ghana Smart Hospital Operations Optimizer (DCIT 204 / DCIT 308).
  */
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("=============================================================");
-        System.out.println("   GHANA SMART HOSPITAL OPERATIONS OPTIMIZER (DCIT 204/308)  ");
+        System.out.println("   GHANA SMART HOSPITAL OPERATIONS OPTIMIZER (DCIT 204 / 308)  ");
         System.out.println("=============================================================");
 
         // 1. Bootstrap SQLite Schema & Ingest Seed Data

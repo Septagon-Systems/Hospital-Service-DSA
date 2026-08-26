@@ -53,6 +53,7 @@ public class RunBenchmarkDemo {
                 toRun.add("CustomHashTable-PutGet");
                 toRun.add("RedBlackTree-InsertSearch");
                 toRun.add("BinarySearchTree-InsertSearch");
+                toRun.add("BTree-InsertSearch");
                 break;
             case "4":
                 toRun.add("DijkstraShortestPath");
