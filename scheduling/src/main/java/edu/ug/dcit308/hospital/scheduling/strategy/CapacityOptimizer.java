@@ -2,7 +2,6 @@ package edu.ug.dcit308.hospital.scheduling.strategy;
 
 import edu.ug.dcit308.hospital.ds.list.DynamicArrayList;
 
-
 /**
  * Pod 6 — Graph & Optimisation
  * Issue #22: Implement 0/1 Knapsack DP for optimal medical supply transport
@@ -17,6 +16,21 @@ public class CapacityOptimizer {
     private static final int SCALE = 100;
 
     public OptimizationResult optimizeCapacity(double[] weights, double[] values, double capacity) {
+        if (weights == null || values == null) {
+            throw new IllegalArgumentException("weights and values must not be null");
+        }
+        if (weights.length != values.length) {
+            throw new IllegalArgumentException("weights and values must be the same length");
+        }
+        if (capacity < 0) {
+            throw new IllegalArgumentException("capacity must not be negative");
+        }
+        for (double w : weights) {
+            if (w < 0) {
+                throw new IllegalArgumentException("item weights must not be negative");
+            }
+        }
+
         int n = weights.length;
         int scaledCapacity = (int) Math.round(capacity * SCALE);
 
