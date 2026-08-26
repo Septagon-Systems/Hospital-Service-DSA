@@ -1,12 +1,14 @@
 package edu.ug.dcit308.hospital.app;
 
+import edu.ug.dcit308.hospital.ds.list.DynamicArrayList;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class RunDemoHandlersTest {
@@ -15,11 +17,13 @@ class RunDemoHandlersTest {
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
+    private DynamicArrayList<RunDataLoader.Hospital> dataset;
 
     @BeforeEach
     void setUp() {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
+        dataset = RunDataLoader.loadData();
     }
 
     @AfterEach
@@ -30,22 +34,22 @@ class RunDemoHandlersTest {
 
     @Test
     void testRunDataLoader() {
-        assertDoesNotThrow(() -> RunDataLoader.execute(new Scanner("0\n")));
+        assertDoesNotThrow(() -> RunDataLoader.execute());
     }
 
     @Test
     void testRunSearchDemo() {
-        assertDoesNotThrow(() -> RunSearchDemo.execute(new Scanner("0\n")));
+        assertDoesNotThrow(() -> RunSearchDemo.execute(dataset));
     }
 
     @Test
     void testRunRouteDemo() {
-        assertDoesNotThrow(() -> RunRouteDemo.execute(new Scanner("0\n")));
+        assertDoesNotThrow(() -> RunRouteDemo.execute(dataset));
     }
 
     @Test
     void testRunDispatchDemo() {
-        assertDoesNotThrow(() -> RunDispatchDemo.execute(new Scanner("0\n")));
+        assertDoesNotThrow(() -> RunDispatchDemo.execute(dataset));
     }
 
     @Test
@@ -55,6 +59,6 @@ class RunDemoHandlersTest {
 
     @Test
     void testRunBenchmarkDemo() {
-        assertDoesNotThrow(() -> RunBenchmarkDemo.execute(new Scanner("0\n")));
+        assertDoesNotThrow(() -> RunBenchmarkDemo.execute(dataset));
     }
 }

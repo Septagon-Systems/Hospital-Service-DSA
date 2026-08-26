@@ -12,7 +12,11 @@ public class ConsoleMenu {
     private DynamicArrayList<RunDataLoader.Hospital> loadedDataset;
 
     public ConsoleMenu() {
-        this.scanner = new Scanner(System.in);
+        this(new Scanner(System.in));
+    }
+
+    public ConsoleMenu(Scanner scanner) {
+        this.scanner = scanner;
         this.actionHistory = new ArrayStack<>();
         this.loadedDataset = null;
     }
