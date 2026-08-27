@@ -9,42 +9,26 @@
   width: var(--sl-sidebar-width);
   max-width: var(--sl-sidebar-width);
   height: calc(100vh - var(--sl-nav-height));
-  border: var(--glass-border-width) solid transparent;
+  border: none;
   border-right: 1px solid var(--sl-color-gray-6);
   border-radius: 0;
   box-shadow: none;
-  background-color: transparent;
+  background-color: var(--sl-color-bg-sidebar);
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
   transition:
-    top var(--glass-ease),
-    inset-block-start var(--glass-ease),
-    left var(--glass-ease),
-    inset-inline-start var(--glass-ease),
-    height var(--glass-ease),
-    border-radius var(--glass-ease),
-    border-color var(--glass-ease),
-    box-shadow var(--glass-ease),
     background-color var(--ui-ease),
     scrollbar-color 0.25s ease;
 }
 
-/* Mobile (< 50rem): drawer stays flush from top */
+/* Mobile (< 50rem): drawer stays flush from top with 100% solid background */
 @media (max-width: 49.99rem) {
-  body.is-scrolled .sidebar-pane {
-    top: var(--sl-nav-height) !important;
-    inset-block-start: var(--sl-nav-height) !important;
-    left: 0 !important;
-    inset-inline-start: 0 !important;
-    width: var(--sl-sidebar-width) !important;
-    max-width: var(--sl-sidebar-width) !important;
-    height: calc(100vh - var(--sl-nav-height)) !important;
-    border-radius: 0 !important;
-    border: none !important;
-    border-right: 1px solid var(--sl-color-gray-6) !important;
-    box-shadow: none !important;
+  .sidebar-pane,
+  nav.sidebar,
+  .sidebar-content,
+  div.sidebar {
     background-color: var(--sl-color-bg-sidebar) !important;
   }
 }
@@ -90,6 +74,11 @@
     display: none !important;
   }
 
+  /*
+    [ARCHIVED] Tablet Floating Sidebar Scroll Effect
+    Sidebar now maintains a steady relationship with the viewport.
+  */
+  /*
   body.is-scrolled .sidebar-pane {
     top: calc(var(--sl-nav-height) + 1.4rem) !important;
     inset-block-start: calc(var(--sl-nav-height) + 1.4rem) !important;
@@ -100,16 +89,11 @@
     height: calc(100vh - var(--sl-nav-height) - 1.8rem) !important;
     border-top-right-radius: var(--glass-radius) !important;
     border-bottom-right-radius: var(--glass-radius) !important;
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
-    /* border: var(--glass-border-width) solid var(--glass-border) !important; */
-    border: var(--glass-border-width) solid transparent;
-    border-left: none !important;
     box-shadow: var(--glass-shadow) !important;
     background-color: var(--glass-bg) !important;
     backdrop-filter: var(--glass-blur) !important;
-    -webkit-backdrop-filter: var(--glass-blur) !important;
   }
+  */
 }
 
 .sidebar-content,
@@ -190,44 +174,16 @@
     width: var(--sl-sidebar-width);
     max-width: var(--sl-sidebar-width);
     height: calc(100vh - var(--sl-nav-height));
-    border: var(--glass-border-width) solid transparent;
+    border: none;
     border-right: 1px solid var(--sl-color-gray-6);
     border-radius: 0;
     box-shadow: none;
-    background-color: transparent;
+    background-color: var(--sl-color-bg-sidebar);
     overflow-y: auto;
     overflow-x: hidden;
     transition:
-      top var(--glass-ease),
-      inset-block-start var(--glass-ease),
-      left var(--glass-ease),
-      inset-inline-start var(--glass-ease),
-      height var(--glass-ease),
-      border-radius var(--glass-ease),
-      border-color var(--glass-ease),
-      box-shadow var(--glass-ease),
       background-color var(--ui-ease),
       scrollbar-color 0.25s ease;
-  }
-
-  body.is-scrolled .sidebar-pane {
-    top: var(--float-panel-top);
-    inset-block-start: var(--float-panel-top);
-    left: var(--float-panel-inset);
-    inset-inline-start: var(--float-panel-inset);
-    width: var(--sl-sidebar-width);
-    max-width: var(--sl-sidebar-width);
-    height: var(--float-panel-height);
-    border-radius: var(--glass-radius);
-    border-right: none;
-    /* border: var(--glass-border-width) solid var(--glass-border); */
-    border: var(--glass-border-width) solid transparent;
-    background-color: var(--glass-bg);
-    box-shadow: var(--glass-shadow);
-  }
-
-  body.is-scrolled .sidebar-pane:hover, body.is-scrolled .right-sidebar:hover {
-        border: var(--glass-border-width) solid var(--glass-border);
   }
 
   .right-sidebar {
@@ -240,21 +196,41 @@
     max-width: var(--sl-sidebar-width);
     height: calc(100vh - var(--sl-nav-height));
     padding-top: 1.2rem;
-    border: var(--glass-border-width) solid transparent;
+    border: none;
     border-left: 1px solid var(--sl-color-gray-6);
     border-radius: 0;
     box-shadow: none;
-    background-color: transparent;
+    background-color: var(--sl-color-bg-sidebar);
     transition:
-      top var(--glass-ease),
-      inset-block-start var(--glass-ease),
-      right var(--glass-ease),
-      inset-inline-end var(--glass-ease),
-      height var(--glass-ease),
-      border-radius var(--glass-ease),
-      border-color var(--glass-ease),
-      box-shadow var(--glass-ease),
       background-color var(--ui-ease);
+  }
+
+  /*
+    [ARCHIVED] Desktop Floating Glass Sidebar System
+    ------------------------------------------------
+    Legend tells of a time when scrolling down would cause the left and right
+    sidebars to magically detach from the walls, grow rounded corners, and levitate
+    in mid-air like futuristic monoliths.
+    Today, they stand firmly grounded so your cursor doesn't get motion sickness.
+  */
+  /*
+  body.is-scrolled .sidebar-pane {
+    top: var(--float-panel-top);
+    inset-block-start: var(--float-panel-top);
+    left: var(--float-panel-inset);
+    inset-inline-start: var(--float-panel-inset);
+    width: var(--sl-sidebar-width);
+    max-width: var(--sl-sidebar-width);
+    height: var(--float-panel-height);
+    border-radius: var(--glass-radius);
+    border-right: none;
+    border: var(--glass-border-width) solid transparent;
+    background-color: var(--glass-bg);
+    box-shadow: var(--glass-shadow);
+  }
+
+  body.is-scrolled .sidebar-pane:hover, body.is-scrolled .right-sidebar:hover {
+    border: var(--glass-border-width) solid var(--glass-border);
   }
 
   body.is-scrolled .right-sidebar {
@@ -269,9 +245,9 @@
     overflow-y: auto;
     overflow-x: hidden;
     border-left: none;
-    /* border: var(--glass-border-width) solid var(--glass-border); */
     border: var(--glass-border-width) solid transparent;
     background-color: var(--glass-bg);
     box-shadow: var(--glass-shadow);
   }
+  */
 }

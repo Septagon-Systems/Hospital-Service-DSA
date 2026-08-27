@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   initTableModals();
   initPopularTopics();
-  initScrollFloatingHeader();
+  // initScrollFloatingHeader(); // RIP fancy floating pill animation (2026-2026). The devs wanted peace.
   initMobileLogoSwitch();
   initSidebarScrollWatcher();
   initMermaidDiagrams();
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('astro:page-load', () => {
   initTableModals();
   initPopularTopics();
-  initScrollFloatingHeader();
+  // initScrollFloatingHeader(); // Still retired. No acrobatics allowed.
   initMobileLogoSwitch();
   initSidebarScrollWatcher();
   initMermaidDiagrams();
@@ -70,9 +70,17 @@ function initMobileLogoSwitch() {
   });
 }
 
-// ---------------------------------------------------- //
-// FLOATING GLASS CAPSULE HEADER — SCROLL LISTENER      //
-// ---------------------------------------------------- //
+// ------------------------------------------------------------------------- //
+// [ARCHIVED] FLOATING GLASS CAPSULE HEADER — SCROLL LISTENER                //
+// ------------------------------------------------------------------------- //
+// Dear fellow dev / code archaeologist:
+// We spent blood, sweat, and 300 CSS transition milliseconds turning this
+// navbar into a sci-fi floating glass capsule that detached when you scrolled.
+// Turns out folks just wanted to read the Dijkstra proof in peace without the
+// header doing layout gymnastics.
+// We've preserved the code here in case future generations demand the return
+// of the floating pill. Until then: calm scrolling prevails.
+/*
 function initScrollFloatingHeader() {
   // Prevent duplicate listeners across page transitions
   if (window.__scrollFloatingHeaderActive) return;
@@ -110,6 +118,7 @@ function initScrollFloatingHeader() {
     document.body.classList.add('is-scrolled');
   }
 }
+*/
 
 // Complete Topic Catalog Pool for Random Discovery Selection
 const TOPIC_CATALOG = [

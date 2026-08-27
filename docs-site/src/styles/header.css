@@ -13,39 +13,48 @@ header.header {
   margin: 0 auto;
   width: 100%;
   max-width: 100%;
-  border: var(--glass-border-width) solid transparent;
-  border-bottom-color: var(--header-border-bottom);
+  border: none;
+  border-bottom: 1px solid var(--header-border-bottom);
   border-radius: 0;
   background-color: transparent;
   box-shadow: none;
   z-index: 100;
   isolation: isolate;
+  /* Transitions retired: no more floating capsule morphing on scroll */
   transition:
-    top var(--glass-ease),
-    inset-block-start var(--glass-ease),
-    width var(--glass-ease),
-    max-width var(--glass-ease),
-    border-radius var(--glass-ease),
-    box-shadow var(--glass-ease),
-    border-color var(--glass-ease);
+    border-color var(--ui-ease),
+    background-color var(--ui-ease);
 }
 
 header.header::before {
   content: "";
   position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   inset: 0;
   z-index: -1;
-  border-radius: inherit;
+  border-radius: 0;
   background-color: var(--sl-color-bg-nav);
   backdrop-filter: var(--glass-blur-header);
   -webkit-backdrop-filter: var(--glass-blur-header);
   pointer-events: none;
   transition:
     background-color var(--ui-ease),
-    backdrop-filter var(--ui-ease),
-    box-shadow var(--glass-ease);
+    backdrop-filter var(--ui-ease);
 }
 
+/*
+  [ARCHIVED] Floating Glass Capsule Scroll Animation
+  --------------------------------------------------
+  To the brave developer inspecting this CSS:
+  This block used to squeeze the navbar into a floating pill with 1480px max-width,
+  rounded pill borders, and active glass blur when scrolling past 20px.
+  It was visually glorious, but seeing that effect over and over gets annoying after a while.
+  This would be great for a landing page, not a doc site :(
+*/
+/*
 body.is-scrolled header.header {
   top: 1.5rem;
   inset-block-start: 1.5rem;
@@ -64,6 +73,7 @@ body.is-scrolled header.header::before {
   -webkit-backdrop-filter: var(--glass-blur-active);
   box-shadow: var(--glass-shadow);
 }
+*/
 
 header.header .header {
   display: flex;
@@ -130,25 +140,7 @@ header.header .right-group {
 
 @media (max-width: 50rem) {
   .site-title .logo-compact {
-    display: inline-block;
-  }
-
-  body.is-scrolled .site-title img:not(.logo-compact) {
-    opacity: 0;
-    max-width: 0;
-    margin-right: 0;
-    transform: scale(0.92);
-    pointer-events: none;
-  }
-
-  body.is-scrolled .site-title .logo-compact {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: translateY(0) scale(1);
-    opacity: 1;
-    pointer-events: auto;
-    margin-right: 0.65rem;
+    display: none; /* Keep full logo consistent without scroll-triggered swapping */
   }
 }
 
@@ -175,9 +167,6 @@ button[aria-controls="starlight__sidebar"] {
   color: var(--menu-btn-color);
   border: 1px solid var(--menu-btn-border);
   transition:
-    top var(--glass-ease),
-    right var(--glass-ease),
-    inset-inline-end var(--glass-ease),
     background-color var(--ui-ease),
     box-shadow var(--ui-ease);
 }
@@ -185,11 +174,17 @@ button[aria-controls="starlight__sidebar"] {
 mobile-starlight-toc nav,
 nav[aria-labelledby="starlight__on-this-page--mobile"] {
   transition:
-    top var(--glass-ease),
     background-color var(--ui-ease),
     border-color var(--ui-ease);
 }
 
+/*
+  [ARCHIVED] Mobile & TOC Scroll-Triggered Layout Jumps
+  ----------------------------------------------------
+  These rules adjusted mobile nav margins and TOC offsets when is-scrolled was toggled.
+  Now resting peacefully in the CSS archives.
+*/
+/*
 body.is-scrolled mobile-starlight-toc nav,
 body.is-scrolled nav[aria-labelledby="starlight__on-this-page--mobile"] {
   background-color: var(--glass-bg-toc);
@@ -234,3 +229,4 @@ body.is-scrolled nav[aria-labelledby="starlight__on-this-page--mobile"] {
     top: calc(var(--sl-nav-height) + 2.1rem);
   }
 }
+*/

@@ -6,7 +6,7 @@ div.sidebar {
   width: 100%;
   min-width: 100%;
   border: none;
-  background: transparent;
+  background-color: var(--sl-color-bg-sidebar);
 }
 
 .sidebar-group .group-label {
